@@ -60,7 +60,7 @@ export default function AdvertiserDashboard() {
       {/* Stats Grid */}
       <Grid container spacing={4} sx={{ mb: 6 }}>
          {stats.map((stat, i) => (
-           <Grid item xs={12} md={4} key={i}>
+           <Grid size={{ xs: 12, md: 4 }} key={i}>
               <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #222', borderRadius: 4, position: 'relative', overflow: 'hidden' }}>
                  <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: stat.color }} />
                  <Stack direction="row" justifyContent="space-between" alignItems="center">

@@ -24,21 +24,21 @@ export default function AdminTransactionsPage() {
       </Typography>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
-         <Grid item xs={12} md={4}>
+         <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4, position: 'relative', overflow: 'hidden' }}>
                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: '#4ADE80' }} />
                <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 800 }}>TOTAL REVENUE</Typography>
                <Typography variant="h3" sx={{ color: 'white', fontWeight: 900, mt: 1 }}>₹ 2,50,000</Typography>
             </Card>
          </Grid>
-         <Grid item xs={12} md={4}>
+         <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4, position: 'relative', overflow: 'hidden' }}>
                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: '#FACC15' }} />
                <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 800 }}>PENDING SETTLEMENT</Typography>
                <Typography variant="h3" sx={{ color: 'white', fontWeight: 900, mt: 1 }}>₹ 85,000</Typography>
             </Card>
          </Grid>
-         <Grid item xs={12} md={4}>
+         <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4, position: 'relative', overflow: 'hidden' }}>
                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: '#3B82F6' }} />
                <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 800 }}>ACTIVE CONTRACTS</Typography>

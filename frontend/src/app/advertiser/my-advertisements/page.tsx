@@ -147,9 +147,9 @@ export default function MyAdvertisementsPage() {
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>Business Identity</Typography>
                    </Box>
                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={4}><InfoBlock label="Brand Name" value={selectedCampaign.brandName} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Category" value={selectedCampaign.businessCategory} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Operating Location" value={selectedCampaign.operatingLocation} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Brand Name" value={selectedCampaign.brandName} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Category" value={selectedCampaign.businessCategory} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Operating Location" value={selectedCampaign.operatingLocation} /></Grid>
                    </Grid>
                 </Box>
                 <Divider sx={{ borderColor: '#222' }} />
@@ -159,10 +159,10 @@ export default function MyAdvertisementsPage() {
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>Distribution & Target</Typography>
                    </Box>
                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={4}><InfoBlock label="Vehicle Category" value={selectedCampaign.targetVehicleType} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Target Reach" value={`${selectedCampaign.numberOfVehicles} Vehicles`} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Target Pin / Radius" value={`${selectedCampaign.averageRunningLocation?.pin} (${selectedCampaign.averageRunningLocation?.radius} KM)`} /></Grid>
-                      <Grid item xs={12}><InfoBlock label="Placement Options" value={selectedCampaign.adOptions?.join(', ')} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Vehicle Category" value={selectedCampaign.targetVehicleType} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Target Reach" value={`${selectedCampaign.numberOfVehicles} Vehicles`} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Target Pin / Radius" value={`${selectedCampaign.averageRunningLocation?.pin} (${selectedCampaign.averageRunningLocation?.radius} KM)`} /></Grid>
+                      <Grid size={{ xs: 12 }}><InfoBlock label="Placement Options" value={selectedCampaign.adOptions?.join(', ')} /></Grid>
                    </Grid>
                 </Box>
                 <Divider sx={{ borderColor: '#222' }} />
@@ -172,10 +172,10 @@ export default function MyAdvertisementsPage() {
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>Budget & Duration</Typography>
                    </Box>
                    <Grid container spacing={3}>
-                      <Grid item xs={6} md={3}><InfoBlock label="Rental/KM" value={`₹ ${selectedCampaign.rentalChargesPerKm}`} /></Grid>
-                      <Grid item xs={6} md={3}><InfoBlock label="Expected Avg KM" value={selectedCampaign.averageKm} /></Grid>
-                      <Grid item xs={6} md={3}><InfoBlock label="Duration" value={selectedCampaign.duration} /></Grid>
-                      <Grid item xs={6} md={3}><InfoBlock label="GST" value={`${selectedCampaign.gst}%`} /></Grid>
+                      <Grid size={{ xs: 6, md: 3 }}><InfoBlock label="Rental/KM" value={`₹ ${selectedCampaign.rentalChargesPerKm}`} /></Grid>
+                      <Grid size={{ xs: 6, md: 3 }}><InfoBlock label="Expected Avg KM" value={selectedCampaign.averageKm} /></Grid>
+                      <Grid size={{ xs: 6, md: 3 }}><InfoBlock label="Duration" value={selectedCampaign.duration} /></Grid>
+                      <Grid size={{ xs: 6, md: 3 }}><InfoBlock label="GST" value={`${selectedCampaign.gst}%`} /></Grid>
                    </Grid>
                    
                    <Box sx={{ mt: 3, p: 3, bgcolor: '#1A1A1A', borderRadius:3, border: '1px solid #222', display: 'flex', justifyContent: 'space-between' }}>
