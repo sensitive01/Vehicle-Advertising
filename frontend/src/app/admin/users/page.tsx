@@ -204,17 +204,17 @@ export default function UsersPage() {
        </Box>
        <Divider sx={{ borderColor: '#222' }} />
        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
              <InfoBlock label="Registration Number" value={v.registrationNumber} />
              <InfoBlock label="Type" value={v.registrationType} />
              <InfoBlock label="Fuel" value={v.fuelType} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
              <InfoBlock label="Make / Brand" value={v.make} />
              <InfoBlock label="Model / Variant" value={`${v.vehicleModel} ${v.variant}`} />
              <InfoBlock label="Color" value={v.color} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
              <InfoBlock label="Category" value={`${v.vehicleCategory} (${v.passengerSubtype || v.goodsSubtype})`} />
              <InfoBlock label="Seating" value={v.seatingCapacity} />
              <InfoBlock label="Owner" value={v.ownerName} />
@@ -222,13 +222,13 @@ export default function UsersPage() {
        </Grid>
        <Divider sx={{ borderColor: '#222' }} />
        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
              <Label>Vehicle Proof Document</Label>
              <Paper sx={{ mt: 1, width: '100%', height: 200, bgcolor: '#000', borderRadius: 2, overflow: 'hidden', border: '1px solid #333' }}>
                 {v.vehicleProof ? <img src={v.vehicleProof} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="proof" onClick={() => window.open(v.vehicleProof, '_blank')} /> : <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'zinc.600' }}>No Proof Uploaded</Box>}
              </Paper>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
              <InfoBlock label="Routine" value={v.travelRoutine} />
              <InfoBlock label="Avg KM / Day" value={v.averageKmPerDay} />
              <InfoBlock label="Ad Options" value={v.adOptions?.join(', ')} />

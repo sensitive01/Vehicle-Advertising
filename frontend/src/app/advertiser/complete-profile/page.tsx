@@ -120,13 +120,13 @@ export default function AdvertiserCompleteProfile() {
                    <GroupLabel>Business & Brand Identity</GroupLabel>
                 </Box>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth label="Brand Name" placeholder="e.g. Nike" value={formData.brandName} onChange={(e) => setFormData({...formData, brandName: e.target.value})} sx={fieldStyle} InputLabelProps={{ shrink: true }} />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth label="Business Category" placeholder="e.g. Footwear" value={formData.businessCategory} onChange={(e) => setFormData({...formData, businessCategory: e.target.value})} sx={fieldStyle} InputLabelProps={{ shrink: true }} />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField fullWidth label="Operating Location" placeholder="Where do you want to advertise? (e.g. Kochi, Kerala)" value={formData.operatingLocation} onChange={(e) => setFormData({...formData, operatingLocation: e.target.value})} sx={fieldStyle} InputLabelProps={{ shrink: true }} />
                   </Grid>
                 </Grid>
@@ -142,7 +142,7 @@ export default function AdvertiserCompleteProfile() {
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={6}>
+                      <Grid size={{ xs: 12, md: 6 }}>
                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>PREFERED VEHICLE CATEGORY</Typography>
                          <TextField select fullWidth value={formData.targetVehicleType} onChange={(e) => setFormData({...formData, targetVehicleType: e.target.value})} sx={fieldStyle}>
                             <MenuItem value="Passenger">Passenger Fleet (Cars/Jeeps)</MenuItem>
@@ -151,7 +151,7 @@ export default function AdvertiserCompleteProfile() {
                             <MenuItem value="Bus">Public Transport (Buses)</MenuItem>
                          </TextField>
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid size={{ xs: 12, md: 6 }}>
                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>NUMBER OF VEHICLES NEEDED</Typography>
                          <TextField fullWidth type="number" placeholder="Enter quantity" value={formData.numberOfVehicles} onChange={(e) => handleNumChange('numberOfVehicles', e.target.value)} sx={fieldStyle} />
                       </Grid>
@@ -167,11 +167,11 @@ export default function AdvertiserCompleteProfile() {
                    </Box>
 
                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={6}>
+                      <Grid size={{ xs: 12, md: 6 }}>
                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>TARGET CENTER (PINCODE)</Typography>
                          <TextField fullWidth placeholder="e.g. 682001" value={formData.averageRunningLocation.pin} onChange={(e) => setFormData({...formData, averageRunningLocation: {...formData.averageRunningLocation, pin: e.target.value}})} sx={fieldStyle} />
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid size={{ xs: 12, md: 6 }}>
                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>OPERATING RADIUS</Typography>
                          <TextField select fullWidth value={formData.averageRunningLocation.radius} onChange={(e) => setFormData({...formData, averageRunningLocation: {...formData.averageRunningLocation, radius: Number(e.target.value)}})} sx={fieldStyle}>
                             {[5, 10, 20, 50, 100].map(v => <MenuItem key={v} value={v}>{v} KM Radius</MenuItem>)}
@@ -191,11 +191,11 @@ export default function AdvertiserCompleteProfile() {
                 </Box>
                 
                 <Grid container spacing={3} sx={{ mb: 3 }}>
-                   <Grid item xs={12} md={6}>
+                   <Grid size={{ xs: 12, md: 6 }}>
                       <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>ESTIMATED RENTAL PER KM (₹)</Typography>
                       <TextField fullWidth type="number" placeholder="e.g. 2" value={formData.rentalChargesPerKm} onChange={(e) => handleNumChange('rentalChargesPerKm', e.target.value)} sx={fieldStyle} />
                    </Grid>
-                   <Grid item xs={12} md={6}>
+                   <Grid size={{ xs: 12, md: 6 }}>
                       <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>EXPECTED AVG KM / MONTH</Typography>
                       <TextField fullWidth type="number" placeholder="e.g. 1500" value={formData.averageKm} onChange={(e) => handleNumChange('averageKm', e.target.value)} sx={fieldStyle} />
                    </Grid>
