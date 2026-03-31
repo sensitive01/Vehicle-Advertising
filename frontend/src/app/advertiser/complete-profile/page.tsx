@@ -211,19 +211,19 @@ export default function AdvertiserCompleteProfile() {
                 </Box>
 
                 <Grid container spacing={3}>
-                   <Grid item xs={6} md={3}>
+                   <Grid size={{ xs: 6, md: 3 }}>
                      <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>DESIGN FEE</Typography>
                      <TextField fullWidth type="number" value={formData.designCharges} onChange={(e) => handleNumChange('designCharges', e.target.value)} sx={fieldStyle} />
                    </Grid>
-                   <Grid item xs={6} md={3}>
+                   <Grid size={{ xs: 6, md: 3 }}>
                      <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>PRINT FEE</Typography>
                      <TextField fullWidth type="number" value={formData.printingCharges} onChange={(e) => handleNumChange('printingCharges', e.target.value)} sx={fieldStyle} />
                    </Grid>
-                   <Grid item xs={6} md={3}>
+                   <Grid size={{ xs: 6, md: 3 }}>
                      <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>SERVICE FEE</Typography>
                      <TextField fullWidth type="number" value={formData.serviceCharges} onChange={(e) => handleNumChange('serviceCharges', e.target.value)} sx={fieldStyle} />
                    </Grid>
-                   <Grid item xs={6} md={3}>
+                   <Grid size={{ xs: 6, md: 3 }}>
                      <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>GST (%)</Typography>
                      <TextField fullWidth type="number" value={formData.gst} onChange={(e) => handleNumChange('gst', e.target.value)} sx={fieldStyle} />
                    </Grid>

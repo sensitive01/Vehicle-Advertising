@@ -241,17 +241,17 @@ export default function MyVehiclesPage() {
        </Box>
        <Divider sx={{ borderColor: '#222' }} />
        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
              <InfoBlock label="Registration Number" value={formData.registrationNumber} />
              <InfoBlock label="Type" value={formData.registrationType} />
              <InfoBlock label="Fuel" value={formData.fuelType} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
              <InfoBlock label="Make / Brand" value={formData.make} />
              <InfoBlock label="Model / Variant" value={`${formData.vehicleModel} ${formData.variant}`} />
              <InfoBlock label="Color" value={formData.color} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
              <InfoBlock label="Category" value={`${formData.vehicleCategory} (${formData.passengerSubtype || formData.goodsSubtype})`} />
              <InfoBlock label="Seating" value={formData.seatingCapacity} />
              <InfoBlock label="Owner" value={formData.ownerName} />
@@ -614,13 +614,13 @@ export default function MyVehiclesPage() {
                 </Box>
                 <Divider sx={{ borderColor: '#222' }} />
                 <Grid container spacing={2}>
-                   <Grid item xs={6}>
+                   <Grid size={{ xs: 6 }}>
                       <Box>
                          <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase' }}>Payout Rate</Typography>
                          <Typography variant="h6" sx={{ color: '#4ADE80', fontWeight: 800 }}>₹ {selectedVehicle.activeCampaignId.rentalChargesPerKm} / KM</Typography>
                       </Box>
                    </Grid>
-                   <Grid item xs={6}>
+                   <Grid size={{ xs: 6 }}>
                       <Box>
                          <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase' }}>Duration</Typography>
                          <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>{selectedVehicle.activeCampaignId.duration}</Typography>
