@@ -259,13 +259,13 @@ export default function MyVehiclesPage() {
        </Grid>
        <Divider sx={{ borderColor: '#222' }} />
        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
              <Label>Vehicle Proof Document</Label>
              <Paper sx={{ mt: 1, width: '100%', height: 180, bgcolor: '#000', borderRadius: 2, overflow: 'hidden', border: '1px solid #333' }}>
                 {formData.vehicleProof ? <img src={formData.vehicleProof} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'zinc.600' }}>No Proof Uploaded</Box>}
              </Paper>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
              <InfoBlock label="Routine" value={formData.travelRoutine} />
              <InfoBlock label="Avg KM / Day" value={formData.averageKmPerDay} />
              <InfoBlock label="Ad Options" value={formData.adOptions.join(', ')} />

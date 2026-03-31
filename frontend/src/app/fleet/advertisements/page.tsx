@@ -84,7 +84,7 @@ export default function MyAdvertisementsPage() {
       ) : (
         <Grid container spacing={4}>
           {campaigns.map((camp) => (
-            <Grid item xs={12} md={6} lg={4} key={camp._id}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={camp._id}>
               <Card sx={{ 
                 bgcolor: '#121212', 
                 border: '1px solid #222', 
@@ -117,19 +117,19 @@ export default function MyAdvertisementsPage() {
                   </Box>
 
                   <Grid container spacing={2} sx={{ mb: 3 }}>
-                     <Grid item xs={6}>
+                     <Grid size={{ xs: 6 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                            <DirectionsCarIcon sx={{ fontSize: 18, color: 'zinc.500' }} />
                            <Typography variant="body2" sx={{ color: 'white', fontWeight: 700 }}>{camp.vehicles.length} Vehicles</Typography>
                         </Box>
                      </Grid>
-                     <Grid item xs={6}>
+                     <Grid size={{ xs: 6 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                            <PaidIcon sx={{ fontSize: 18, color: 'zinc.500' }} />
                            <Typography variant="body2" sx={{ color: 'white', fontWeight: 700 }}>₹{camp.budget || 'N/A'}</Typography>
                         </Box>
                      </Grid>
-                     <Grid item xs={12}>
+                     <Grid size={{ xs: 12 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                            <CalendarMonthIcon sx={{ fontSize: 18, color: 'zinc.500' }} />
                            <Typography variant="body2" sx={{ color: 'zinc.400' }}>Duration: {camp.campaignDuration || 'TBD'}</Typography>
