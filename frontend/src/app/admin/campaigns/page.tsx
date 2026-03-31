@@ -241,11 +241,11 @@ export default function AdminCampaignsPage() {
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>Advertiser Identity</Typography>
                    </Box>
                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={4}><InfoBlock label="Full Name" value={selectedCampaign.userId?.fullName} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Brand" value={selectedCampaign.brandName} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Category" value={selectedCampaign.businessCategory} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Email" value={selectedCampaign.userId?.email} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Contact" value={selectedCampaign.userId?.mobileNumber} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Full Name" value={selectedCampaign.userId?.fullName} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Brand" value={selectedCampaign.brandName} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Category" value={selectedCampaign.businessCategory} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Email" value={selectedCampaign.userId?.email} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Contact" value={selectedCampaign.userId?.mobileNumber} /></Grid>
                    </Grid>
                 </Box>
                 
@@ -257,9 +257,9 @@ export default function AdminCampaignsPage() {
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>Campaign Scope</Typography>
                    </Box>
                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={4}><InfoBlock label="Operating Location" value={selectedCampaign.operatingLocation} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Target Vehicles" value={`${selectedCampaign.numberOfVehicles} ${selectedCampaign.targetVehicleType} units`} /></Grid>
-                      <Grid item xs={12} md={4}><InfoBlock label="Reach" value={`${selectedCampaign.averageRunningLocation?.pin} (+${selectedCampaign.averageRunningLocation?.radius}km)`} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Operating Location" value={selectedCampaign.operatingLocation} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Target Vehicles" value={`${selectedCampaign.numberOfVehicles} ${selectedCampaign.targetVehicleType} units`} /></Grid>
+                      <Grid size={{ xs: 12, md: 4 }}><InfoBlock label="Reach" value={`${selectedCampaign.averageRunningLocation?.pin} (+${selectedCampaign.averageRunningLocation?.radius}km)`} /></Grid>
                    </Grid>
                 </Box>
              </Box>
