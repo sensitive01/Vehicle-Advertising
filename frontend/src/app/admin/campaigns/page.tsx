@@ -42,7 +42,7 @@ export default function AdminCampaignsPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/advertiser/all', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertiser/all`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -54,7 +54,7 @@ export default function AdminCampaignsPage() {
   const fetchVehicles = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/fleet/all', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/all`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -70,7 +70,7 @@ export default function AdminCampaignsPage() {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/advertiser/status/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertiser/status/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ status })
@@ -94,7 +94,7 @@ export default function AdminCampaignsPage() {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/advertiser/assign-vehicles', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertiser/assign-vehicles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ 

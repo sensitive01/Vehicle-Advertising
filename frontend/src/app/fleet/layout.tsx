@@ -25,7 +25,7 @@ export default function FleetLayout({ children }: { children: React.ReactNode })
   const fetchPendingCount = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/fleet/myfleet', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/myfleet`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();

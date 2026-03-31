@@ -31,7 +31,7 @@ export default function LeadsPage() {
 
   const fetchLeads = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/leads');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/leads`);
       const data = await res.json();
       if (data.success) {
         setLeads(data.data);

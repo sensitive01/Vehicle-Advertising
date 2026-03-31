@@ -57,8 +57,8 @@ export default function DailyReportsPage() {
     try {
       const token = localStorage.getItem('token');
       const [repRes, vehRes] = await Promise.all([
-        fetch('http://localhost:5000/api/reports/myreports', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/fleet/myfleet', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reports/myreports`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/myfleet`, { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
       const repData = await repRes.json();
       const vehData = await vehRes.json();
@@ -73,7 +73,7 @@ export default function DailyReportsPage() {
     // Fetch last KM
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/reports/last-km/${vid}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reports/last-km/${vid}`, { headers: { 'Authorization': `Bearer ${token}` } });
       const data = await res.json();
       if (data.success) {
         setOpeningKm(data.lastClosingKm);
@@ -88,7 +88,7 @@ export default function DailyReportsPage() {
     const fd = new FormData();
     fd.append('file', e.target.files[0]);
     try {
-      const res = await fetch('http://localhost:5000/api/fleet/upload', { method: 'POST', body: fd });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/upload`, { method: 'POST', body: fd });
       const data = await res.json();
       if (data.secure_url) setter(data.secure_url);
     } catch (err) { console.error(err); }
@@ -103,7 +103,7 @@ export default function DailyReportsPage() {
     setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/reports/submit', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reports/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({

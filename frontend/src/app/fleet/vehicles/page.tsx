@@ -94,7 +94,7 @@ export default function MyVehiclesPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/fleet/myfleet', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/myfleet`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -107,7 +107,7 @@ export default function MyVehiclesPage() {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/fleet/campaign-response/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/campaign-response/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ status })
@@ -145,7 +145,7 @@ export default function MyVehiclesPage() {
     if (!confirm('Are you sure you want to delete this vehicle?')) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/fleet/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -159,7 +159,7 @@ export default function MyVehiclesPage() {
     try {
       const token = localStorage.getItem('token');
       const isEdit = mode === 'edit';
-      const url = isEdit ? `http://localhost:5000/api/fleet/${formData._id}` : 'http://localhost:5000/api/fleet/add';
+      const url = isEdit ? `${process.env.NEXT_PUBLIC_API_URL}/api/fleet/${formData._id}` : `${process.env.NEXT_PUBLIC_API_URL}/api/fleet/add`;
       const method = isEdit ? 'PATCH' : 'POST';
       const cleanPayload = { ...formData, averageKmPerDay: Number(formData.averageKmPerDay)||0, seatingCapacity: Number(formData.seatingCapacity)||0 };
       const body = isEdit ? cleanPayload : { vehicles: [cleanPayload] };
@@ -188,7 +188,7 @@ export default function MyVehiclesPage() {
       const fd = new FormData();
       fd.append('file', file);
       try {
-        const res = await fetch('http://localhost:5000/api/fleet/upload', { method: 'POST', body: fd });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/upload`, { method: 'POST', body: fd });
         const data = await res.json();
         if (data.secure_url) urls.push(data.secure_url);
       } catch (err) { console.error(err); }

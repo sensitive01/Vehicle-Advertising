@@ -85,7 +85,7 @@ export default function UsersPage() {
     setErrorMsg('');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/auth/users', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/users`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -106,7 +106,7 @@ export default function UsersPage() {
     setUserVehicles([]);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/fleet/user/${user._id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/user/${user._id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -130,7 +130,7 @@ export default function UsersPage() {
     setConfirmOpen(false);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/auth/users/${userId}/block`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/users/${userId}/block`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -151,7 +151,7 @@ export default function UsersPage() {
     setActionLoading(vehicleId);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/fleet/approve/${vehicleId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/approve/${vehicleId}`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });

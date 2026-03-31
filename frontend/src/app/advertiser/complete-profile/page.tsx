@@ -67,7 +67,7 @@ export default function AdvertiserCompleteProfile() {
          gst: Number(formData.gst) || 18,
       };
 
-      const res = await fetch('http://localhost:5000/api/advertiser/complete-profile', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/advertiser/complete-profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)
