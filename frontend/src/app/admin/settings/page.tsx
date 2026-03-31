@@ -34,7 +34,7 @@ export default function AdminSettingsPage() {
       {saveSuccess && <Alert severity="success" sx={{ mb: 4, bgcolor: 'rgba(34, 197, 94, 0.1)', color: '#4ADE80', border: '1px solid #4ADE80' }}>Configuration updated successfully!</Alert>}
 
       <Grid container spacing={4}>
-         <Grid item xs={12} md={6}>
+         <Grid size={{ xs: 12, md: 6 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                    <SecurityIcon sx={{ color: '#FACC15' }} />
@@ -48,7 +48,7 @@ export default function AdminSettingsPage() {
             </Card>
          </Grid>
 
-         <Grid item xs={12} md={6}>
+         <Grid size={{ xs: 12, md: 6 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                    <NotificationsActiveIcon sx={{ color: '#FACC15' }} />
@@ -61,13 +61,13 @@ export default function AdminSettingsPage() {
             </Card>
          </Grid>
 
-         <Grid item xs={12}>
+         <Grid size={{ xs: 12 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4 }}>
                 <Typography variant="h6" sx={{ color: 'white', fontWeight: 800, mb: 3 }}>Service Charges Configuration</Typography>
                 <Grid container spacing={3}>
-                   <Grid item xs={12} md={4}><TextField fullWidth label="Default Service Fee (%)" defaultValue="10" sx={fieldStyle} InputLabelProps={{ shrink: true }} /></Grid>
-                   <Grid item xs={12} md={4}><TextField fullWidth label="Printing GST (%)" defaultValue="18" sx={fieldStyle} InputLabelProps={{ shrink: true }} /></Grid>
-                   <Grid item xs={12} md={4}><TextField fullWidth label="Agent Commission (%)" defaultValue="5" sx={fieldStyle} InputLabelProps={{ shrink: true }} /></Grid>
+                   <Grid size={{ xs: 12, md: 4 }}><TextField fullWidth label="Default Service Fee (%)" defaultValue="10" sx={fieldStyle} InputLabelProps={{ shrink: true }} /></Grid>
+                   <Grid size={{ xs: 12, md: 4 }}><TextField fullWidth label="Printing GST (%)" defaultValue="18" sx={fieldStyle} InputLabelProps={{ shrink: true }} /></Grid>
+                   <Grid size={{ xs: 12, md: 4 }}><TextField fullWidth label="Agent Commission (%)" defaultValue="5" sx={fieldStyle} InputLabelProps={{ shrink: true }} /></Grid>
                 </Grid>
                 <Divider sx={{ my: 4, borderColor: '#222' }} />
                 <Button variant="contained" onClick={handleSave} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 6, py: 1.5, borderRadius: 2, '&:hover': { bgcolor: '#FDE047' } }}>Save Changes</Button>

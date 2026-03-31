@@ -12,14 +12,14 @@ export default function AdvertiserPaymentsPage() {
       </Typography>
 
       <Grid container spacing={4} sx={{ mb: 6 }}>
-         <Grid item xs={12} md={4}>
+         <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #222', borderRadius: 4, position: 'relative', overflow: 'hidden' }}>
                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: '#4ADE80' }} />
                <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 800 }}>TOTAL SPENT</Typography>
                <Typography variant="h3" sx={{ color: 'white', fontWeight: 900 }}>₹ 0.00</Typography>
             </Card>
          </Grid>
-         <Grid item xs={12} md={4}>
+         <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #222', borderRadius: 4, position: 'relative', overflow: 'hidden' }}>
                <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: '#FACC15' }} />
                <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 800 }}>PENDING DUES</Typography>
