@@ -36,7 +36,7 @@ export default function RegisterPage() {
     return () => clearInterval(timer);
   }, [resendTimer]);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSendOtp = async () => {
     if (!formData.email) return setErrorMsg('Please enter an email address first');
