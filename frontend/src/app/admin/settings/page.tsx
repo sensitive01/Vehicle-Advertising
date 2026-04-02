@@ -35,6 +35,7 @@ export default function AdminSettingsPage() {
     defaultDesignCharge: 0,
     defaultGstPercentage: 18,
     serviceChargePercentage: 10,
+    minCampaignDuration: 3,
     printingChargePerVehicleType: [],
     installationChargePerVehicleType: [],
     transportChargePerVehicleType: [],
@@ -92,20 +93,22 @@ export default function AdminSettingsPage() {
   };
 
   const addItem = (field: string) => {
+    const list = [...(settings as any)[field]];
+    list.push({ type: '', charge: 0 });
     setSettings({
       ...settings,
-      [field]: [...settings[field], { type: '', charge: 0 }]
+      [field]: list
     });
   };
 
   const updateItem = (field: string, index: number, key: string, value: any) => {
-    const newList = [...settings[field]];
+    const newList = [...(settings as any)[field]];
     newList[index][key] = key === 'charge' ? Number(value) : value;
     setSettings({ ...settings, [field]: newList });
   };
 
   const removeItem = (field: string, index: number) => {
-    const newList = [...settings[field]];
+    const newList = [...(settings as any)[field]];
     newList.splice(index, 1);
     setSettings({ ...settings, [field]: newList });
   };
