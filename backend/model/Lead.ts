@@ -18,6 +18,7 @@ export interface ILead extends Document {
   rentalPerKm?: number;
   expectedAvgKm?: number;
   gstPercentage?: number;
+  notes?: string;
 
   createdAt: Date;
 }
@@ -40,6 +41,7 @@ const LeadSchema: Schema = new Schema({
   rentalPerKm: { type: Number, default: 0 },
   expectedAvgKm: { type: Number, default: 0 },
   gstPercentage: { type: Number, default: 18 },
+  notes: { type: String, default: '' },
 
   createdAt: { type: Date, default: Date.now }
 });

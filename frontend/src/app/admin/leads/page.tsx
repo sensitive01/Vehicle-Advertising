@@ -31,6 +31,7 @@ interface Lead {
   rentalPerKm?: number;
   expectedAvgKm?: number;
   gstPercentage?: number;
+  notes?: string;
   createdAt: string;
 }
 
