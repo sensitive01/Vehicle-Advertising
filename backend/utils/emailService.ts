@@ -4,6 +4,7 @@ export const sendEmail = async (
   to: string,
   subject: string,
   message: string,
+  attachments?: any[]
 ) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -58,6 +59,7 @@ export const sendEmail = async (
         </body>
         </html>
       `,
+      attachments: attachments || []
     };
 
     const info = await transporter.sendMail(mailOptions);
@@ -67,4 +69,26 @@ export const sendEmail = async (
     console.error("❌ Error sending email:", error);
     return false;
   }
+};
+
+export const sendQuoteEmail = async (to: string, leadName: string, quote: any, pdfBuffer: Buffer) => {
+  const message = `
+    <div style="text-align: left; background-color: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid #333;">
+      <h3 style="color: #FACC15; margin-bottom: 20px; font-size: 20px; font-weight: 800;">OFFICIAL QUOTATION ENCLOSED</h3>
+      <p style="color: #fff; margin-bottom: 15px;">Hello <strong>${leadName}</strong>,</p>
+      <p style="color: #A1A1AA; margin-bottom: 25px;">Our team has analyzed your requirements and prepared a formal quotation for your advertising campaign. Please find the detailed invoice PDF attached to this email.</p>
+      
+      <div style="background-color: #000; padding: 15px; border-radius: 8px; border: 1px solid #FACC15; color: #FACC15; font-size: 13px; text-align: center; font-weight: 700;">
+        TOTAL QUOTED VALUE: ₹${quote.quotedPrice.toLocaleString()} (Incl. GST)
+      </div>
+      
+      <p style="color: #71717a; font-size: 13px; margin-top: 25px;">A digital copy of the quotation is attached for your records. Our representative will contact you shortly to discuss the next steps.</p>
+    </div>
+  `;
+  return await sendEmail(to, `Official Quotation: VAP-QUO-${Date.now().toString().slice(-4)}`, message, [
+    {
+      filename: `Vehicle_Ad_Quote_${leadName.replace(/\s+/g, '_')}.pdf`,
+      content: pdfBuffer
+    }
+  ]);
 };

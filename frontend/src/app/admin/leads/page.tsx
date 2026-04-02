@@ -5,11 +5,14 @@ import {
   TableHead, TableRow, TablePagination, Chip, Button, Dialog, DialogTitle, 
   DialogContent, DialogActions, Grid, Stack, TextField, MenuItem, 
   FormControl, Select, CircularProgress, Alert, Snackbar, 
-  IconButton 
+  IconButton
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import DownloadIcon from '@mui/icons-material/Download';
+import Tooltip from '@mui/material/Tooltip';
 
 interface Lead {
   _id: string;
@@ -19,6 +22,15 @@ interface Lead {
   vehicleType: string;
   requirementDetails: string;
   status: string;
+  quotedPrice?: number;
+  designCharges?: number;
+  printingCharges?: number;
+  serviceCharges?: number;
+  transportCharges?: number;
+  installationCharges?: number;
+  rentalPerKm?: number;
+  expectedAvgKm?: number;
+  gstPercentage?: number;
   createdAt: string;
 }
 
@@ -41,7 +53,36 @@ export default function LeadsPage() {
     status: 'New'
   });
 
+  // Quoting Modal State
+  const [isQuoting, setIsQuoting] = useState(false);
+  const [quotingLead, setQuotingLead] = useState<Lead | null>(null);
+
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+
+  // Quote Data for complex breakdown
+  const [quoteData, setQuoteData] = useState<{
+    designCharges: number | string;
+    printingCharges: number | string;
+    serviceCharges: number | string;
+    transportCharges: number | string;
+    installationCharges: number | string;
+    rentalPerKm: number | string;
+    expectedAvgKm: number | string;
+    gstPercentage: number | string;
+    durationMonths: number;
+    notes?: string;
+  }>({
+    designCharges: 0,
+    printingCharges: 0,
+    serviceCharges: 0,
+    transportCharges: 0,
+    installationCharges: 0,
+    rentalPerKm: 0,
+    expectedAvgKm: 3000,
+    gstPercentage: 18,
+    durationMonths: 3,
+    notes: ''
+  });
 
   useEffect(() => {
     fetchLeads();
@@ -54,8 +95,8 @@ export default function LeadsPage() {
       if (data.success) {
         setLeads(data.data);
       }
-    } catch (err) {
-      console.error('Failed to fetch leads', err);
+    } catch (error) {
+      console.error('Failed to fetch leads', error);
     } finally {
       setLoading(false);
     }
@@ -63,6 +104,66 @@ export default function LeadsPage() {
 
   const handleOpenViewer = (lead: Lead) => setSelectedLead(lead);
   const handleCloseViewer = () => setSelectedLead(null);
+
+  const handleOpenQuoter = (lead: Lead) => {
+    setQuotingLead(lead);
+    setQuoteData({
+      designCharges: lead.designCharges || 0,
+      printingCharges: lead.printingCharges || 0,
+      serviceCharges: lead.serviceCharges || 0,
+      transportCharges: lead.transportCharges || 0,
+      installationCharges: lead.installationCharges || 0,
+      rentalPerKm: lead.rentalPerKm || 0,
+      expectedAvgKm: lead.expectedAvgKm || 3000,
+      gstPercentage: lead.gstPercentage || 18,
+      durationMonths: 3,
+      notes: lead.notes || ''
+    });
+    setIsQuoting(true);
+  };
+  const handleCloseQuoter = () => {
+    setIsQuoting(false);
+    setQuotingLead(null);
+  };
+
+  const calculateTotal = () => {
+    const getVal = (val: string | number) => (val === '' ? 0 : Number(val));
+    const oneTime = getVal(quoteData.designCharges) + getVal(quoteData.printingCharges) + getVal(quoteData.serviceCharges) + getVal(quoteData.transportCharges) + getVal(quoteData.installationCharges);
+    const recurring = (getVal(quoteData.rentalPerKm) * getVal(quoteData.expectedAvgKm)) * getVal(quoteData.durationMonths);
+    const baseTotal = oneTime + recurring;
+    const gstAmount = (baseTotal * getVal(quoteData.gstPercentage)) / 100;
+    return { subtotal: baseTotal, gst: gstAmount, total: baseTotal + gstAmount };
+  };
+
+  const handleUpdateLead = async (status: string, leadId?: string) => {
+    const targetId = leadId || selectedLead?._id || quotingLead?._id;
+    if (!targetId) return;
+    setSubmitting(true);
+    const { total } = calculateTotal();
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/leads/${targetId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status, 
+          quotedPrice: total,
+          ...quoteData
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotification({ open: true, message: `Lead updated to ${status}`, severity: 'success' });
+        fetchLeads();
+        handleCloseViewer();
+        handleCloseQuoter();
+      }
+    } catch (error) {
+      console.error('Update failed:', error);
+      setNotification({ open: true, message: 'Update failed', severity: 'error' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleOpenAdder = () => setIsAdding(true);
   const handleCloseAdder = () => {
@@ -172,15 +273,45 @@ export default function LeadsPage() {
                       }} />
                     </TableCell>
                     <TableCell sx={{ textAlign: 'center' }}>
-                      <Button 
-                        variant="outlined" 
-                        size="small" 
-                        startIcon={<VisibilityIcon />}
-                        onClick={() => handleOpenViewer(lead)}
-                        sx={{ textTransform: 'none', borderRadius: 2 }}
-                      >
-                        View Info
-                      </Button>
+                        <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                          <Tooltip title="View Lead Details">
+                            <Button 
+                              size="small" variant="outlined" startIcon={<VisibilityIcon />}
+                              onClick={() => handleOpenViewer(lead)}
+                              sx={{ color: 'zinc.400', borderColor: '#333', textTransform: 'none', borderRadius: 2, '&:hover': { borderColor: '#555', bgcolor: 'rgba(255,255,255,0.05)' } }}
+                            >
+                              View Info
+                            </Button>
+                          </Tooltip>
+
+                          {lead.quotedPrice && lead.quotedPrice > 0 ? (
+                            <Tooltip title="Download Invoice PDF">
+                              <IconButton 
+                                size="small"
+                                onClick={() => window.open(`${process.env.NEXT_PUBLIC_API_URL}/api/leads/${lead._id}/download-quote`, '_blank')}
+                                sx={{ color: '#FACC15', bgcolor: 'rgba(250, 204, 21, 0.1)', border: '1px solid rgba(250, 204, 21, 0.2)', '&:hover': { bgcolor: 'rgba(250, 204, 21, 0.2)' } }}
+                              >
+                                <DownloadIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          ) : null}
+
+                          <Tooltip title={lead.quotedPrice ? "Already Quoted - Click to Update" : "Create New Quote"}>
+                            <Button 
+                              size="small" variant="contained"
+                              startIcon={<AssignmentIcon />}
+                              onClick={() => handleOpenQuoter(lead)}
+                              sx={{ 
+                                bgcolor: lead.quotedPrice ? '#3B82F6' : '#FACC15', 
+                                color: lead.quotedPrice ? 'white' : 'black',
+                                fontWeight: 800, textTransform: 'none', borderRadius: 2, px: 2,
+                                '&:hover': { bgcolor: lead.quotedPrice ? '#2563EB' : '#EAB308' }
+                              }}
+                            >
+                              {lead.quotedPrice ? 'Update Quote' : 'Make Quote'}
+                            </Button>
+                          </Tooltip>
+                        </Stack>
                     </TableCell>
                   </TableRow>
                 ))
@@ -247,15 +378,201 @@ export default function LeadsPage() {
                   <Typography sx={{ color: 'zinc.300', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{selectedLead.requirementDetails}</Typography>
                 </div>
               </div>
+
+              <div className="col-span-1 md:col-span-2">
+                <Typography sx={{ color: 'zinc.500', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700, mb: 1 }}>Message & Details</Typography>
+                <div className="bg-[#121212] p-6 rounded-xl border border-zinc-800">
+                  <Typography sx={{ color: 'zinc.300', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{selectedLead.requirementDetails}</Typography>
+                </div>
+              </div>
+
+              {selectedLead.quotedPrice && selectedLead.quotedPrice > 0 && (
+                <div className="col-span-1 md:col-span-2 mt-4">
+                  <Box sx={{ bgcolor: 'rgba(96, 165, 250, 0.05)', p: 3, border: '1px solid rgba(96, 165, 250, 0.2)', borderRadius: 4 }}>
+                    <Typography sx={{ color: '#60A5FA', fontWeight: 900, mb: 1, textTransform: 'uppercase', fontSize: '0.75rem' }}>Active Quotation Detected</Typography>
+                    <Typography variant="h5" sx={{ color: 'white', fontWeight: 900 }}>Total Value: ₹{selectedLead.quotedPrice.toLocaleString()}</Typography>
+                  </Box>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
-        <DialogActions sx={{ p: 3, borderTop: '1px solid #333' }}>
-          <Button onClick={handleCloseViewer} variant="outlined" sx={{ color: 'white', borderColor: '#555', '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}>
-            Close Window
+        <DialogActions sx={{ p: 3, borderTop: '1px solid #333', justifyContent: 'space-between' }}>
+          <Button onClick={handleCloseViewer} variant="outlined" sx={{ color: '#A1A1AA', borderColor: '#444' }}>
+            Close Info
           </Button>
-          <Button onClick={handleCloseViewer} variant="contained" sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 700, '&:hover': { bgcolor: '#FDE047' } }}>
-            Mark as Contacted
+          <Stack direction="row" spacing={2}>
+            <Button 
+              onClick={() => handleUpdateLead('Contacted')} 
+              disabled={submitting || selectedLead?.status === 'Contacted'}
+              variant="outlined" 
+              sx={{ color: 'white', borderColor: '#FACC15', fontWeight: 700 }}
+            >
+              Mark Contacted
+            </Button>
+            <Button 
+              onClick={() => handleUpdateLead('Closed')} 
+              disabled={submitting || selectedLead?.status === 'Closed'}
+              variant="contained" 
+              sx={{ bgcolor: '#EF4444', color: 'white', fontWeight: 800 }}
+            >
+              Reject Lead
+            </Button>
+          </Stack>
+        </DialogActions>
+      </Dialog>
+
+      {/* Make Quote Dialog */}
+      <Dialog 
+        open={isQuoting} onClose={handleCloseQuoter} maxWidth="md" fullWidth 
+        PaperProps={{ sx: { 
+          bgcolor: '#1E1E1E', color: 'white', borderRadius: 3, border: '1px solid #333',
+          '&::-webkit-scrollbar': { display: 'none' },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
+        } }}
+      >
+        <DialogTitle sx={{ borderBottom: '1px solid #333', pb: 2 }}>
+          <Typography variant="h5" sx={{ fontWeight: 800 }}>Create <span style={{ color: '#FACC15' }}>Quotation</span></Typography>
+          <Typography variant="caption" sx={{ color: 'zinc.500' }}>For: {quotingLead?.contactName} ({quotingLead?.email})</Typography>
+        </DialogTitle>
+        <DialogContent sx={{ 
+          mt: 3,
+          '&::-webkit-scrollbar': { display: 'none' },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
+        }}>
+          {quotingLead && (
+            <Grid container spacing={3}>
+              {/* One-time Costs */}
+              <Grid size={{ xs: 12 }}>
+                <Typography sx={{ color: 'zinc.500', fontSize: '0.75rem', fontWeight: 800, mb: 2 }}>ONE-TIME SETUP CHARGES (INR)</Typography>
+                <Grid container spacing={2}>
+                  {[
+                    { label: 'Design', key: 'designCharges' },
+                    { label: 'Printing', key: 'printingCharges' },
+                    { label: 'Service', key: 'serviceCharges' },
+                    { label: 'Transport', key: 'transportCharges' },
+                    { label: 'Installation', key: 'installationCharges' }
+                  ].map((field) => (
+                    <Grid size={{ xs: 6, sm: 2.4 }} key={field.key}>
+                      <Typography sx={{ color: 'zinc.500', fontSize: '0.7rem', fontWeight: 600, mb: 0.5, ml: 0.5 }}>{field.label.toUpperCase()}</Typography>
+                      <TextField 
+                        fullWidth type="number" size="small"
+                        value={quoteData[field.key as keyof typeof quoteData]} 
+                        onChange={(e) => {
+                           const val = e.target.value;
+                           if (val === '') { setQuoteData({...quoteData, [field.key]: ''}); return; }
+                           setQuoteData({...quoteData, [field.key]: Math.max(0, Number(val))});
+                        }}
+                        inputProps={{ min: 0 }}
+                        sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 2, '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+
+              {/* Recurring Rental Logic */}
+              <Grid size={{ xs: 12 }}>
+                <Typography sx={{ color: 'zinc.500', fontSize: '0.75rem', fontWeight: 800, mb: 2, mt: 1 }}>RECURRING AD RENTAL ESTIMATION</Typography>
+                <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                      <Typography sx={{ color: 'zinc.500', fontSize: '0.7rem', fontWeight: 600, mb: 0.5, ml: 0.5 }}>RENTAL (PER KM)</Typography>
+                      <TextField 
+                        fullWidth type="number" size="small"
+                        value={quoteData.rentalPerKm} onChange={(e) => {
+                           const val = e.target.value;
+                           if (val === '') { setQuoteData({...quoteData, rentalPerKm: ''}); return; }
+                           setQuoteData({...quoteData, rentalPerKm: Math.max(0, Number(val))});
+                        }}
+                        inputProps={{ min: 0 }}
+                        sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 2, '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                      <Typography sx={{ color: 'zinc.500', fontSize: '0.7rem', fontWeight: 600, mb: 0.5, ml: 0.5 }}>AVG KM/MONTH</Typography>
+                      <TextField 
+                        fullWidth type="number" size="small"
+                        value={quoteData.expectedAvgKm} onChange={(e) => {
+                           const val = e.target.value;
+                           if (val === '') { setQuoteData({...quoteData, expectedAvgKm: ''}); return; }
+                           setQuoteData({...quoteData, expectedAvgKm: Math.max(0, Number(val))});
+                        }}
+                        inputProps={{ min: 0 }}
+                        sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 2, '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                      <Typography sx={{ color: 'zinc.500', fontSize: '0.7rem', fontWeight: 600, mb: 0.5, ml: 0.5 }}>CAMPAIGN DURATION</Typography>
+                      <FormControl fullWidth sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 2, '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}>
+                        <Select size="small" value={quoteData.durationMonths} onChange={(e) => setQuoteData({...quoteData, durationMonths: Number(e.target.value)})}>
+                            <MenuItem value={3}>3 Months</MenuItem>
+                            <MenuItem value={6}>6 Months</MenuItem>
+                            <MenuItem value={12}>1 Year</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                      <Typography sx={{ color: 'zinc.500', fontSize: '0.7rem', fontWeight: 600, mb: 0.5, ml: 0.5 }}>GST (%)</Typography>
+                      <TextField 
+                        fullWidth type="number" size="small"
+                        value={quoteData.gstPercentage} onChange={(e) => {
+                           const val = e.target.value;
+                           if (val === '') { setQuoteData({...quoteData, gstPercentage: ''}); return; }
+                           setQuoteData({...quoteData, gstPercentage: Math.max(0, Number(val))});
+                        }}
+                        inputProps={{ min: 0, max: 100 }}
+                        sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 2, '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}
+                      />
+                    </Grid>
+                </Grid>
+              </Grid>
+
+              {/* Summary Box */}
+              <Grid size={{ xs: 12 }}>
+                <Box sx={{ bgcolor: 'rgba(250, 204, 21, 0.05)', p: 3, border: '1px solid rgba(250, 204, 21, 0.2)', borderRadius: 4 }}>
+                    <Grid container spacing={3} justifyContent="space-between" alignItems="center">
+                      <Grid size={{ xs: 12, sm: 'auto' }}>
+                          <Stack direction="row" spacing={4}>
+                            <Box>
+                                <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 700 }}>SUBTOTAL</Typography>
+                                <Typography sx={{ color: 'white', fontWeight: 800 }}>₹{calculateTotal().subtotal.toLocaleString()}</Typography>
+                            </Box>
+                            <Box>
+                                <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 700 }}>GST ({quoteData.gstPercentage}%)</Typography>
+                                <Typography sx={{ color: 'white', fontWeight: 800 }}>₹{calculateTotal().gst.toLocaleString()}</Typography>
+                            </Box>
+                          </Stack>
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 'auto' }}>
+                          <Typography variant="h5" sx={{ color: '#FACC15', fontWeight: 900 }}>TOTAL: ₹{calculateTotal().total.toLocaleString()}</Typography>
+                      </Grid>
+                    </Grid>
+                </Box>
+              </Grid>
+
+              {/* Editable Notes for PDF */}
+              <Grid size={{ xs: 12 }}>
+                <Typography sx={{ color: 'zinc.500', fontSize: '0.75rem', fontWeight: 800, mb: 1, mt: 1 }}>CAMPAIGN NOTES / SPECIAL TERMS (APPEARS ON PDF)</Typography>
+                <TextField 
+                  fullWidth multiline rows={3} placeholder="Add any custom terms, duration details, or a personalized message for the advertiser here..."
+                  value={quoteData.notes} onChange={(e) => setQuoteData({...quoteData, notes: e.target.value})}
+                  sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: '#D4D4D8', borderRadius: 3, fontSize: '0.85rem', '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}
+                />
+              </Grid>
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3, borderTop: '1px solid #333' }}>
+          <Button onClick={handleCloseQuoter} sx={{ color: 'zinc.500' }}>Cancel</Button>
+          <Button 
+            variant="contained" 
+            disabled={submitting}
+            onClick={() => handleUpdateLead('Quoted')}
+            sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, borderRadius: 3, '&:hover': { bgcolor: '#FDE047' } }}
+          >
+            {submitting ? <CircularProgress size={24} color="inherit" /> : 'GENERATE & EMAIL QUOTE'}
           </Button>
         </DialogActions>
       </Dialog>
