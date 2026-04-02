@@ -7,8 +7,6 @@ import {
 } from '@mui/material';
 import BusinessIcon from '@mui/icons-material/Business';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import AssessmentIcon from '@mui/icons-material/Assessment';
 
 const AD_OPTIONS = ['Left doors', 'Right doors', 'front bonnet', 'Rear door', 'Roof carrier handles'];
 
@@ -181,70 +179,7 @@ export default function AdvertiserCompleteProfile() {
                 </Box>
              </Box>
 
-             <Divider sx={{ borderColor: '#222' }} />
-
-             {/* Estimates and Charges */}
-             <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                   <AssessmentIcon sx={{ color: '#FACC15' }} />
-                   <GroupLabel>Campaign Estimates & Budget</GroupLabel>
-                </Box>
-                
-                <Grid container spacing={3} sx={{ mb: 3 }}>
-                   <Grid size={{ xs: 12, md: 6 }}>
-                      <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>ESTIMATED RENTAL PER KM (₹)</Typography>
-                      <TextField fullWidth type="number" placeholder="e.g. 2" value={formData.rentalChargesPerKm} onChange={(e) => handleNumChange('rentalChargesPerKm', e.target.value)} sx={fieldStyle} />
-                   </Grid>
-                   <Grid size={{ xs: 12, md: 6 }}>
-                      <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>EXPECTED AVG KM / MONTH</Typography>
-                      <TextField fullWidth type="number" placeholder="e.g. 1500" value={formData.averageKm} onChange={(e) => handleNumChange('averageKm', e.target.value)} sx={fieldStyle} />
-                   </Grid>
-                </Grid>
-
-                <Box sx={{ mb: 3 }}>
-                   <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>CAMPAIGN DURATION</Typography>
-                   <Box sx={{ display: 'flex', gap: 2 }}>
-                     {['3 months', '6 months', '1 year'].map(d => (
-                       <Button key={d} onClick={() => setFormData({...formData, duration: d as any})} sx={{ flex: 1, py: 1.2, bgcolor: formData.duration === d ? 'rgba(250, 204, 21, 0.1)' : '#1E1E1E', color: formData.duration === d ? '#FACC15' : 'zinc.500', border: '1px solid', borderColor: formData.duration === d ? '#FACC15' : '#333', fontWeight: 800, borderRadius: 2 }}>{d.toUpperCase()}</Button>
-                     ))}
-                   </Box>
-                </Box>
-
-                <Grid container spacing={3}>
-                   <Grid size={{ xs: 6, md: 3 }}>
-                     <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>DESIGN FEE</Typography>
-                     <TextField fullWidth type="number" value={formData.designCharges} onChange={(e) => handleNumChange('designCharges', e.target.value)} sx={fieldStyle} />
-                   </Grid>
-                   <Grid size={{ xs: 6, md: 3 }}>
-                     <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>PRINT FEE</Typography>
-                     <TextField fullWidth type="number" value={formData.printingCharges} onChange={(e) => handleNumChange('printingCharges', e.target.value)} sx={fieldStyle} />
-                   </Grid>
-                   <Grid size={{ xs: 6, md: 3 }}>
-                     <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>SERVICE FEE</Typography>
-                     <TextField fullWidth type="number" value={formData.serviceCharges} onChange={(e) => handleNumChange('serviceCharges', e.target.value)} sx={fieldStyle} />
-                   </Grid>
-                   <Grid size={{ xs: 6, md: 3 }}>
-                     <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>GST (%)</Typography>
-                     <TextField fullWidth type="number" value={formData.gst} onChange={(e) => handleNumChange('gst', e.target.value)} sx={fieldStyle} />
-                   </Grid>
-                </Grid>
-
-                <Box sx={{ mt: 4, p: 3, bgcolor: '#1A1A1A', borderRadius: 4, border: '1px solid #333', position: 'relative', overflow: 'hidden' }}>
-                   <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: '#FACC15' }} />
-                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box>
-                         <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>Monthly Payout Estimate</Typography>
-                         <Typography variant="h4" sx={{ color: 'white', fontWeight: 900, mt: 1 }}>₹ {(Number(formData.rentalChargesPerKm) * Number(formData.averageKm) * Number(formData.numberOfVehicles) || 0).toLocaleString('en-IN')}</Typography>
-                      </Box>
-                      <Box sx={{ textAlign: 'right' }}>
-                         <Typography variant="h6" sx={{ color: '#FACC15', fontWeight: 900 }}>₹ {(Number(formData.rentalChargesPerKm) * Number(formData.averageKm) * Number(formData.numberOfVehicles) * (1 + Number(formData.gst)/100) || 0).toLocaleString('en-IN')}</Typography>
-                         <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block' }}>Total Incl. GST</Typography>
-                      </Box>
-                   </Box>
-                </Box>
-             </Box>
-
-             <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+             <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
                 <Button variant="outlined" sx={{ flex: 1, py: 2, color: 'zinc.500', borderColor: '#333', fontWeight: 700, borderRadius: 3 }}>Save Draft</Button>
                 <Button variant="contained" onClick={handleSubmit} disabled={loading} sx={{ flex: 2, py: 2, bgcolor: '#FACC15', color: 'black', fontWeight: 900, '&:hover': { bgcolor: '#FDE047' }, borderRadius: 3 }}>
                    {loading ? <CircularProgress size={24} color="inherit" /> : 'LAUNCH CAMPAIGN'}
