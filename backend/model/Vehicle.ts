@@ -19,14 +19,31 @@ export interface IVehicle extends Document {
   ownerName: string;
   ownerContact: string;
   ownerEmail?: string;
-  vehicleProof?: string; // Image URL/Path
-  parkingLocation: string;
+  
+  // KYC Documents
+  documents: {
+    registrationCertificate: string;
+    insuranceCopy: string;
+    permitCopy?: string;
+    taxCopy?: string;
+    vehicleImages: string[];
+  };
+
+  parkingLocation: {
+    address: string;
+    lat: number;
+    lng: number;
+  };
+  
   adOptions: string[]; // Left, Right doors, front bonnet, Rear door, Roof carrier handles
-  images: string[];
-  status: string;
+  status: 'Pending Verification' | 'Approved' | 'Rejected' | 'Under Service' | 'Not Operational';
   isBlocked?: boolean; // Managed by admin
-  isOperatable: boolean; // Managed by owner
   serviceReason?: string;
+  
+  // Campaign Assignment
+  activeCampaignId: mongoose.Types.ObjectId | null;
+  campaignStatus: 'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  
   createdAt: Date;
 }
 
@@ -44,22 +61,35 @@ const VehicleSchema: Schema = new Schema({
   vehicleModel: { type: String, required: true },
   variant: { type: String, required: true },
   color: { type: String, required: true },
-  travelRoutine: { type: String, required: true },
+  travelRoutine: { type: String, required: true, enum: ['City ride', 'Outstation', 'State permit', 'All India', 'Random'] },
   averageKmPerDay: { type: Number, required: true },
   ownerName: { type: String, required: true },
   ownerContact: { type: String, required: true },
   ownerEmail: { type: String },
-  vehicleProof: { type: String },
-  parkingLocation: { type: String, required: true },
+  
+  documents: {
+    registrationCertificate: { type: String },
+    insuranceCopy: { type: String },
+    permitCopy: { type: String },
+    taxCopy: { type: String },
+    vehicleImages: { type: [String], default: [] }
+  },
+
+  parkingLocation: {
+    address: { type: String, required: true },
+    lat: { type: Number },
+    lng: { type: Number }
+  },
+  
   adOptions: { type: [String], default: [] },
-  images: { type: [String], default: [] },
-  status: { type: String, default: 'Pending Verification' },
+  status: { type: String, default: 'Pending Verification', enum: ['Pending Verification', 'Approved', 'Rejected', 'Under Service', 'Not Operational'] },
   isBlocked: { type: Boolean, default: false },
-  isOperatable: { type: Boolean, default: true },
   serviceReason: { type: String },
-  activeCampaignId: { type: Schema.Types.ObjectId, ref: 'AdvertiserProfile', default: null },
+  
+  activeCampaignId: { type: Schema.Types.ObjectId, ref: 'Campaign', default: null },
   campaignStatus: { type: String, enum: ['NONE', 'PENDING', 'ACCEPTED', 'REJECTED'], default: 'NONE' },
   createdAt: { type: Date, default: Date.now }
 });
 
 export default mongoose.models.Vehicle || mongoose.model<IVehicle>('Vehicle', VehicleSchema);
+

@@ -3,9 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { 
   Box, Typography, Card, Table, TableBody, TableCell, TableContainer, 
   TableHead, TableRow, TablePagination, Chip, Button, Dialog, DialogTitle, 
-  DialogContent, DialogActions, Grid 
+  DialogContent, DialogActions, Grid, Stack, TextField, MenuItem, 
+  FormControl, Select, CircularProgress, Alert, Snackbar, 
+  IconButton 
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Lead {
   _id: string;
@@ -24,6 +28,20 @@ export default function LeadsPage() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
+  
+  // Create Lead State
+  const [isAdding, setIsAdding] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [newLead, setNewLead] = useState({
+    contactName: '',
+    mobileNumber: '',
+    email: '',
+    vehicleType: 'Any',
+    requirementDetails: '',
+    status: 'New'
+  });
+
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
 
   useEffect(() => {
     fetchLeads();
@@ -46,6 +64,44 @@ export default function LeadsPage() {
   const handleOpenViewer = (lead: Lead) => setSelectedLead(lead);
   const handleCloseViewer = () => setSelectedLead(null);
 
+  const handleOpenAdder = () => setIsAdding(true);
+  const handleCloseAdder = () => {
+    setIsAdding(false);
+    setNewLead({
+      contactName: '',
+      mobileNumber: '',
+      email: '',
+      vehicleType: 'Any',
+      requirementDetails: '',
+      status: 'New'
+    });
+  };
+
+  const handleCreateLead = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newLead)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotification({ open: true, message: 'Lead added successfully!', severity: 'success' });
+        fetchLeads();
+        handleCloseAdder();
+      } else {
+        setNotification({ open: true, message: data.error || 'Failed to add lead', severity: 'error' });
+      }
+    } catch (err: unknown) {
+      console.error(err);
+      setNotification({ open: true, message: 'Network error occurred', severity: 'error' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -66,9 +122,19 @@ export default function LeadsPage() {
 
   return (
     <Box>
-      <Typography variant="h4" sx={{ color: 'white', fontWeight: 900, mb: 4, textTransform: 'uppercase' }}>
-        Advertisement <span style={{ color: '#FACC15' }}>Leads</span>
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h4" sx={{ color: 'white', fontWeight: 900, textTransform: 'uppercase', mb: 0 }}>
+          Advertisement <span style={{ color: '#FACC15' }}>Leads</span>
+        </Typography>
+        <Button 
+          variant="contained" 
+          startIcon={<AddIcon />}
+          onClick={handleOpenAdder}
+          sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 700, p: '10px 24px', borderRadius: 3, '&:hover': { bgcolor: '#FDE047' } }}
+        >
+          Add New Lead
+        </Button>
+      </Box>
 
       <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
         <TableContainer>
@@ -135,14 +201,27 @@ export default function LeadsPage() {
       </Card>
 
       {/* View Lead Dialog */}
-      <Dialog open={!!selectedLead} onClose={handleCloseViewer} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: '#1E1E1E', color: 'white', borderRadius: 3, border: '1px solid #333' } }}>
+      <Dialog 
+        open={!!selectedLead} onClose={handleCloseViewer} maxWidth="md" fullWidth 
+        PaperProps={{ sx: { 
+          bgcolor: '#1E1E1E', color: 'white', borderRadius: 3, border: '1px solid #333',
+          '&::-webkit-scrollbar': { display: 'none' },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
+        } }}
+      >
         <DialogTitle sx={{ borderBottom: '1px solid #333', pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>Lead <span style={{ color: '#FACC15' }}>Details</span></Typography>
           {selectedLead && (
             <Chip label={selectedLead.status} sx={{ bgcolor: 'rgba(250, 204, 21, 0.2)', color: '#FACC15', fontWeight: 'bold' }} />
           )}
         </DialogTitle>
-        <DialogContent sx={{ mt: 3 }}>
+        <DialogContent sx={{ 
+          mt: 3,
+          '&::-webkit-scrollbar': { display: 'none' },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
+        }}>
           {selectedLead && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col">
@@ -180,6 +259,123 @@ export default function LeadsPage() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Add Lead Dialog */}
+      <Dialog 
+        open={isAdding} onClose={handleCloseAdder} maxWidth="sm" fullWidth 
+        PaperProps={{ sx: { 
+          bgcolor: '#1E1E1E', color: 'white', borderRadius: 4, border: '1px solid #333',
+          '&::-webkit-scrollbar': { display: 'none' },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
+        } }}
+      >
+        <form onSubmit={handleCreateLead}>
+          <DialogTitle sx={{ borderBottom: '1px solid #333', pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h5" sx={{ fontWeight: 800 }}>Add New <span style={{ color: '#FACC15' }}>Lead</span></Typography>
+            <IconButton onClick={handleCloseAdder} sx={{ color: 'zinc.400' }}><CloseIcon /></IconButton>
+          </DialogTitle>
+          <DialogContent sx={{ 
+            mt: 3,
+            '&::-webkit-scrollbar': { display: 'none' },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none'
+          }}>
+            <Stack spacing={3}>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12 }}>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem', fontWeight: 600, mb: 1, ml: 0.5 }}>CONTACT NAME *</Typography>
+                  <TextField 
+                    fullWidth required placeholder="Enter full name"
+                    value={newLead.contactName} onChange={(e) => setNewLead({...newLead, contactName: e.target.value})}
+                    sx={{ 
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem', fontWeight: 600, mb: 1, ml: 0.5 }}>MOBILE NUMBER *</Typography>
+                  <TextField 
+                    fullWidth required placeholder="+91 ..."
+                    value={newLead.mobileNumber} onChange={(e) => setNewLead({...newLead, mobileNumber: e.target.value})}
+                    sx={{ 
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem', fontWeight: 600, mb: 1, ml: 0.5 }}>EMAIL ADDRESS *</Typography>
+                  <TextField 
+                    fullWidth required type="email" placeholder="email@example.com"
+                    value={newLead.email} onChange={(e) => setNewLead({...newLead, email: e.target.value})}
+                    sx={{ 
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                    }}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem', fontWeight: 600, mb: 1, ml: 0.5 }}>VEHICLE PREFERENCE</Typography>
+                  <FormControl fullWidth>
+                    <Select 
+                      value={newLead.vehicleType} onChange={(e) => setNewLead({...newLead, vehicleType: e.target.value as string})}
+                      sx={{ bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } }}
+                    >
+                      <MenuItem value="Any">Mixed Fleet</MenuItem>
+                      <MenuItem value="Trucks">Trucks Only</MenuItem>
+                      <MenuItem value="Buses">Buses Only</MenuItem>
+                      <MenuItem value="Vans">Vans / Mini-loads</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem', fontWeight: 600, mb: 1, ml: 0.5 }}>INITIAL STATUS</Typography>
+                  <FormControl fullWidth>
+                    <Select 
+                      value={newLead.status} onChange={(e) => setNewLead({...newLead, status: e.target.value as string})}
+                      sx={{ bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } }}
+                    >
+                      <MenuItem value="New">New Lead</MenuItem>
+                      <MenuItem value="Contacted">Contacted</MenuItem>
+                      <MenuItem value="Interested">Interested</MenuItem>
+                      <MenuItem value="Closed">Closed</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <Typography sx={{ color: '#A1A1AA', fontSize: '0.8rem', fontWeight: 600, mb: 1, ml: 0.5 }}>REQUIREMENT DETAILS *</Typography>
+                  <TextField 
+                    fullWidth required multiline rows={4} placeholder="Describe the campaign requirements..."
+                    value={newLead.requirementDetails} onChange={(e) => setNewLead({...newLead, requirementDetails: e.target.value})}
+                    sx={{ 
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 4, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ p: 3, borderTop: '1px solid #333' }}>
+            <Button onClick={handleCloseAdder} sx={{ color: 'zinc.400', fontWeight: 600 }}>Cancel</Button>
+            <Button 
+              type="submit" disabled={submitting} variant="contained" 
+              sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 800, p: '10px 24px', borderRadius: 3, '&:hover': { bgcolor: '#FDE047' } }}
+            >
+              {submitting ? <CircularProgress size={24} color="inherit" /> : 'Create Lead'}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      <Snackbar 
+        open={notification.open} 
+        autoHideDuration={4000} 
+        onClose={() => setNotification({ ...notification, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={notification.severity} sx={{ borderRadius: 3, fontWeight: 700 }}>
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

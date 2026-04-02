@@ -1,11 +1,84 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Admin from '../model/Admin';
 import User from '../model/User';
 import { verifyToken } from '../middleware/authMiddleware';
 
+import Otp from '../model/Otp';
+import { sendEmail } from '../utils/emailService';
+
 const router = express.Router();
+
+// 1. Send OTP
+router.post('/send-otp', async (req: Request, res: Response) => {
+
+
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Email is required' });
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'This email is already registered. Please login.' });
+    }
+
+    // Generate 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save/Update OTP in DB
+    await Otp.findOneAndUpdate(
+      { email },
+      { otp, createdAt: Date.now() },
+      { upsert: true, new: true }
+    );
+
+    // Send Mail
+    const emailSent = await sendEmail(
+      email, 
+      'Your Verification Code', 
+      `<div style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 18px; color: #d4d4d8; margin-bottom: 25px;">Please use the following 6-digit verification code to complete your registration:</p>
+        <div style="background-color: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px dashed #FACC15; display: inline-block; letter-spacing: 12px; font-size: 42px; font-weight: 800; color: #FACC15;">
+          ${otp}
+        </div>
+        <p style="font-size: 14px; color: #71717a; margin-top: 30px;">This code is valid for <b>10 minutes</b>. If you didn't request this, you can safely ignore this email.</p>
+      </div>`
+    );
+
+    if (emailSent) {
+      res.status(200).json({ success: true, message: 'Verification OTP sent to your email!' });
+    } else {
+      res.status(500).json({ success: false, message: 'Failed to send email. Please try again.' });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error sending OTP' });
+  }
+});
+
+// 2. Verify OTP
+router.post('/verify-otp', async (req: Request, res: Response) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ success: false, message: 'Email and OTP are required' });
+
+    const otpData = await Otp.findOne({ email, otp });
+    if (!otpData) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    // OTP is valid!
+    res.status(200).json({ success: true, message: 'Email verified successfully!' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error verifying OTP' });
+  }
+});
+
 
 router.post('/register', async (req, res) => {
   try {
@@ -84,9 +157,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/users', verifyToken, async (req: any, res: any) => {
+router.get('/users', verifyToken, async (req: Request, res: Response) => {
+  const user = (req as any).user;
   try {
-    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+    if (user.role !== 'superadmin' && user.role !== 'SuperAdmin') {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
 
@@ -98,9 +172,10 @@ router.get('/users', verifyToken, async (req: any, res: any) => {
   }
 });
 
-router.patch('/users/:id/block', verifyToken, async (req: any, res: any) => {
+router.patch('/users/:id/block', verifyToken, async (req: Request, res: Response) => {
+  const userRole = (req as any).user.role;
   try {
-    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+    if (userRole !== 'superadmin' && userRole !== 'SuperAdmin') {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
 

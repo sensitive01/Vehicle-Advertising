@@ -50,11 +50,12 @@ export default function AdvertiserDashboard() {
           </Typography>
           <Typography variant="body1" sx={{ color: 'zinc.500', mt: 1 }}>Track your advertising performance and fleet engagement.</Typography>
         </Box>
-        <Link href="/advertiser/complete-profile" style={{ textDecoration: 'none' }}>
+        <Link href="/advertiser/create-campaign" style={{ textDecoration: 'none' }}>
            <Button variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, py: 1.5, borderRadius: 3, '&:hover': { bgcolor: '#FDE047' }, boxShadow: '0 8px 24px rgba(250, 204, 21, 0.2)' }}>
               NEW CAMPAIGN REQUEST
            </Button>
         </Link>
+
       </Box>
 
       {/* Stats Grid */}

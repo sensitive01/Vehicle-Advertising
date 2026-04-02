@@ -10,3 +10,10 @@ export const verifyToken = (req: any, res: any, next: any) => {
     next();
   });
 };
+export const verifyAdmin = (req: any, res: any, next: any) => {
+  if (req.user && req.user.accountType === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ success: false, message: 'Forbidden: Admin access required' });
+  }
+};

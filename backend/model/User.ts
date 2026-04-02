@@ -15,7 +15,7 @@ const UserSchema: Schema = new Schema({
   fullName: { type: String, required: true },
   mobileNumber: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  accountType: { type: String, required: true, enum: ['fleet', 'advertiser'] },
+  accountType: { type: String, required: true, enum: ['fleet', 'advertiser', 'admin'] },
   passwordHash: { type: String, required: true },
   isProfileComplete: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
