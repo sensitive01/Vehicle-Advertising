@@ -186,7 +186,7 @@ export default function AdminSettingsPage() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {settings[section.field].map((item: any, idx: number) => (
+                        {(settings as any)[section.field].map((item: any, idx: number) => (
                           <TableRow key={idx}>
                              <TableCell sx={{ borderBottom: '1px solid #111' }}>
                                 <TextField placeholder="e.g. Auto" value={item.type} onChange={(e) => updateItem(section.field, idx, 'type', e.target.value)} variant="standard" sx={{ input: { color: 'white', fontSize: '0.9rem' } }} />
