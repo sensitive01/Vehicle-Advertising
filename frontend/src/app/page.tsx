@@ -1,397 +1,281 @@
 'use client';
-
 import React from 'react';
 import Link from 'next/link';
-import { Card, Typography, Button, Container, Box, AppBar, Toolbar } from '@mui/material';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import CampaignIcon from '@mui/icons-material/Campaign';
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
-import LoginIcon from '@mui/icons-material/Login';
-import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import SecurityIcon from '@mui/icons-material/Security';
-import PublicIcon from '@mui/icons-material/Public';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import LooksOneIcon from '@mui/icons-material/LooksOne';
-import LooksTwoIcon from '@mui/icons-material/LooksTwo';
-import Looks3Icon from '@mui/icons-material/Looks3';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 export default function Home() {
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', bgcolor: '#050505', color: 'white', width: '100%', overflowX: 'hidden' }}>
-      {/* Navigation Bar */}
-      <AppBar position="sticky" sx={{ bgcolor: 'rgba(5, 5, 5, 0.95)', backdropFilter: 'blur(16px)', borderBottom: '1px solid #1c1c1c', boxShadow: 'none' }}>
-        <Toolbar sx={{ justifyContent: 'space-between', py: 1, px: { xs: 2, md: 6 } }}>
-          <Box display="flex" alignItems="center" gap={1}>
-            <DirectionsCarIcon sx={{ color: '#FACC15', fontSize: 32 }} />
-            <Typography variant="h6" sx={{ fontWeight: 900, letterSpacing: '-0.03em', textTransform: 'uppercase' }}>
-              Fleet<span style={{ color: '#FACC15' }}>Ad</span> Network
-            </Typography>
-          </Box>
-          <Box display="flex" gap={2} alignItems="center">
-            <a href="/register" style={{ textDecoration: 'none' }}>
-              <Button 
-                sx={{ 
-                  color: 'white', 
-                  fontSize: '0.9rem', 
-                  fontWeight: 600,
-                  transition: 'all 0.3s ease',
-                  '&:hover': { color: '#FACC15', transform: 'translateY(-2px)' } 
-                }}
-              >
-                Register
-              </Button>
-            </a>
-            <Link href="/login" style={{ textDecoration: 'none' }}>
-              <Button 
-                variant="contained" 
-                startIcon={<LoginIcon sx={{ fontSize: '1.2rem !important' }} />}
-                sx={{ 
-                  py: 0.75, 
-                  px: 2.5, 
-                  bgcolor: '#FACC15', 
-                  color: 'black', 
-                  fontSize: '0.9rem', 
-                  fontWeight: 700,
-                  borderRadius: '8px',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 14px 0 rgba(250, 204, 21, 0.2)',
-                  '&:hover': { 
-                    bgcolor: '#FDE047', 
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 6px 20px 0 rgba(250, 204, 21, 0.4)'
-                  } 
-                }}
-              >
-                Sign In
-              </Button>
-            </Link>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* Hero Section Split Layout */}
-      <section className="relative w-full min-h-[85vh] flex flex-col items-center justify-center overflow-hidden">
-        {/* Abstract Background Design */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-[#FACC15] opacity-[0.05] rounded-full blur-[100px]"></div>
-          <div className="absolute bottom-[0%] right-[0%] w-[600px] h-[600px] bg-[#FACC15] opacity-[0.05] rounded-full blur-[120px]"></div>
+    <div className="w-full min-h-screen font-sans selection:bg-[#F39C12] selection:text-black overflow-x-hidden">
+      
+      {/* -------------------- HERO SECTION (Dark) -------------------- */}
+      <section className="relative w-full h-[100vh] min-h-[800px] bg-[#16181C] text-white flex flex-col overflow-hidden">
+        {/* Faint Background Text */}
+        <div className="absolute top-[20%] left-0 w-full text-center z-0 pointer-events-none">
+             <h1 className="text-[25vw] font-black uppercase tracking-[0.05em] leading-none text-white/[0.03]">FLEET</h1>
         </div>
-
-        <Container maxWidth="xl" className="z-10 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center py-12">
-            
-            {/* Left Content */}
-            <div className="space-y-6 flex flex-col items-start text-left">
-              <Box sx={{ mb: 1, display: 'inline-flex', alignItems: 'center', gap: 1.5, padding: '6px 16px', borderRadius: '100px', border: '1px solid rgba(250, 204, 21, 0.4)', bgcolor: 'rgba(250, 204, 21, 0.08)' }}>
-                <span className="w-2 h-2 rounded-full bg-[#FACC15] animate-pulse"></span>
-                <Typography variant="caption" sx={{ color: '#FACC15', fontWeight: 800, letterSpacing: '0.1em' }}>VEHICLE ADVERTISING MARKETPLACE</Typography>
-              </Box>
-              
-              <Typography 
-                variant="h1" 
-                className="font-black text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] uppercase"
-                sx={{
-                  background: 'linear-gradient(135deg, #ffffff 30%, #FACC15 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  textShadow: '0 4px 40px rgba(250, 204, 21, 0.2)',
-                  lineHeight: '1.05',
-                  letterSpacing: '-0.03em'
-                }}
-              >
-                Your Brand <br />
-                <span style={{ color: '#FACC15', WebkitTextFillColor: '#FACC15' }}>Everywhere</span>
-              </Typography>
-              
-              <Typography variant="h6" className="text-zinc-300 max-w-xl font-light tracking-wide leading-relaxed text-lg">
-                The ultimate marketplace connecting advertisers with everyday vehicles. From Government Buses and Metro trains to local Auto-Rickshaws and Private Cars. Choose exactly where you want to be seen.
-              </Typography>
-
-              <div className="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
-                <a href="/request-advertisement" style={{ textDecoration: 'none' }}>
-                  <Button 
-                    variant="contained" 
-                    startIcon={<AppRegistrationIcon />}
-                    endIcon={<KeyboardArrowRightIcon />}
-                    sx={{ py: 1.5, px: 5, fontSize: '1.05rem', fontWeight: 700, bgcolor: '#FACC15', color: '#000', '&:hover': { bgcolor: '#FDE047', transform: 'scale(1.02)' }, transition: 'all 0.2s' }}
-                  >
-                    Make an Advertisement
-                  </Button>
-                </a>
-                <Link href="/login" style={{ textDecoration: 'none' }}>
-                  <Button 
-                    variant="outlined" 
-                    startIcon={<LoginIcon />}
-                    sx={{ py: 1.5, px: 5, fontSize: '1.05rem', fontWeight: 600, borderColor: '#333', color: '#fff', '&:hover': { borderColor: '#FACC15', color: '#FACC15' } }}
-                  >
-                    Sign In to Portal
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Image Content */}
-            <div className="relative w-full h-[450px] lg:h-[600px] rounded-3xl overflow-hidden border border-zinc-800 shadow-[0_0_60px_rgba(250,204,21,0.15)] group">
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10"></div>
-              {/* Image of City Transit/Traffic */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src="/images/hero-ad.png" 
-                alt="City Transit and Taxis" 
-                className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-1000"
-              />
-              <div className="absolute bottom-8 left-8 z-20">
-                <Typography variant="h4" className="uppercase font-black italic text-white drop-shadow-xl">
-                  CITY <span className="text-[#FACC15]">TRANSIT</span>
-                </Typography>
-                <Typography variant="body2" className="text-zinc-200 font-medium tracking-widest uppercase mt-1 bg-black/50 inline-block px-3 py-1 rounded-full border border-zinc-700 backdrop-blur-md">
-                  Autos, Cabs & Private Cars
-                </Typography>
-              </div>
-            </div>
-
-          </div>
-        </Container>
-      </section>
-
-      {/* Analytics / Stats Section */}
-      <section className="w-full py-12 border-y border-zinc-900 bg-[#0A0A0A]">
-        <Container maxWidth="xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <Typography variant="h3" sx={{ color: '#FACC15', fontWeight: 900, mb: 1 }}>14M+</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Daily Impressions</Typography>
-            </div>
-            <div>
-              <Typography variant="h3" sx={{ color: '#FACC15', fontWeight: 900, mb: 1 }}>5,000+</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Registered Vehicles</Typography>
-            </div>
-            <div>
-              <Typography variant="h3" sx={{ color: '#FACC15', fontWeight: 900, mb: 1 }}>4</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Transport Types</Typography>
-            </div>
-            <div>
-              <Typography variant="h3" sx={{ color: '#FACC15', fontWeight: 900, mb: 1 }}>₹2M+</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Paid to Owners</Typography>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="w-full py-20 bg-[#050505]">
-        <Container maxWidth="xl">
-          <div className="text-center mb-16">
-            <Typography variant="h3" className="uppercase font-black mb-4 text-white tracking-tight">
-              A Complete <span className="text-[#FACC15]">Marketplace</span>
-            </Typography>
-            <div className="w-24 h-1 bg-[#FACC15] mx-auto rounded-full mb-6"></div>
-            <Typography variant="subtitle1" className="text-zinc-400 font-light max-w-3xl mx-auto leading-relaxed">
-              We connect companies looking for serious visibility with people and organizations who drive every day. Find your perfect match.
-            </Typography>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Box p={4} sx={{ bgcolor: '#0A0A0A', borderRadius: 4, border: '1px solid #1c1c1c' }}>
-              <LooksOneIcon sx={{ fontSize: 40, color: '#FACC15', mb: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>Register Vehicle</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', fontSize: '1rem', lineHeight: 1.6 }}>
-                Owners list their private cars, auto-rickshaws, or government buses, setting their availability and standard driving routes.
-              </Typography>
-            </Box>
-            <Box p={4} sx={{ bgcolor: '#0A0A0A', borderRadius: 4, border: '1px solid #1c1c1c' }}>
-              <LooksTwoIcon sx={{ fontSize: 40, color: '#FACC15', mb: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>Select & Connect</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', fontSize: '1rem', lineHeight: 1.6 }}>
-                Advertisers browse available vehicles by type and transit route. They send an offer to the owner to wrap their vehicle.
-              </Typography>
-            </Box>
-            <Box p={4} sx={{ bgcolor: '#0A0A0A', borderRadius: 4, border: '1px solid #1c1c1c' }}>
-              <Looks3Icon sx={{ fontSize: 40, color: '#FACC15', mb: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>Install & Earn</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', fontSize: '1rem', lineHeight: 1.6 }}>
-                Once accepted, we handle the professional, non-damaging wrap installation. The owner drives their usual route and earns passive income.
-              </Typography>
-            </Box>
-            <Box p={4} sx={{ bgcolor: '#0A0A0A', borderRadius: 4, border: '1px solid #1c1c1c' }}>
-              <TrendingUpIcon sx={{ fontSize: 40, color: '#FACC15', mb: 2 }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>Track Results</Typography>
-              <Typography variant="body2" sx={{ color: 'zinc.400', fontSize: '1rem', lineHeight: 1.6 }}>
-                Advertisers access a live GPS dashboard to see exactly where their ads are traveling and analyze their city-wide impressions.
-              </Typography>
-            </Box>
-          </div>
-        </Container>
-      </section>
-
-      {/* Showcase Portfolio Section */}
-      <section className="w-full py-20 bg-[#0A0A0A] border-y border-zinc-900">
-        <Container maxWidth="xl">
-          <div className="text-center mb-16">
-            <Typography variant="h3" className="uppercase font-black mb-4 text-white tracking-tight">
-              Vehicle <span className="text-[#FACC15]">Categories</span>
-            </Typography>
-            <div className="w-24 h-1 bg-[#FACC15] mx-auto rounded-full mb-6"></div>
-            <Typography variant="subtitle1" className="text-zinc-400 font-light max-w-3xl mx-auto leading-relaxed">
-              Scale your budget perfectly. Launch local campaigns on auto-rickshaws or dominate major arteries via Government Buses and Metros.
-            </Typography>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="relative h-[400px] rounded-3xl overflow-hidden border border-zinc-800 shadow-lg group">
-              {/* Image of Bus/Mass transit */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src="/images/bus-ad.png" 
-                alt="City Mass Transit Bus" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="absolute bottom-8 left-8">
-                <Typography variant="h4" className="text-white font-black uppercase tracking-tight mb-1">Public Transit & Buses</Typography>
-                <Typography variant="subtitle2" className="text-[#FACC15] font-bold tracking-widest uppercase">High-Volume Arteries</Typography>
-                <Typography className="text-zinc-300 mt-2 max-w-sm text-sm line-clamp-2">
-                  Partner with government buses and metro systems. Large format canvases that guarantee massive daily visibility across main city routes.
-                </Typography>
-              </div>
-            </div>
-
-            <div className="relative h-[400px] rounded-3xl overflow-hidden border border-zinc-800 shadow-lg group">
-              {/* Image of Private cars / Autos */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src="/images/car-ad.png" 
-                alt="City Traffic Private Cars" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="absolute bottom-8 left-8">
-                <Typography variant="h4" className="text-white font-black uppercase tracking-tight mb-1">Private Cars & Autos</Typography>
-                <Typography variant="subtitle2" className="text-[#FACC15] font-bold tracking-widest uppercase">Granular Block Targeting</Typography>
-                <Typography className="text-zinc-300 mt-2 max-w-sm text-sm line-clamp-2">
-                  Access narrow lanes and residential zones by wrapping everyday commuter cars and local auto-rickshaws for intimate customer reach.
-                </Typography>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Features Section */}
-      <section className="w-full py-24 px-6 sm:px-12 bg-[#050505]">
-        <Container maxWidth="xl">
-          <div className="text-center mb-16">
-            <Typography variant="h3" className="uppercase font-black mb-6 text-white tracking-tight">
-              Why Use <span className="text-[#FACC15]">Our Platform</span>
-            </Typography>
-            <div className="w-24 h-1 bg-[#FACC15] mx-auto rounded-full mb-6"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <Box textAlign="center" p={6} sx={{ bgcolor: '#0A0A0A', borderRadius: 6, border: '1px solid #1c1c1c', height: '100%', transition: 'all 0.3s', '&:hover': { borderColor: '#FACC15', transform: 'translateY(-10px)', boxShadow: '0 10px 30px rgba(250,204,21,0.05)' } }}>
-                <DirectionsBusIcon sx={{ fontSize: 48, color: '#FACC15', mb: 3 }} />
-                <Typography variant="h5" sx={{ fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Diverse Inventory</Typography>
-                <Typography sx={{ color: 'zinc.400', lineHeight: 1.6, fontSize: '1rem' }}>No restrictions. Whether you own a single auto-rickshaw or manage a state government bus depot, you can instantly monetize your vehicles.</Typography>
-              </Box>
-            </div>
-            <div>
-              <Box textAlign="center" p={6} sx={{ bgcolor: '#0A0A0A', borderRadius: 6, border: '1px solid #1c1c1c', height: '100%', transition: 'all 0.3s', '&:hover': { borderColor: '#FACC15', transform: 'translateY(-10px)', boxShadow: '0 10px 30px rgba(250,204,21,0.05)' } }}>
-                <PublicIcon sx={{ fontSize: 48, color: '#FACC15', mb: 3 }} />
-                <Typography variant="h5" sx={{ fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Complete Control</Typography>
-                <Typography sx={{ color: 'zinc.400', lineHeight: 1.6, fontSize: '1rem' }}>Advertisers choose exact vehicle types and routes. Owners retain the right to accept or decline any specific brand advertising on their car.</Typography>
-              </Box>
-            </div>
-            <div>
-              <Box textAlign="center" p={6} sx={{ bgcolor: '#0A0A0A', borderRadius: 6, border: '1px solid #1c1c1c', height: '100%', transition: 'all 0.3s', '&:hover': { borderColor: '#FACC15', transform: 'translateY(-10px)', boxShadow: '0 10px 30px rgba(250,204,21,0.05)' } }}>
-                <SecurityIcon sx={{ fontSize: 48, color: '#FACC15', mb: 3 }} />
-                <Typography variant="h5" sx={{ fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Safe & Verified</Typography>
-                <Typography sx={{ color: 'zinc.400', lineHeight: 1.6, fontSize: '1rem' }}>All wraps are certified to be non-damaging to paint. Vehicle owners submit simple daily check-in photos to guarantee payout.</Typography>
-              </Box>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Registration & Services Section */}
-      <section id="registration" className="w-full py-24 px-6 sm:px-12 bg-[#0A0A0A] border-t border-zinc-900 flex justify-center relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#FACC15] opacity-[0.03] rounded-full blur-[150px] z-0"></div>
         
-        <div className="max-w-6xl w-full z-10">
-          <div className="text-center mb-16">
-            <Typography variant="h3" className="uppercase font-black mb-4 text-white tracking-tight">
-              Join The <span className="text-[#FACC15]">Marketplace</span>
-            </Typography>
-            <div className="w-24 h-1 bg-[#FACC15] mx-auto rounded-full"></div>
-            <Typography variant="subtitle1" className="text-zinc-400 font-light mt-6 max-w-2xl mx-auto">Select whether you want to earn money from your vehicle or launch an ad campaign.</Typography>
-          </div>
+        {/* Navbar */}
+        <nav className="relative z-50 w-full px-6 md:px-12 py-8 flex justify-between items-center text-[10px] font-medium uppercase tracking-[2px]">
+            <div className="text-2xl tracking-tighter font-black normal-case">FLEET<span className="text-[#F39C12]">AD</span></div>
+            <div className="hidden lg:flex gap-12">
+                <Link href="#" className="text-[#F39C12]">Home</Link>
+                <Link href="#" className="hover:text-[#F39C12] transition-colors">About Us</Link>
+                <Link href="#" className="hover:text-[#F39C12] transition-colors">Vehicles <span className="text-[8px] opacity-50 ml-1">▼</span></Link>
+                <Link href="#" className="hover:text-[#F39C12] transition-colors">Service <span className="text-[8px] opacity-50 ml-1">▼</span></Link>
+                <Link href="#" className="hover:text-[#F39C12] transition-colors">Gallery</Link>
+                <Link href="#" className="hover:text-[#F39C12] transition-colors">Contact</Link>
+            </div>
+            <div className="flex gap-6 items-center">
+                <span className="w-5 h-5 border border-white/20 rounded-full flex items-center justify-center text-[9px] hover:bg-white/10 cursor-pointer">f</span>
+                <span className="w-5 h-5 border border-white/20 rounded-full flex items-center justify-center text-[9px] hover:bg-white/10 cursor-pointer">tw</span>
+                <span className="w-5 h-5 border border-white/20 rounded-full flex items-center justify-center text-[9px] hover:bg-white/10 cursor-pointer">in</span>
+            </div>
+        </nav>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-            {/* Fleet Card */}
-            <Card className="flex flex-col items-center p-10 hover:-translate-y-4 transition-all duration-500 bg-[#121212] border-2 border-zinc-800 hover:border-[#FACC15] group shadow-xl">
-              <div className="h-20 w-20 bg-[#050505] rounded-2xl flex items-center justify-center mb-6 border-2 border-zinc-800 group-hover:border-[#FACC15] transition-colors duration-500 group-hover:shadow-[0_0_20px_rgba(250,204,21,0.15)]">
-                <DirectionsCarIcon sx={{ fontSize: 36, color: '#FACC15' }} />
-              </div>
-              <Typography variant="h4" className="mb-4 text-white uppercase font-black text-center">Vehicle Owners</Typography>
-              <Typography className="text-zinc-400 text-center mb-8 text-base leading-relaxed flex-1">
-                Monetize your daily commute. Whether it is a personal car, an auto-rickshaw, or a fleet of buses—get verified and start earning.
-              </Typography>
-              <Link href="/fleet-registration" style={{ textDecoration: 'none', width: '100%' }}>
-                <Button variant="contained" fullWidth sx={{ py: 2, fontSize: '1rem', fontWeight: 700, bgcolor: '#FACC15', color: '#000' }}>
-                  Register Vehicle
-                </Button>
-              </Link>
-            </Card>
+        {/* Hero Content */}
+        <div className="relative z-10 flex-grow flex flex-col md:flex-row items-center w-full max-w-[1400px] mx-auto px-6 md:px-12">
+            {/* Left Content */}
+            <div className="w-full md:w-[45%] flex flex-col items-start mt-[-10vh] md:mt-0">
+                <h1 className="text-[3rem] lg:text-[4.5rem] font-bold tracking-tight leading-[1.1] mb-6 drop-shadow-xl">VEHICLE<br/>ADVERTISING</h1>
+                <p className="text-[12px] text-zinc-400 font-light leading-[1.8] max-w-[320px] mb-10">
+                    Expand the visual reach of your brand through the great explorer of the roads. Turn everyday operational fleets into unignorable moving advertising.
+                </p>
+                <button className="px-8 py-3 rounded-[30px] border border-[#F39C12] text-[#F39C12] text-[10px] uppercase tracking-[1.5px] font-bold hover:bg-[#F39C12] hover:text-black transition-colors shadow-[0_0_30px_rgba(243,156,18,0.15)]">
+                    Know More
+                </button>
+            </div>
+            {/* Right Vehicle Image */}
+            <div className="w-full md:w-[55%] relative flex justify-center lg:justify-end mt-16 md:mt-0">
+                <img src="/images/mini-hero.png" alt="Fleet Vehicle" className="w-[125%] md:w-[135%] lg:w-[150%] max-w-none transform lg:translate-x-12 filter drop-shadow-[0_60px_80px_rgba(0,0,0,0.9)] z-20" />
+                
+                {/* Side Arrows */}
+                <div className="absolute right-[-20px] md:right-[-40px] top-1/2 -translate-y-1/2 flex flex-col gap-6 text-white/30 text-xl font-light scale-y-150 z-30 hidden lg:flex">
+                   <span className="hover:text-white cursor-pointer transition-colors">&rarr;</span>
+                   <span className="hover:text-white cursor-pointer transition-colors">&larr;</span>
+                </div>
+            </div>
+        </div>
 
-            {/* Advertiser Card */}
-            <Card className="flex flex-col items-center p-10 hover:-translate-y-4 transition-all duration-500 bg-[#121212] border-2 border-zinc-800 hover:border-[#FACC15] group shadow-xl">
-              <div className="h-20 w-20 bg-[#050505] rounded-2xl flex items-center justify-center mb-6 border-2 border-zinc-800 group-hover:border-[#FACC15] transition-colors duration-500 group-hover:shadow-[0_0_20px_rgba(250,204,21,0.15)]">
-                <CampaignIcon sx={{ fontSize: 36, color: '#FACC15' }} />
-              </div>
-              <Typography variant="h4" className="mb-4 text-white uppercase font-black text-center">Advertisers</Typography>
-              <Typography className="text-zinc-400 text-center mb-8 text-base leading-relaxed flex-1">
-                Launch hyper-targeted campaigns. Browse active vehicles, select your preferred transit categories, and dispatch offers directly.
-              </Typography>
-              <Link href="/advertiser-registration" style={{ textDecoration: 'none', width: '100%' }}>
-                <Button variant="outlined" fullWidth sx={{ 
-                  py: 2, borderWidth: '2px', borderColor: '#FACC15', color: '#FACC15', fontSize: '1rem', fontWeight: 700,
-                  '&:hover': { backgroundColor: 'rgba(250, 204, 21, 0.1)', borderColor: '#FACC15', borderWidth: '2px' }
-                }}>
-                  Create Campaign
-                </Button>
-              </Link>
-            </Card>
+        {/* Hero Footer Indicators */}
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-12 flex justify-between items-end">
+            <div className="flex flex-col gap-4 text-white/30 text-[10px] font-bold tracking-wider">
+                <span className="hover:text-[#F39C12] cursor-pointer inline-block w-4 text-center transition-colors">f</span>
+                <span className="hover:text-[#F39C12] cursor-pointer inline-block w-4 text-center transition-colors">ig</span>
+                <span className="hover:text-[#F39C12] cursor-pointer inline-block w-4 text-center transition-colors">tw</span>
+            </div>
+            
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-12 flex flex-col items-center gap-2 cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+               <div className="w-5 h-8 border border-white/40 rounded-full flex justify-center p-[3px]">
+                   <div className="w-1 h-1.5 bg-white rounded-full animate-bounce"></div>
+               </div>
+            </div>
 
-            {/* Operations/Login Card */}
-            <Card className="flex flex-col items-center p-10 hover:-translate-y-4 transition-all duration-500 bg-[#121212] border-2 border-zinc-800 hover:border-[#FACC15] group shadow-xl">
-              <div className="h-20 w-20 bg-[#050505] rounded-2xl flex items-center justify-center mb-6 border-2 border-zinc-800 group-hover:border-[#FACC15] transition-colors duration-500 group-hover:shadow-[0_0_20px_rgba(250,204,21,0.15)]">
-                <QueryStatsIcon sx={{ fontSize: 36, color: '#FACC15' }} />
-              </div>
-              <Typography variant="h4" className="mb-4 text-white uppercase font-black text-center">Portal Login</Typography>
-              <Typography className="text-zinc-400 text-center mb-8 text-base leading-relaxed flex-1">
-                Access your dashboard. Owners upload daily condition proofs; Advertisers monitor live GPS tracking and impression metrics.
-              </Typography>
-              <Link href="/login" style={{ textDecoration: 'none', width: '100%' }}>
-                <Button variant="outlined" fullWidth sx={{ 
-                  py: 2, color: '#FFFFFF', borderColor: '#555', borderWidth: '2px', fontSize: '1rem', fontWeight: 700,
-                  '&:hover': { borderColor: '#FACC15', color: '#FACC15', backgroundColor: 'transparent', borderWidth: '2px' }
-                }}>
-                  Access Gateway
-                </Button>
-              </Link>
-            </Card>
-          </div>
+            <div className="flex gap-2.5 items-center">
+               <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+               <div className="w-1.5 h-1.5 bg-white/20 rounded-full"></div>
+               <div className="w-1.5 h-1.5 bg-white/20 rounded-full"></div>
+               <div className="w-1.5 h-1.5 bg-white/20 rounded-full"></div>
+            </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="w-full py-10 bg-[#050505] border-t border-zinc-900 text-center">
-        <Typography variant="body2" sx={{ color: 'zinc.500' }}>
-          &copy; {new Date().getFullYear()} FleetAd Network. Vehicle Advertising Marketplace.
-        </Typography>
+      {/* -------------------- ABOUT US SECTION (Light) -------------------- */}
+      <section className="relative w-full bg-[#FFFFFF] text-black py-24 pb-32 overflow-hidden">
+          <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-16 relative">
+              {/* Left Column Text */}
+              <div className="w-full lg:w-[45%] z-20 relative pt-4">
+                  <h2 className="text-[32px] md:text-[36px] font-bold tracking-tight mb-2 text-zinc-900">About Us</h2>
+                  <p className="text-[12px] font-bold text-[#F39C12] tracking-wide mb-8">FLEET ADVERTISING <span className="text-zinc-400 font-medium">IS THE FUTURE</span></p>
+                  
+                  <p className="text-[12px] text-zinc-500 leading-[2] max-w-[480px] mb-12 font-medium">
+                      On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue. Harness outdoor tracking transit algorithms to achieve mass scale.
+                  </p>
+                  
+                  <button className="px-8 py-3 rounded-[30px] border-[1.5px] border-zinc-300 text-zinc-600 text-[10px] uppercase tracking-[1px] font-bold hover:bg-black hover:text-white hover:border-black transition-colors mb-20">
+                      Know More
+                  </button>
+
+                  {/* 4 Detail Icons Grid - Exactly matched to the Jeep layout icons */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                      <div className="flex flex-col text-left">
+                          <div className="w-14 h-14 bg-zinc-50 rounded-full border border-zinc-100 shadow-sm flex items-center justify-center mb-5 hover:-translate-y-1 transition-transform">
+                             <img src="/images/tech-bluetooth.png" className="w-6 h-6 object-cover opacity-60 rounded-full filter grayscale" alt="Reach" />
+                          </div>
+                          <h4 className="font-bold text-[11px] mb-2 text-zinc-800">Maximum Reach</h4>
+                          <p className="text-[9px] text-zinc-500 leading-[1.6]">We denounce with righteous indignation and dislike men</p>
+                      </div>
+                      
+                      <div className="flex flex-col text-left">
+                          <div className="w-14 h-14 bg-zinc-50 rounded-full border border-zinc-100 shadow-sm flex items-center justify-center mb-5 hover:-translate-y-1 transition-transform">
+                             <img src="/images/tech-speed.png" className="w-6 h-6 object-cover opacity-60 rounded-full filter grayscale" alt="Quality" />
+                          </div>
+                          <h4 className="font-bold text-[11px] mb-2 text-zinc-800">Premium Quality</h4>
+                          <p className="text-[9px] text-zinc-500 leading-[1.6]">We denounce with righteous indignation and dislike men</p>
+                      </div>
+                      
+                      <div className="flex flex-col text-left">
+                          <div className="w-14 h-14 bg-zinc-50 rounded-full border border-zinc-100 shadow-sm flex items-center justify-center mb-5 hover:-translate-y-1 transition-transform">
+                             <img src="/images/tech-audio.png" className="w-6 h-6 object-cover opacity-60 rounded-full filter grayscale" alt="Tracking" />
+                          </div>
+                          <h4 className="font-bold text-[11px] mb-2 text-zinc-800">Live Tracking</h4>
+                          <p className="text-[9px] text-zinc-500 leading-[1.6]">We denounce with righteous indignation and dislike men</p>
+                      </div>
+                      
+                      <div className="flex flex-col text-left">
+                          <div className="w-14 h-14 bg-zinc-50 rounded-full border border-zinc-100 shadow-sm flex items-center justify-center mb-5 hover:-translate-y-1 transition-transform">
+                             <div className="w-6 h-6 rounded-full border-2 border-zinc-300"></div>
+                          </div>
+                          <h4 className="font-bold text-[11px] mb-2 text-zinc-800">Full Support</h4>
+                          <p className="text-[9px] text-zinc-500 leading-[1.6]">We denounce with righteous indignation and dislike men</p>
+                      </div>
+                  </div>
+              </div>
+
+              {/* Right Side Overlapping Background Vehicle */}
+              <div className="w-full lg:w-[55%] flex justify-end items-center relative mt-16 lg:mt-0 lg:static">
+                  <div className="static lg:absolute lg:right-[-15%] lg:top-[50%] lg:-translate-y-1/2 w-full lg:w-[130%] pointer-events-none z-10">
+                      <img src="/images/mini-side.png" className="w-full max-w-none transform drop-shadow-[0_45px_60px_rgba(0,0,0,0.3)] filter brightness-95" alt="Side Ad Concept" />
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      {/* -------------------- VEHICLES SLIDER SECTION (Dark) -------------------- */}
+      <section className="relative w-full bg-[#1A1B20] text-white pt-28 pb-36 overflow-hidden flex flex-col items-center">
+          {/* Faint Background Text */}
+          <div className="absolute bottom-[20%] right-[5%] z-0 pointer-events-none">
+             <h2 className="text-[22vw] font-black tracking-tighter leading-none text-white/[0.02]">FLEET</h2>
+          </div>
+
+          <h2 className="text-[32px] font-bold tracking-wide mb-24 relative z-10 text-center">
+              Fleet<span className="font-normal text-zinc-400"> Vehicles</span>
+          </h2>
+
+          <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 relative z-20">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-24 lg:gap-8 items-end text-center">
+                  
+                  {/* Vehicle 1 - Left */}
+                  <div className="flex flex-col items-center relative lg:pb-8 group">
+                     <div className="h-[180px] lg:h-[220px] flex items-center justify-center mb-10 relative">
+                         <img src="/images/car-ad.png" className="w-full max-w-[300px] drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] filter brightness-75 group-hover:brightness-100 transition-all duration-500" alt="Car Ad" />
+                         {/* Ground Shadow */}
+                         <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[220px] h-[15px] bg-black/60 blur-[12px] rounded-full"></div>
+                     </div>
+                     <h3 className="font-bold text-[14px] text-white tracking-wide">Transit Ad Standard*</h3>
+                     <p className="text-[9px] text-zinc-500 font-medium mt-3 uppercase tracking-[2px] mb-2">Impressions Starting at</p>
+                     <p className="text-[#F39C12] font-bold text-[14px] tracking-widest mb-8">1.5M VIEWS*</p>
+                     <button className="px-8 py-2.5 rounded-[30px] border border-[#F39C12]/40 text-[#F39C12] text-[9px] uppercase tracking-[1px] hover:bg-[#F39C12] hover:text-black transition-colors font-bold">
+                         Know More
+                     </button>
+                  </div>
+
+                  {/* Vehicle 2 - Center (Active/Larger) */}
+                  <div className="flex flex-col items-center relative lg:pb-8 group">
+                     <div className="h-[220px] flex items-center justify-center mb-10 relative">
+                         <img src="/images/mini-hero.png" className="w-[125%] max-w-[380px] drop-shadow-[0_30px_50px_rgba(0,0,0,0.95)] z-20 transform lg:-translate-y-4 group-hover:scale-105 transition-all duration-500" alt="Hero Ad" />
+                         {/* Heavy ground shadow */}
+                         <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[280px] h-[25px] bg-black/80 blur-[15px] rounded-full"></div>
+                     </div>
+                     <h3 className="font-bold text-[14px] text-white tracking-wide">Premium Daily Commuter</h3>
+                     <p className="text-[9px] text-zinc-500 font-medium mt-3 uppercase tracking-[2px] mb-2">Impressions Starting at</p>
+                     <p className="text-[#F39C12] font-bold text-[14px] tracking-widest mb-8">2.8M VIEWS*</p>
+                     <button className="px-8 py-2.5 rounded-[30px] border border-[#F39C12] text-[#F39C12] text-[9px] uppercase tracking-[1px] hover:bg-[#F39C12] hover:text-black transition-colors font-bold shadow-[0_0_15px_rgba(243,156,18,0.2)]">
+                         Know More
+                     </button>
+                  </div>
+
+                  {/* Vehicle 3 - Right */}
+                  <div className="flex flex-col items-center relative lg:pb-8 group">
+                     <div className="h-[180px] lg:h-[220px] flex items-center justify-center mb-10 relative">
+                         <img src="/images/bus-ad.png" className="w-[110%] max-w-[320px] drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] filter brightness-75 scale-x-[-1] group-hover:brightness-100 transition-all duration-500" alt="Bus Ad" />
+                         <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[240px] h-[15px] bg-black/60 blur-[12px] rounded-full"></div>
+                     </div>
+                     <h3 className="font-bold text-[14px] text-white tracking-wide">Full Transit Bus</h3>
+                     <p className="text-[9px] text-zinc-500 font-medium mt-3 uppercase tracking-[2px] mb-2">Impressions Starting at</p>
+                     <p className="text-[#F39C12] font-bold text-[14px] tracking-widest mb-8">4.5M VIEWS*</p>
+                     <button className="px-8 py-2.5 rounded-[30px] border border-[#F39C12]/40 text-[#F39C12] text-[9px] uppercase tracking-[1px] hover:bg-[#F39C12] hover:text-black transition-colors font-bold">
+                         Know More
+                     </button>
+                  </div>
+
+              </div>
+
+              {/* Slider Arrows & Dots (Right Aligned) */}
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-6 text-white/30 text-xl font-light scale-y-150 z-30 hidden lg:flex">
+                 <span className="hover:text-white cursor-pointer transition-colors">&rarr;</span>
+                 <span className="hover:text-white cursor-pointer transition-colors">&larr;</span>
+              </div>
+              
+              <div className="flex justify-center gap-3 mt-20 items-center">
+                 <div className="w-1.5 h-1.5 bg-white rounded-full opacity-100"></div>
+                 <div className="w-1.5 h-1.5 bg-white rounded-full opacity-20"></div>
+                 <div className="w-1.5 h-1.5 bg-white rounded-full opacity-20"></div>
+                 <div className="w-1.5 h-1.5 bg-white rounded-full opacity-20"></div>
+              </div>
+          </div>
+      </section>
+
+      {/* -------------------- PORTFOLIO GALLERY (Light) -------------------- */}
+      <section className="relative w-full bg-[#FFFFFF] text-black py-28 pb-40">
+          <div className="text-center w-full max-w-[1400px] mx-auto px-6 md:px-12 object-contain">
+              <h2 className="text-[32px] font-bold tracking-tight mb-12 text-zinc-900">Gallery</h2>
+              
+              {/* Category Nav Tabs */}
+              <div className="flex flex-wrap justify-center gap-6 md:gap-16 text-[10px] font-bold text-zinc-400 uppercase tracking-wide mb-16 px-4">
+                  <span className="text-black border-b-[3px] border-black pb-2 cursor-pointer transition-colors">Campaigns</span>
+                  <span className="hover:text-black cursor-pointer transition-colors pb-2">Exterior Advertising</span>
+                  <span className="hover:text-black cursor-pointer transition-colors pb-2">Analytics Dashboard</span>
+                  <span className="hover:text-black cursor-pointer transition-colors pb-2">Commercial Fleet</span>
+                  <span className="hover:text-black cursor-pointer transition-colors pb-2">Ride-Share Sedans</span>
+              </div>
+
+              {/* 3 Column Flush Photo Grid */}
+              <div className="flex flex-col md:flex-row w-full h-[600px] md:h-[400px] bg-[#1A1B20] text-left">
+                  
+                  {/* Photo 1 (Exterior) */}
+                  <div className="relative w-full md:w-1/3 h-1/3 md:h-full overflow-hidden group cursor-pointer border-b md:border-b-0 md:border-r border-zinc-800">
+                      <img src="/images/hero-ad.png" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000 opacity-80 group-hover:opacity-100 saturate-50 group-hover:saturate-100" alt="Fleet Exterior" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1A1B20]/90 via-[#1A1B20]/10 to-transparent pointer-events-none"></div>
+                      <div className="absolute bottom-6 left-8 right-8 flex justify-between items-center text-white/90 group-hover:text-white transition-colors">
+                          <span className="text-[13px] font-bold tracking-wide">Exterior</span>
+                          <span className="text-[16px] font-light transform group-hover:translate-x-2 transition-transform">&rarr;</span>
+                      </div>
+                  </div>
+
+                  {/* Photo 2 (Dashboard / Interior Analogy) */}
+                  <div className="relative w-full md:w-1/3 h-1/3 md:h-full overflow-hidden group cursor-pointer border-b md:border-b-0 md:border-r border-zinc-800">
+                      <img src="/images/tech-speed.png" className="w-full h-full object-cover transform scale-110 group-hover:scale-115 transition-transform duration-1000 opacity-60 group-hover:opacity-90 saturate-50 group-hover:saturate-100" alt="Fleet Interior Dashboard" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1A1B20]/90 via-[#1A1B20]/20 to-transparent pointer-events-none"></div>
+                      <div className="absolute bottom-6 left-8 right-8 flex justify-between items-center text-white/90 group-hover:text-white transition-colors">
+                          <span className="text-[13px] font-bold tracking-wide">Interior/Dashboard</span>
+                          <span className="text-[16px] font-light transform group-hover:translate-x-2 transition-transform">&rarr;</span>
+                      </div>
+                  </div>
+
+                  {/* Photo 3 (Capability / Transit) */}
+                  <div className="relative w-full md:w-1/3 h-1/3 md:h-full overflow-hidden group cursor-pointer">
+                      <img src="/images/car-ad.png" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000 opacity-80 group-hover:opacity-100 saturate-50 group-hover:saturate-100" alt="Fleet Capability" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1A1B20]/90 via-[#1A1B20]/10 to-transparent pointer-events-none"></div>
+                      <div className="absolute bottom-6 left-8 right-8 flex justify-between items-center text-white/90 group-hover:text-white transition-colors">
+                          <span className="text-[13px] font-bold tracking-wide">Capability</span>
+                          <span className="text-[16px] font-light transform group-hover:translate-x-2 transition-transform">&rarr;</span>
+                      </div>
+                  </div>
+
+              </div>
+          </div>
+      </section>
+
+      {/* -------------------- MINIMALISTIC FOOTER -------------------- */}
+      <footer className="w-full bg-[#1A1B20] text-center pt-20 pb-16 relative z-30">
+           <div className="flex justify-center gap-12 md:gap-20 text-[10px] md:text-[11px] tracking-[3px] uppercase font-bold text-zinc-500 mb-10">
+               <Link href="#" className="hover:text-white transition-colors">Instagram</Link>
+               <Link href="#" className="hover:text-white transition-colors">Twitter</Link>
+               <Link href="#" className="hover:text-white transition-colors">Youtube</Link>
+               <Link href="#" className="hover:text-white transition-colors">Facebook</Link>
+           </div>
+           <p className="text-[9px] text-zinc-600 tracking-[0.2em] font-medium uppercase mt-8">© {new Date().getFullYear()} FLEETAD NETWORK. ALL RIGHTS RESERVED.</p>
+           <div className="w-full h-[3px] bg-gradient-to-r from-transparent via-[#F39C12]/20 to-transparent mt-12 mx-auto max-w-[300px]"></div>
       </footer>
-    </Box>
+    </div>
   );
 }
