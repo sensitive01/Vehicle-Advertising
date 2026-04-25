@@ -64,13 +64,13 @@ export default function MyAdvertisementsPage() {
           <Typography variant="body1" sx={{ color: 'zinc.500', mt: 1 }}>Full list of all campaign requests submitted for the platform.</Typography>
         </Box>
         <Link href="/advertiser/complete-profile" style={{ textDecoration: 'none' }}>
-           <Button variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, py: 1.5, borderRadius: 3 }}>
+           <Button variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, py: 1.5, borderRadius: 1 }}>
               LAUNCH NEW REQUEST
            </Button>
         </Link>
       </Box>
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#1A1A1A' }}>
@@ -132,9 +132,9 @@ export default function MyAdvertisementsPage() {
         onClose={() => setViewOpen(false)} 
         maxWidth="md" 
         fullWidth 
-        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 4, border: '1px solid #333' } }}
+        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}
       >
-        <DialogTitle sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
+        <DialogTitle component="div" sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
            <Typography variant="h5" sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>Campaign <span style={{ color: '#FACC15' }}>Overview</span></Typography>
            <IconButton onClick={() => setViewOpen(false)} sx={{ color: 'zinc.500' }}><CloseIcon /></IconButton>
         </DialogTitle>

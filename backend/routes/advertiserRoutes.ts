@@ -47,6 +47,19 @@ router.get('/all', verifyToken, async (req: any, res: any) => {
   }
 });
 
+router.get('/user/:userId', verifyToken, async (req: any, res: any) => {
+  try {
+    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+    const campaigns = await AdvertiserProfile.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: campaigns });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error fetching user campaigns' });
+  }
+});
+
 router.patch('/status/:id', verifyToken, async (req: any, res: any) => {
   try {
     const { status } = req.body;

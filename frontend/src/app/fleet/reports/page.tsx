@@ -151,7 +151,7 @@ export default function DailyReportsPage() {
         </Button>
       </Box>
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#1A1A1A' }}>
@@ -188,7 +188,7 @@ export default function DailyReportsPage() {
         </TableContainer>
       </Card>
 
-      <Dialog open={openAdd} onClose={() => setOpenAdd(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 4, border: '1px solid #333' } }}>
+      <Dialog open={openAdd} onClose={() => setOpenAdd(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}>
         <DialogTitle sx={{ p: 4 }}>
            <Typography variant="h5" sx={{ fontWeight: 900, textTransform: 'uppercase' }}>Daily <span style={{ color: '#FACC15' }}>Submission</span></Typography>
         </DialogTitle>
@@ -233,7 +233,7 @@ export default function DailyReportsPage() {
                        {uploading ? <CircularProgress size={20} /> : <><CloudUploadIcon sx={{ mr: 1 }}/> Upload Photo</>}
                        <input type="file" hidden onChange={(e) => handleImageUpload(e, setOpeningProof)} />
                      </Button>
-                   ) : <img src={openingProof} style={{ width: 100, borderRadius: 8 }} />}
+                   ) : <img src={openingProof} style={{ width: 100, borderRadius: 2 }} />}
                 </Box>
                 <Box>
                    <Label>Closing Proof *</Label>
@@ -242,7 +242,7 @@ export default function DailyReportsPage() {
                        {uploading ? <CircularProgress size={20} /> : <><CloudUploadIcon sx={{ mr: 1 }}/> Upload Current KM Photo</>}
                        <input type="file" hidden onChange={(e) => handleImageUpload(e, setClosingProof)} />
                      </Button>
-                   ) : <img src={closingProof} style={{ width: 100, borderRadius: 8 }} />}
+                   ) : <img src={closingProof} style={{ width: 100, borderRadius: 2 }} />}
                 </Box>
              </>
            ) : (
@@ -271,7 +271,7 @@ export default function DailyReportsPage() {
                         {uploading ? <CircularProgress size={20} /> : <CloudUploadIcon />}
                         <input type="file" hidden onChange={(e) => handleImageUpload(e, setDamageProof)} />
                      </Button>
-                   ) : <img src={damageProof} style={{ width: 100, borderRadius: 8 }} />}
+                   ) : <img src={damageProof} style={{ width: 100, borderRadius: 2 }} />}
                 </Box>
              </>
            )}

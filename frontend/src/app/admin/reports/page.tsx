@@ -43,7 +43,7 @@ export default function AdminReportsPage() {
         Daily <span style={{ color: '#FACC15' }}>Reports</span>
       </Typography>
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#1A1A1A' }}>

@@ -136,27 +136,29 @@ export default function AdminCampaignsPage() {
         Advertising <span style={{ color: '#FACC15' }}>Review</span>
       </Typography>
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#1A1A1A' }}>
               <TableRow>
-                <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Brand Name</TableCell>
-                <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Advertiser</TableCell>
-                <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Vehicles</TableCell>
-                <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Budget (Est)</TableCell>
-                <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Status</TableCell>
-                <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Action</TableCell>
+                <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>AD ID</TableCell>
+                <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>Brand Name</TableCell>
+                <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>Advertiser</TableCell>
+                <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>Vehicles</TableCell>
+                <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>Budget (Est)</TableCell>
+                <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>Status</TableCell>
+                <TableCell sx={{ color: '#FACC15', fontWeight: 800 }} align="center">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={6} sx={{ textAlign: 'center', py: 6 }}><CircularProgress color="warning" /></TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} sx={{ textAlign: 'center', py: 6 }}><CircularProgress color="warning" /></TableCell></TableRow>
               ) : campaigns.length === 0 ? (
-                <TableRow><TableCell colSpan={6} sx={{ textAlign: 'center', py: 6, color: 'zinc.600' }}>No campaign requests found.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} sx={{ textAlign: 'center', py: 6, color: 'zinc.600' }}>No campaign requests found.</TableCell></TableRow>
               ) : (
                 campaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((c) => (
                   <TableRow key={c._id} sx={{ '&:hover': { bgcolor: '#1A1A1A' } }}>
+                    <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>{c.adId || 'CP------'}</TableCell>
                     <TableCell sx={{ color: 'white', fontWeight: 700 }}>{c.brandName}</TableCell>
                     <TableCell>
                       <Typography sx={{ color: 'zinc.300', fontSize: '0.85rem', fontWeight: 600 }}>{c.userId?.fullName}</Typography>
@@ -171,15 +173,16 @@ export default function AdminCampaignsPage() {
                           sx={{ 
                             bgcolor: c.status === 'ACTIVE' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(250, 204, 21, 0.1)', 
                             color: c.status === 'ACTIVE' ? '#4ADE80' : '#FACC15', 
-                            fontWeight: 'bold' 
+                            fontWeight: 800,
+                            fontSize: '0.65rem'
                           }} 
                         />
                     </TableCell>
-                    <TableCell>
-                       <Stack direction="row" spacing={1}>
+                    <TableCell align="center">
+                       <Stack direction="row" spacing={1} justifyContent="center">
                           <Tooltip title="Review Campaign">
-                            <IconButton onClick={() => { setSelectedCampaign(c); setViewOpen(true); }} sx={{ color: 'zinc.500', '&:hover': { color: '#FACC15' } }}>
-                              <VisibilityIcon />
+                            <IconButton onClick={() => { setSelectedCampaign(c); setViewOpen(true); }} sx={{ color: 'white' }}>
+                              <VisibilityIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                           {c.status === 'ACTIVE' && (
@@ -220,9 +223,9 @@ export default function AdminCampaignsPage() {
         onClose={() => setViewOpen(false)} 
         maxWidth="md" 
         fullWidth 
-        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 4, border: '1px solid #333' } }}
+        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}
       >
-        <DialogTitle sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
+      <DialogTitle component="div" sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
            <Typography variant="h5" sx={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1 }}>Campaign <span style={{ color: '#FACC15' }}>Review</span></Typography>
            <IconButton onClick={() => setViewOpen(false)} sx={{ color: 'zinc.500' }}><CloseIcon /></IconButton>
         </DialogTitle>
@@ -293,9 +296,9 @@ export default function AdminCampaignsPage() {
         onClose={() => setAssignOpen(false)} 
         maxWidth="sm" 
         fullWidth 
-        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 4, border: '1px solid #333' } }}
+        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}
       >
-        <DialogTitle sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
+        <DialogTitle component="div" sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
            <Typography variant="h5" sx={{ fontWeight: 900, textTransform: 'uppercase' }}>Assign <span style={{ color: '#FACC15' }}>Vehicles</span></Typography>
            <IconButton onClick={() => setAssignOpen(false)} sx={{ color: 'zinc.500' }}><CloseIcon /></IconButton>
         </DialogTitle>
@@ -324,7 +327,7 @@ export default function AdminCampaignsPage() {
                         <Box sx={{ py: 1, display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                            <Box>
                               <Typography variant="body2" sx={{ fontWeight: 700, color: 'white' }}>{v.registrationNumber} ({v.make} {v.vehicleModel})</Typography>
-                              <Typography variant="caption" sx={{ color: 'zinc.500' }}>Owner: {v.userId?.fullName} | {v.parkingLocation}</Typography>
+                              <Typography variant="caption" sx={{ color: 'zinc.500' }}>Owner: {v.userId?.fullName} | {v.parkingLocation?.address || v.parkingLocation}</Typography>
                            </Box>
                            {selectedVehicleIds.includes(v._id) && (
                               <Chip label="SELECTED" size="small" sx={{ bgcolor: 'rgba(250, 204, 21, 0.1)', color: '#FACC15', fontWeight: 900, fontSize: '0.6rem' }} />

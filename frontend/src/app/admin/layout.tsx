@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Drawer, AppBar, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
+import BusinessIcon from '@mui/icons-material/Business';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -43,6 +44,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
     { text: 'Leads', icon: <ArticleIcon />, path: '/admin/leads' },
     { text: 'User Management', icon: <PeopleIcon />, path: '/admin/users' },
+    { text: 'Vehicle Owners', icon: <DirectionsCarIcon />, path: '/admin/owners' },
+    { text: 'Advertisers', icon: <BusinessIcon sx={{ color: 'inherit' }} />, path: '/admin/advertisers' },
     { text: 'Campaigns', icon: <CampaignIcon />, path: '/admin/campaigns' },
     { text: 'Daily Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
     { text: 'Transactions', icon: <ReceiptLongIcon />, path: '/admin/transactions' },
@@ -60,7 +63,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </Typography>
       </Toolbar>
       <Divider sx={{ borderColor: '#222' }} />
-      <List sx={{ flexGrow: 1, px: 2, py: 4, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <List 
+        sx={{ 
+          flexGrow: 1, 
+          px: 2, 
+          py: 4, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 1,
+          overflowY: 'auto',
+          '&::-webkit-scrollbar': { display: 'none' },
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
         {navItems.map((item) => {
           const active = pathname.includes(item.path);
           return (
@@ -131,7 +147,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </Drawer>
         <Drawer
           variant="permanent"
-          sx={{ display: { xs: 'none', sm: 'block' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, bgcolor: '#0A0A0A', borderRight: '1px solid #1c1c1c' } }}
+          sx={{ 
+            display: { xs: 'none', sm: 'block' }, 
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth, 
+              bgcolor: '#0A0A0A', 
+              borderRight: '1px solid #1c1c1c',
+              '&::-webkit-scrollbar': { display: 'none' },
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            } 
+          }}
           open
         >
           {drawerContent}

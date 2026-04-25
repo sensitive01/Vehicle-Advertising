@@ -1,6 +1,7 @@
 import express from 'express';
 import Vehicle from '../model/Vehicle';
 import User from '../model/User';
+import AdvertiserProfile from '../model/AdvertiserProfile';
 import { verifyToken } from '../middleware/authMiddleware';
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
@@ -15,6 +16,27 @@ cloudinary.config({
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
+
+const generatevehicleId = async () => {
+  let isUnique = false;
+  let newId = '';
+  while (!isUnique) {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    newId = `VF${randomNum}`;
+    const existing = await Vehicle.findOne({ vehicleId: newId });
+    if (!existing) isUnique = true;
+  }
+  return newId;
+};
+
+const mapVehicleForFrontend = (v: any) => {
+  const vehicle = v.toObject ? v.toObject() : v;
+  return {
+    ...vehicle,
+    images: vehicle.documents?.vehicleImages || [],
+    vehicleProof: vehicle.documents?.registrationCertificate || ''
+  };
+};
 
 router.post('/upload', upload.single('file'), async (req: any, res: any) => {
   try {
@@ -49,11 +71,32 @@ router.post('/add', verifyToken, async (req: any, res: any) => {
       return res.status(400).json({ success: false, message: 'No vehicle data provided' });
     }
 
-    const payload = vehicles.map((v: any) => ({
-      userId: req.user.id,
-      ...v,
-      images: Array.isArray(v.images) ? v.images : []
-    }));
+    const payload = [];
+    for (const v of vehicles) {
+      const vid = await generatevehicleId();
+      payload.push({
+        userId: req.user.id,
+        vehicleId: vid,
+        ...v,
+        parkingLocation: typeof v.parkingLocation === 'string' 
+          ? { address: v.parkingLocation, lat: 0, lng: 0 } 
+          : (v.parkingLocation || { address: 'Not Specified', lat: 0, lng: 0 }),
+        registrationType: v.registrationType || 'Personal',
+        fuelType: v.fuelType || 'Petrol',
+        vehicleCategory: v.vehicleCategory || 'Passenger',
+        make: v.make || 'Generic',
+        variant: v.variant || 'Standard',
+        color: v.color || 'White',
+        travelRoutine: v.travelRoutine || 'City ride',
+        averageKmPerDay: Number(v.averageKmPerDay) || 0,
+        ownerName: v.ownerName || 'Unknown',
+        ownerContact: v.ownerContact || '0000000000',
+        documents: {
+          registrationCertificate: v.vehicleProof || '',
+          vehicleImages: Array.isArray(v.images) ? v.images : []
+        }
+      });
+    }
 
     await Vehicle.insertMany(payload);
 
@@ -69,7 +112,8 @@ router.post('/add', verifyToken, async (req: any, res: any) => {
 router.get('/myfleet', verifyToken, async (req: any, res: any) => {
   try {
     const myVehicles = await Vehicle.find({ userId: req.user.id }).populate('activeCampaignId');
-    res.status(200).json({ success: true, data: myVehicles });
+    const mappedVehicles = myVehicles.map(mapVehicleForFrontend);
+    res.status(200).json({ success: true, data: mappedVehicles });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error retrieving fleet' });
@@ -82,8 +126,9 @@ router.get('/user/:userId', verifyToken, async (req: any, res: any) => {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
 
-    const vehicles = await Vehicle.find({ userId: req.params.userId }).sort({ createdAt: -1 });
-    res.status(200).json({ success: true, count: vehicles.length, data: vehicles });
+    const vehicles = await Vehicle.find({ userId: req.params.userId }).populate('activeCampaignId').sort({ createdAt: -1 });
+    const mappedVehicles = vehicles.map(mapVehicleForFrontend);
+    res.status(200).json({ success: true, count: vehicles.length, data: mappedVehicles });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error retrieving user fleet' });
@@ -98,7 +143,7 @@ router.patch('/approve/:vehicleId', verifyToken, async (req: any, res: any) => {
 
     const vehicle = await Vehicle.findByIdAndUpdate(
       req.params.vehicleId, 
-      { status: 'Verified' },
+      { status: 'Approved' },
       { new: true }
     );
     
@@ -111,16 +156,77 @@ router.patch('/approve/:vehicleId', verifyToken, async (req: any, res: any) => {
   }
 });
 
+router.patch('/block/:vehicleId', verifyToken, async (req: any, res: any) => {
+  try {
+    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const vehicle = await Vehicle.findById(req.params.vehicleId);
+    if (!vehicle) return res.status(404).json({ success: false, message: 'Vehicle not found' });
+
+    vehicle.isBlocked = !vehicle.isBlocked;
+    await vehicle.save();
+
+    res.status(200).json({ 
+      success: true, 
+      message: `Vehicle ${vehicle.isBlocked ? 'blocked' : 'unblocked'} successfully`,
+      isBlocked: vehicle.isBlocked 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error toggling block' });
+  }
+});
+
+router.patch('/update/:vehicleId', verifyToken, async (req: any, res: any) => {
+  try {
+    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const vehicle = await Vehicle.findByIdAndUpdate(req.params.vehicleId, req.body, { new: true });
+    if (!vehicle) return res.status(404).json({ success: false, message: 'Vehicle not found' });
+
+    res.status(200).json({ success: true, data: vehicle });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error updating vehicle' });
+  }
+});
+
 router.get('/all', verifyToken, async (req: any, res: any) => {
   try {
     if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
     const vehicles = await Vehicle.find().populate('userId', 'fullName mobileNumber');
-    res.status(200).json({ success: true, data: vehicles });
+    const mappedVehicles = vehicles.map(mapVehicleForFrontend);
+    res.status(200).json({ success: true, data: mappedVehicles });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error fetching all vehicles' });
+  }
+});
+
+router.get('/:vehicleId/ads', verifyToken, async (req: any, res: any) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.vehicleId).populate('activeCampaignId');
+    if (!vehicle) return res.status(404).json({ success: false, message: 'Vehicle not found' });
+    
+    res.status(200).json({ 
+      success: true, 
+      vehicle: {
+        registrationNumber: vehicle.registrationNumber,
+        vehicleId: vehicle.vehicleId,
+        make: vehicle.make,
+        model: vehicle.vehicleModel
+      },
+      campaign: vehicle.activeCampaignId 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error fetching ads' });
   }
 });
 
@@ -151,6 +257,22 @@ router.patch('/:id', verifyToken, async (req: any, res: any) => {
     const updateData = { ...req.body };
     delete updateData._id;
     delete updateData.userId;
+
+    // Map frontend images/proof to backend documents schema
+    if (updateData.images || updateData.vehicleProof) {
+      updateData.documents = {
+        ...(updateData.documents || {}),
+        vehicleImages: Array.isArray(updateData.images) ? updateData.images : (updateData.documents?.vehicleImages || []),
+        registrationCertificate: updateData.vehicleProof || updateData.documents?.registrationCertificate || ''
+      };
+    }
+
+    // Normalize parkingLocation
+    if (updateData.parkingLocation) {
+      updateData.parkingLocation = typeof updateData.parkingLocation === 'string'
+        ? { address: updateData.parkingLocation, lat: 0, lng: 0 }
+        : updateData.parkingLocation;
+    }
 
     const vehicle = await Vehicle.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.id },

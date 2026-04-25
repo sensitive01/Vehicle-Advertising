@@ -139,7 +139,7 @@ export default function CreateCampaignPage() {
           </Box>
           <Stack direction="row" spacing={2} sx={{ mb: 1 }}>
             <Button onClick={() => handleSubmit('Draft')} disabled={loading} sx={{ color: 'zinc.500', fontWeight: 800, px: 3 }}>SAVE AS DRAFT</Button>
-            <Button variant="contained" onClick={() => handleSubmit()} disabled={loading} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 6, py: 1.5, borderRadius: 3, '&:hover': { bgcolor: '#FDE047' } }}>
+            <Button variant="contained" onClick={() => handleSubmit()} disabled={loading} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 6, py: 1.5, borderRadius: 1, '&:hover': { bgcolor: '#FDE047' } }}>
                {loading ? <CircularProgress size={24} color="inherit" /> : 'SUBMIT REQUEST'}
             </Button>
           </Stack>
@@ -147,7 +147,7 @@ export default function CreateCampaignPage() {
 
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, lg: 8 }}>
-            <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 6, p: 4 }}>
+            <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 2, p: 4 }}>
               <Stack spacing={5}>
                 {/* Basic Details */}
                 <Box>
@@ -165,7 +165,7 @@ export default function CreateCampaignPage() {
                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1.5, fontWeight: 700 }}>VEHICLE CATEGORY</Typography>
                          <Stack direction="row" spacing={2}>
                             {['Passenger', 'Goods'].map((cat: any) => (
-                               <Button key={cat} fullWidth onClick={() => setFormData({...formData, vehicleCategory: cat})} sx={{ py: 1.5, bgcolor: formData.vehicleCategory === cat ? 'rgba(250, 204, 21, 0.1)' : '#1E1E1E', color: formData.vehicleCategory === cat ? '#FACC15' : 'zinc.500', border: '1px solid', borderColor: formData.vehicleCategory === cat ? '#FACC15' : '#333', fontWeight: 800, borderRadius: 3 }}>{cat.toUpperCase()}</Button>
+                               <Button key={cat} fullWidth onClick={() => setFormData({...formData, vehicleCategory: cat})} sx={{ py: 1.5, bgcolor: formData.vehicleCategory === cat ? 'rgba(250, 204, 21, 0.1)' : '#1E1E1E', color: formData.vehicleCategory === cat ? '#FACC15' : 'zinc.500', border: '1px solid', borderColor: formData.vehicleCategory === cat ? '#FACC15' : '#333', fontWeight: 800, borderRadius: 1 }}>{cat.toUpperCase()}</Button>
                             ))}
                          </Stack>
                       </Grid>
@@ -177,7 +177,7 @@ export default function CreateCampaignPage() {
                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1.5, fontWeight: 700 }}>SELECT VEHICLE TYPES</Typography>
                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
                             {VEHICLE_TYPES.map(type => (
-                               <Paper key={type} onClick={() => handleToggle(formData.vehicleTypes, type, 'vehicleTypes')} sx={{ px: 3, py: 1.2, bgcolor: formData.vehicleTypes.includes(type) ? 'rgba(250, 204, 21, 0.1)' : '#1E1E1E', color: formData.vehicleTypes.includes(type) ? '#FACC15' : 'zinc.400', border: '1px solid', borderColor: formData.vehicleTypes.includes(type) ? '#FACC15' : '#333', borderRadius: 3, cursor: 'pointer', transition: '0.2s', fontWeight: 700, '&:hover': { borderColor: '#FACC15' } }}>{type}</Paper>
+                               <Paper key={type} onClick={() => handleToggle(formData.vehicleTypes, type, 'vehicleTypes')} sx={{ px: 3, py: 1.2, bgcolor: formData.vehicleTypes.includes(type) ? 'rgba(250, 204, 21, 0.1)' : '#1E1E1E', color: formData.vehicleTypes.includes(type) ? '#FACC15' : 'zinc.400', border: '1px solid', borderColor: formData.vehicleTypes.includes(type) ? '#FACC15' : '#333', borderRadius: 1, cursor: 'pointer', transition: '0.2s', fontWeight: 700, '&:hover': { borderColor: '#FACC15' } }}>{type}</Paper>
                             ))}
                          </Box>
                       </Grid>
@@ -229,7 +229,7 @@ export default function CreateCampaignPage() {
           {/* Pricing Sidebar */}
           <Grid size={{ xs: 12, lg: 4 }}>
             <Box sx={{ position: 'sticky', top: 100 }}>
-              <Card sx={{ bgcolor: '#121212', border: '2px solid #FACC15', borderRadius: 6, p: 4, boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
+              <Card sx={{ bgcolor: '#121212', border: '2px solid #FACC15', borderRadius: 2, p: 4, boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
                 <Typography variant="h6" sx={{ color: 'white', fontWeight: 900, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
                   COST <span style={{ color: '#FACC15' }}>ESTIMATION</span>
                   {calcLoading && <CircularProgress size={16} sx={{ color: '#FACC15', ml: 2 }} />}
@@ -264,7 +264,7 @@ export default function CreateCampaignPage() {
                     <Typography variant="caption" sx={{ color: 'zinc.500', mt: 1, display: 'block' }}>*One-time costs for setup and distribution.</Typography>
                   </Box>
 
-                  <Box sx={{ mt: 4, p: 2.5, bgcolor: '#1A1A1A', borderRadius: 4, border: '1px solid #333' }}>
+                  <Box sx={{ mt: 4, p: 2.5, bgcolor: '#1A1A1A', borderRadius: 1.5, border: '1px solid #333' }}>
                     <Stack direction="row" spacing={2} alignItems="center">
                        <AccountBalanceWalletIcon sx={{ color: '#4ADE80' }} />
                        <Box>

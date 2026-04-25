@@ -20,10 +20,10 @@ export default function Home() {
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex justify-between items-center">
                 <div className="text-2xl font-black tracking-tighter">FLEET<span className="text-[#F39C12]">AD</span></div>
                 <div className="hidden lg:flex gap-8 text-[11px] uppercase tracking-widest font-bold text-zinc-300">
-                    <Link href="#" className="text-white">Home</Link>
-                    <Link href="#" className="hover:text-[#F39C12] transition-colors">Our Fleet</Link>
-                    <Link href="#" className="hover:text-[#F39C12] transition-colors">Campaigns</Link>
-                    <Link href="#" className="hover:text-[#F39C12] transition-colors">Technology</Link>
+                    <Link href="/" className="text-white">Home</Link>
+                    <Link href="/our-fleet" className="hover:text-[#F39C12] transition-colors">Our Fleet</Link>
+                    <Link href="/campaigns" className="hover:text-[#F39C12] transition-colors">Campaigns</Link>
+                    <Link href="/technology" className="hover:text-[#F39C12] transition-colors">Technology</Link>
                 </div>
                 <div className="flex items-center gap-4">
                     <Link href="/login">

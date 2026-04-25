@@ -132,7 +132,7 @@ export default function RegisterPage() {
     '& .MuiOutlinedInput-root': {
       bgcolor: '#1A1A1A', '& fieldset': { borderColor: '#333' },
       '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' },
-      color: 'white', borderRadius: 3
+      color: 'white', borderRadius: 1
     },
     '& .MuiInputLabel-root': { color: '#888' },
     '& .MuiInputBase-input': { p: '14px 16px' }
@@ -148,7 +148,7 @@ export default function RegisterPage() {
         </Link>
       </div>
 
-      <Card sx={{ width: '100%', maxWidth: '500px', p: 5, bgcolor: '#121212', border: '1px solid #222', borderRadius: 6, zIndex: 10 }}>
+      <Card sx={{ width: '100%', maxWidth: '500px', p: 5, bgcolor: '#121212', border: '1px solid #222', borderRadius: 2, zIndex: 10 }}>
         
         <Box sx={{ textAlign: 'center', mb: 5 }}>
           <div className="w-16 h-16 bg-zinc-900 border border-zinc-800 rounded-2xl mx-auto mb-4 flex items-center justify-center text-[#FACC15]">
@@ -197,7 +197,7 @@ export default function RegisterPage() {
             />
 
             {isOtpSent && !isEmailVerified && (
-               <Box sx={{ p: 2, bgcolor: '#1A1A1A', borderRadius: 3, border: '1px solid #333' }}>
+               <Box sx={{ p: 2, bgcolor: '#1A1A1A', borderRadius: 1, border: '1px solid #333' }}>
                   <Typography variant="caption" sx={{ color: 'zinc.500', mb: 1, display: 'block', textAlign: 'center' }}>ENTER OTP SENT TO EMAIL</Typography>
                   <Stack direction="row" spacing={1}>
                      <TextField 
@@ -249,7 +249,7 @@ export default function RegisterPage() {
                type="submit" 
                variant="contained" 
                disabled={isLoading || !isEmailVerified} 
-               sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, py: 2, borderRadius: 3, '&:hover': { bgcolor: '#FDE047' }, mt: 2, opacity: !isEmailVerified ? 0.5 : 1 }}
+               sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, py: 2, borderRadius: 1, '&:hover': { bgcolor: '#FDE047' }, mt: 2, opacity: !isEmailVerified ? 0.5 : 1 }}
             >
               {isLoading ? <CircularProgress size={24} color="inherit" /> : 'CREATE MY ACCOUNT'}
             </Button>

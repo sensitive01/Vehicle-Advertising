@@ -72,7 +72,7 @@ export default function MyAdvertisementsPage() {
       {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
 
       {campaigns.length === 0 ? (
-        <Card sx={{ bgcolor: '#121212', p: 8, textAlign: 'center', border: '1px solid #333', borderRadius: 4 }}>
+        <Card sx={{ bgcolor: '#121212', p: 8, textAlign: 'center', border: '1px solid #333', borderRadius: 1.5 }}>
            <CampaignIcon sx={{ fontSize: 64, color: 'zinc.700', mb: 2 }} />
            <Typography variant="h6" sx={{ color: 'zinc.500', fontWeight: 700 }}>
              No active or pending advertisements found for your fleet.
@@ -160,7 +160,7 @@ export default function MyAdvertisementsPage() {
                     sx={{ 
                       borderColor: '#333', 
                       color: 'white', 
-                      borderRadius: 3, 
+                      borderRadius: 1, 
                       fontWeight: 800,
                       '&:hover': { bgcolor: '#1A1A1A', borderColor: '#FACC15' }
                     }}

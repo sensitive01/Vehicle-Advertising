@@ -10,6 +10,21 @@ import { sendEmail } from '../utils/emailService';
 
 const router = express.Router();
 
+const generateuserId = async () => {
+  let isUnique = false;
+  let newId = '';
+  
+  while (!isUnique) {
+    const randomNum = Math.floor(100000 + Math.random() * 900000); 
+    newId = `VA${randomNum}`;
+    const existingUser = await User.findOne({ userId: newId });
+    if (!existingUser) {
+      isUnique = true;
+    }
+  }
+  return newId;
+};
+
 // 1. Send OTP
 router.post('/send-otp', async (req: Request, res: Response) => {
 
@@ -97,13 +112,15 @@ router.post('/register', async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
+    const userId = await generateuserId();
 
     const newUser = new User({
        fullName,
        mobileNumber,
        email,
        accountType,
-       passwordHash
+       passwordHash,
+       userId
     });
 
     await newUser.save();
@@ -169,6 +186,29 @@ router.get('/users', verifyToken, async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ success: false, message: 'Server error fetching users' });
+  }
+});
+
+router.patch('/users/:id', verifyToken, async (req: Request, res: Response) => {
+  const userRole = (req as any).user.role;
+  try {
+    if (userRole !== 'superadmin' && userRole !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const { fullName, mobileNumber, email } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { fullName, mobileNumber, email },
+      { new: true }
+    );
+    
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    res.status(200).json({ success: true, message: 'User updated successfully', data: user });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ success: false, message: 'Server error updating user' });
   }
 });
 

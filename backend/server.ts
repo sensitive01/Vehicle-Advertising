@@ -24,6 +24,8 @@ import reportRoutes from './routes/reportRoutes';
 import advertiserRoutes from './routes/advertiserRoutes';
 import campaignRoutes from './routes/campaignRoutes';
 import adminSettingRoutes from './routes/adminSettingRoutes';
+import adminRoutes from './routes/adminRoutes';
+import transactionRoutes from './routes/transactionRoutes';
 
 // Register Sub-routes
 app.use('/api/leads', leadRoutes);
@@ -33,6 +35,8 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/advertiser', advertiserRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/admin/settings', adminSettingRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 const PORT = Number(process.env.PORT) || 5000;
 app.listen(PORT, '0.0.0.0', () => {

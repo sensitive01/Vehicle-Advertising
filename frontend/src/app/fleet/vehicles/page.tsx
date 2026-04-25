@@ -41,7 +41,11 @@ interface Vehicle {
   ownerContact: string;
   ownerEmail?: string;
   vehicleProof?: string;
-  parkingLocation: string;
+  parkingLocation: {
+    address: string;
+    lat?: number;
+    lng?: number;
+  };
   adOptions: string[];
   images: string[];
   status?: string;
@@ -63,7 +67,7 @@ const emptyVehicle: Vehicle = {
   averageKmPerDay: '',
   ownerName: '',
   ownerContact: '',
-  parkingLocation: '',
+  parkingLocation: { address: '', lat: 0, lng: 0 },
   seatingCapacity: '',
   adOptions: [],
   images: []
@@ -129,14 +133,24 @@ export default function MyVehiclesPage() {
   };
 
   const handleOpenEdit = (v: Vehicle) => {
-    setFormData({ ...v });
+    setFormData({ 
+      ...v, 
+      images: v.images || [], 
+      adOptions: v.adOptions || [],
+      parkingLocation: v.parkingLocation || { address: '', lat: 0, lng: 0 }
+    });
     setMode('edit');
     setStep(1);
     setOpenDialog(true);
   };
 
   const handleOpenView = (v: Vehicle) => {
-    setFormData({ ...v });
+    setFormData({ 
+      ...v, 
+      images: v.images || [], 
+      adOptions: v.adOptions || [],
+      parkingLocation: v.parkingLocation || { address: '', lat: 0, lng: 0 }
+    });
     setMode('view');
     setOpenDialog(true);
   };
@@ -161,7 +175,11 @@ export default function MyVehiclesPage() {
       const isEdit = mode === 'edit';
       const url = isEdit ? `${process.env.NEXT_PUBLIC_API_URL}/api/fleet/${formData._id}` : `${process.env.NEXT_PUBLIC_API_URL}/api/fleet/add`;
       const method = isEdit ? 'PATCH' : 'POST';
-      const cleanPayload = { ...formData, averageKmPerDay: Number(formData.averageKmPerDay)||0, seatingCapacity: Number(formData.seatingCapacity)||0 };
+      const cleanPayload = { 
+        ...formData, 
+        averageKmPerDay: Number(formData.averageKmPerDay)||0, 
+        seatingCapacity: Number(formData.seatingCapacity)||0 
+      };
       const body = isEdit ? cleanPayload : { vehicles: [cleanPayload] };
 
       const res = await fetch(url, {
@@ -232,7 +250,7 @@ export default function MyVehiclesPage() {
        <Box>
           <Label>Vehicle Photos</Label>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
-            {formData.images.map((img, i) => (
+            {(formData.images || []).map((img, i) => (
               <Paper key={i} sx={{ width: 120, height: 90, overflow: 'hidden', borderRadius: 2, border: '1px solid #333' }}>
                 <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </Paper>
@@ -268,8 +286,8 @@ export default function MyVehiclesPage() {
           <Grid size={{ xs: 12, md: 6 }}>
              <InfoBlock label="Routine" value={formData.travelRoutine} />
              <InfoBlock label="Avg KM / Day" value={formData.averageKmPerDay} />
-             <InfoBlock label="Ad Options" value={formData.adOptions.join(', ')} />
-             <InfoBlock label="Parking Location" value={formData.parkingLocation} />
+             <InfoBlock label="Ad Options" value={(formData.adOptions || []).join(', ')} />
+             <InfoBlock label="Parking Location" value={formData.parkingLocation?.address} />
           </Grid>
        </Grid>
     </Box>
@@ -283,10 +301,10 @@ export default function MyVehiclesPage() {
             <Box>
                 <Label>Vehicle Photos</Label>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 1 }}>
-                  {formData.images.map((img, i) => (
+                  {(formData.images || []).map((img, i) => (
                     <Paper key={i} sx={{ position: 'relative', width: 100, height: 75, overflow: 'hidden', borderRadius: 2, border: '1px solid #333' }}>
                       <img src={img} style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
-                      <IconButton size="small" onClick={() => setFormData({ ...formData, images: formData.images.filter((_, idx) => idx !== i) })} sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(255,0,0,0.8)', color: 'white', '&:hover': { bgcolor: 'red' }, p: 0.1 }}><CloseIcon sx={{ fontSize: 12 }} /></IconButton>
+                      <IconButton size="small" onClick={() => setFormData({ ...formData, images: (formData.images || []).filter((_, idx) => idx !== i) })} sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(255,0,0,0.8)', color: 'white', '&:hover': { bgcolor: 'red' }, p: 0.1 }}><CloseIcon sx={{ fontSize: 12 }} /></IconButton>
                     </Paper>
                   ))}
                   <Button variant="outlined" component="label" sx={{ width: 100, height: 75, border: '2px dashed #444', color: 'zinc.500', display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -384,7 +402,14 @@ export default function MyVehiclesPage() {
              </Box>
              <Box>
                <Label>Parking Location</Label>
-               <TextField fullWidth multiline rows={2} value={formData.parkingLocation} onChange={(e) => setFormData({ ...formData, parkingLocation: e.target.value })} sx={customFieldStyle}/>
+               <TextField 
+                fullWidth 
+                multiline 
+                rows={2} 
+                value={formData.parkingLocation?.address || ''} 
+                onChange={(e) => setFormData({ ...formData, parkingLocation: { ...formData.parkingLocation, address: e.target.value } })} 
+                sx={customFieldStyle}
+               />
              </Box>
           </Box>
         );
@@ -432,8 +457,8 @@ export default function MyVehiclesPage() {
                <Label>Advertisement Options</Label>
                <FormGroup sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
                  {AD_OPTIONS.map(opt => (
-                   <FormControlLabel key={opt} control={<Checkbox checked={formData.adOptions.includes(opt)} onChange={(e) => {
-                     const opts = e.target.checked ? [...formData.adOptions, opt] : formData.adOptions.filter(o => o !== opt);
+                   <FormControlLabel key={opt} control={<Checkbox checked={(formData.adOptions || []).includes(opt)} onChange={(e) => {
+                     const opts = e.target.checked ? [...(formData.adOptions || []), opt] : (formData.adOptions || []).filter(o => o !== opt);
                      setFormData({ ...formData, adOptions: opts });
                    }} sx={{ color: '#333', '&.Mui-checked': { color: '#FACC15' } }} />} label={<Typography variant="body2" sx={{ color: 'zinc.300' }}>{opt}</Typography>} />
                  ))}
@@ -449,7 +474,7 @@ export default function MyVehiclesPage() {
 
   const dialogContent = (
     <Box>
-      <DialogTitle sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <DialogTitle component="div" sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h5" sx={{ fontWeight: 900, textTransform: 'uppercase' }}>
           {isView ? 'Vehicle' : (mode === 'edit' ? 'Update' : 'Register')} <span style={{ color: '#FACC15' }}>{isView ? 'Overview' : 'Details'}</span>
         </Typography>
@@ -504,13 +529,13 @@ export default function MyVehiclesPage() {
          <Alert 
             severity="info" 
             icon={<InfoIcon sx={{ color: '#FACC15' }} />}
-            sx={{ mb: 3, bgcolor: 'rgba(250, 204, 21, 0.05)', color: '#FACC15', border: '1px solid rgba(250, 204, 21, 0.2)', borderRadius: 3 }}
+            sx={{ mb: 3, bgcolor: 'rgba(250, 204, 21, 0.05)', color: '#FACC15', border: '1px solid rgba(250, 204, 21, 0.2)', borderRadius: 1 }}
          >
             You have new advertising campaign requests pending for your vehicles!
          </Alert>
       )}
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#1A1A1A' }}>
@@ -586,7 +611,7 @@ export default function MyVehiclesPage() {
         <TablePagination component="div" count={vehicles.length} rowsPerPage={rowsPerPage} page={page} onPageChange={(e, p) => setPage(p)} onRowsPerPageChange={(e) => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); }} rowsPerPageOptions={[10, 25, 50, 100]} sx={{ color: 'zinc.400' }} />
       </Card>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 4, border: '1px solid #333' } }}>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}>
         {dialogContent}
       </Dialog>
 
@@ -596,9 +621,9 @@ export default function MyVehiclesPage() {
         onClose={() => setCampaignDialogOpen(false)} 
         maxWidth="sm" 
         fullWidth 
-        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 4, border: '1px solid #333' } }}
+        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}
       >
-        <DialogTitle sx={{ p: 4, borderBottom: '1px solid #222', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle component="div" sx={{ p: 4, borderBottom: '1px solid #222', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
            <Typography variant="h5" sx={{ fontWeight: 900 }}>Campaign <span style={{ color: '#FACC15' }}>Request</span></Typography>
            <IconButton onClick={() => setCampaignDialogOpen(false)} sx={{ color: 'zinc.500' }}><CloseIcon /></IconButton>
         </DialogTitle>

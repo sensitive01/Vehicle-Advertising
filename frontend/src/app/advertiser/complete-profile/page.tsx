@@ -3,15 +3,24 @@ import React, { useState } from 'react';
 import { 
   Box, Container, Typography, Card, TextField, MenuItem, 
   Button, Divider, FormGroup, FormControlLabel, Checkbox, 
-  CircularProgress, Grid
+  CircularProgress, Grid, Autocomplete
 } from '@mui/material';
 import BusinessIcon from '@mui/icons-material/Business';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloseIcon from '@mui/icons-material/Close';
+import { Stack, IconButton } from '@mui/material';
 
 const AD_OPTIONS = ['Left doors', 'Right doors', 'front bonnet', 'Rear door', 'Roof carrier handles'];
 
 export default function AdvertiserCompleteProfile() {
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  
+  // Location Search States
+  const [locationOptions, setLocationOptions] = useState<any[]>([]);
+  const [loadingLocations, setLoadingLocations] = useState(false);
+  const [selectedCoords, setSelectedCoords] = useState<{lat: string, lon: string} | null>(null);
   
   // Data State - Allowing string for empty input handling
   const [formData, setFormData] = useState({
@@ -28,7 +37,9 @@ export default function AdvertiserCompleteProfile() {
     designCharges: '' as string | number, 
     printingCharges: '' as string | number, 
     serviceCharges: '' as string | number, 
-    gst: 18 as string | number
+    gst: 18 as string | number,
+    adImages: [] as string[],
+    adDimensions: { length: '', width: '' }
   });
 
   const handleToggleAdOption = (opt: string) => {
@@ -43,6 +54,45 @@ export default function AdvertiserCompleteProfile() {
   const handleNumChange = (field: string, val: string) => {
     // Allows empty string, otherwise converts to number
     setFormData(prev => ({ ...prev, [field]: val === '' ? '' : Number(val) }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    setUploading(true);
+    const files = Array.from(e.target.files);
+    const urls: string[] = [];
+
+    await Promise.all(files.map(async (file) => {
+      const fd = new FormData();
+      fd.append('file', file);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/upload`, { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.secure_url) urls.push(data.secure_url);
+      } catch (err) { console.error(err); }
+    }));
+
+    setFormData(prev => ({ ...prev, adImages: [...prev.adImages, ...urls] }));
+    setUploading(false);
+  };
+
+  const searchLocations = async (query: string) => {
+    if (!query || query.length < 3) return;
+    setLoadingLocations(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
+      const data = await res.json();
+      setLocationOptions(data.map((item: any) => ({
+        label: item.display_name,
+        value: item.display_name,
+        lat: item.lat,
+        lon: item.lon
+      })));
+    } catch (err) {
+      console.error('Location search failed:', err);
+    } finally {
+      setLoadingLocations(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -107,7 +157,7 @@ export default function AdvertiserCompleteProfile() {
           <Typography variant="body1" sx={{ color: 'zinc.500', mt: 1 }}>Define your brand and ad requirements to find perfectly matched fleets.</Typography>
         </Box>
 
-        <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 6, p: { xs: 3, md: 5 } }}>
+        <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 2, p: { xs: 3, md: 5 } }}>
            
            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
              
@@ -125,8 +175,79 @@ export default function AdvertiserCompleteProfile() {
                     <TextField fullWidth label="Business Category" placeholder="e.g. Footwear" value={formData.businessCategory} onChange={(e) => setFormData({...formData, businessCategory: e.target.value})} sx={fieldStyle} InputLabelProps={{ shrink: true }} />
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <TextField fullWidth label="Operating Location" placeholder="Where do you want to advertise? (e.g. Kochi, Kerala)" value={formData.operatingLocation} onChange={(e) => setFormData({...formData, operatingLocation: e.target.value})} sx={fieldStyle} InputLabelProps={{ shrink: true }} />
+                     <Autocomplete
+                        fullWidth
+                        freeSolo
+                        options={locationOptions}
+                        loading={loadingLocations}
+                        value={formData.operatingLocation}
+                        onInputChange={(e, value) => {
+                          setFormData(prev => ({ ...prev, operatingLocation: value }));
+                          searchLocations(value);
+                        }}
+                        onChange={(e, value: any) => {
+                          const label = typeof value === 'string' ? value : value?.label;
+                          if (label) {
+                            setFormData(prev => ({ ...prev, operatingLocation: label }));
+                            if (value?.lat && value?.lon) {
+                              setSelectedCoords({ lat: value.lat, lon: value.lon });
+                            }
+                          }
+                        }}
+                        ListboxProps={{
+                          sx: {
+                            bgcolor: '#121212',
+                            color: 'white',
+                            '& .MuiAutocomplete-option': {
+                              borderBottom: '1px solid #222',
+                              fontSize: '0.85rem',
+                              py: 1.5
+                            }
+                          }
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            fullWidth
+                            label="Operating Location"
+                            placeholder="Search city or area..."
+                            sx={fieldStyle}
+                            InputLabelProps={{ shrink: true }}
+                            InputProps={{
+                              ...params.InputProps,
+                              endAdornment: (
+                                <React.Fragment>
+                                  {loadingLocations ? <CircularProgress color="inherit" size={20} /> : null}
+                                  {params.InputProps.endAdornment}
+                                </React.Fragment>
+                              ),
+                            }}
+                          />
+                        )}
+                     />
                   </Grid>
+
+                  {/* Map Preview */}
+                  <Grid size={{ xs: 12 }}>
+                      <Box sx={{ width: '100%', height: 250, borderRadius: 2, overflow: 'hidden', border: '1px solid #333', bgcolor: '#000', position: 'relative' }}>
+                         {selectedCoords ? (
+                           <iframe 
+                            width="100%" 
+                            height="100%" 
+                            frameBorder="0" 
+                            scrolling="no" 
+                            marginHeight={0} 
+                            marginWidth={0} 
+                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(selectedCoords.lon)-0.05}%2C${Number(selectedCoords.lat)-0.05}%2C${Number(selectedCoords.lon)+0.05}%2C${Number(selectedCoords.lat)+0.05}&layer=mapnik&marker=${selectedCoords.lat}%2C${selectedCoords.lon}`}
+                           />
+                         ) : (
+                           <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'zinc.600', flexDirection: 'column', gap: 1 }}>
+                              <Typography variant="caption" sx={{ fontWeight: 700, letterSpacing: 2 }}>MAP PREVIEW</Typography>
+                              <Typography variant="caption" sx={{ opacity: 0.5 }}>Search for a location to see it on the map</Typography>
+                           </Box>
+                         )}
+                      </Box>
+                   </Grid>
                 </Grid>
              </Box>
 
@@ -179,12 +300,53 @@ export default function AdvertiserCompleteProfile() {
                 </Box>
              </Box>
 
-             <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
-                <Button variant="outlined" sx={{ flex: 1, py: 2, color: 'zinc.500', borderColor: '#333', fontWeight: 700, borderRadius: 3 }}>Save Draft</Button>
-                <Button variant="contained" onClick={handleSubmit} disabled={loading} sx={{ flex: 2, py: 2, bgcolor: '#FACC15', color: 'black', fontWeight: 900, '&:hover': { bgcolor: '#FDE047' }, borderRadius: 3 }}>
-                   {loading ? <CircularProgress size={24} color="inherit" /> : 'LAUNCH CAMPAIGN'}
-                </Button>
-             </Box>
+              <Divider sx={{ borderColor: '#222' }} />
+
+              {/* Campaign Creatives */}
+              <Box>
+                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                    <CloudUploadIcon sx={{ color: '#FACC15' }} />
+                    <GroupLabel>Campaign Creatives & Size</GroupLabel>
+                 </Box>
+                 
+                 <Grid container spacing={4}>
+                    <Grid item xs={12} md={7}>
+                       <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>CAMPAIGN IMAGES / CREATIVES</Typography>
+                       <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+                          {formData.adImages.map((img, i) => (
+                             <Box key={i} sx={{ position: 'relative', width: 100, height: 100, borderRadius: 2, overflow: 'hidden', border: '1px solid #333' }}>
+                                <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <IconButton size="small" onClick={() => setFormData(prev => ({ ...prev, adImages: prev.adImages.filter((_, idx) => idx !== i) }))} sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(255,0,0,0.8)', color: 'white', '&:hover': { bgcolor: 'red' }, p: 0.1 }}>
+                                   <CloseIcon sx={{ fontSize: 14 }} />
+                                </IconButton>
+                             </Box>
+                          ))}
+                          <Button variant="outlined" component="label" sx={{ width: 100, height: 100, border: '2px dashed #444', color: 'zinc.500', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                             {uploading ? <CircularProgress size={24} color="inherit" /> : <><CloudUploadIcon sx={{ fontSize: 24 }} /><Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800 }}>UPLOAD</Typography></>}
+                             <input type="file" hidden multiple onChange={handleImageUpload} />
+                          </Button>
+                       </Box>
+                       <Typography variant="caption" sx={{ color: 'zinc.600' }}>Upload high-quality designs of your advertisement materials.</Typography>
+                    </Grid>
+
+                    <Grid item xs={12} md={5}>
+                       <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>CREATIVE DIMENSIONS (OPTIONAL)</Typography>
+                       <Stack direction="row" spacing={2} alignItems="center">
+                          <TextField fullWidth placeholder="Length" value={formData.adDimensions.length} onChange={(e) => setFormData({...formData, adDimensions: {...formData.adDimensions, length: e.target.value}})} sx={fieldStyle} />
+                          <Typography sx={{ color: 'zinc.500', fontWeight: 900 }}>X</Typography>
+                          <TextField fullWidth placeholder="Width" value={formData.adDimensions.width} onChange={(e) => setFormData({...formData, adDimensions: {...formData.adDimensions, width: e.target.value}})} sx={fieldStyle} />
+                       </Stack>
+                       <Typography variant="caption" sx={{ color: 'zinc.600', mt: 1, display: 'block' }}>Specify the preferred size of your ad (e.g. 2ft x 3ft).</Typography>
+                    </Grid>
+                 </Grid>
+              </Box>
+
+              <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+                 <Button variant="outlined" sx={{ flex: 1, py: 2, color: 'zinc.500', borderColor: '#333', fontWeight: 700, borderRadius: 1 }}>Save Draft</Button>
+                 <Button variant="contained" onClick={handleSubmit} disabled={loading} sx={{ flex: 2, py: 2, bgcolor: '#FACC15', color: 'black', fontWeight: 900, '&:hover': { bgcolor: '#FDE047' }, borderRadius: 1 }}>
+                    {loading ? <CircularProgress size={24} color="inherit" /> : 'LAUNCH CAMPAIGN'}
+                 </Button>
+              </Box>
 
            </Box>
 

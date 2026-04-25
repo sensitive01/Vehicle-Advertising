@@ -51,7 +51,7 @@ export default function AdvertiserDashboard() {
           <Typography variant="body1" sx={{ color: 'zinc.500', mt: 1 }}>Track your advertising performance and fleet engagement.</Typography>
         </Box>
         <Link href="/advertiser/create-campaign" style={{ textDecoration: 'none' }}>
-           <Button variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, py: 1.5, borderRadius: 3, '&:hover': { bgcolor: '#FDE047' }, boxShadow: '0 8px 24px rgba(250, 204, 21, 0.2)' }}>
+           <Button variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, py: 1.5, borderRadius: 1, '&:hover': { bgcolor: '#FDE047' }, boxShadow: '0 8px 24px rgba(250, 204, 21, 0.2)' }}>
               NEW CAMPAIGN REQUEST
            </Button>
         </Link>
@@ -62,14 +62,14 @@ export default function AdvertiserDashboard() {
       <Grid container spacing={4} sx={{ mb: 6 }}>
          {stats.map((stat, i) => (
            <Grid size={{ xs: 12, md: 4 }} key={i}>
-              <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #222', borderRadius: 4, position: 'relative', overflow: 'hidden' }}>
+              <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #222', borderRadius: 1.5, position: 'relative', overflow: 'hidden' }}>
                  <Box sx={{ position: 'absolute', top: 0, left: 0, width: 4, height: '100%', bgcolor: stat.color }} />
                  <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box>
                        <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 800, mb: 1, textTransform: 'uppercase', letterSpacing: 1.5 }}>{stat.label}</Typography>
                        <Typography variant="h3" sx={{ color: 'white', fontWeight: 900 }}>{stat.value}</Typography>
                     </Box>
-                    <Box sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 3 }}>{stat.icon}</Box>
+                    <Box sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 1 }}>{stat.icon}</Box>
                  </Stack>
               </Card>
            </Grid>
@@ -82,7 +82,7 @@ export default function AdvertiserDashboard() {
          <Link href="/advertiser/my-advertisements" style={{ textDecoration: 'none', color: '#FACC15', fontWeight: 700, fontSize: '0.9rem' }}>VIEW ALL →</Link>
       </Box>
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #222', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #222', borderRadius: 1.5, overflow: 'hidden' }}>
          {loading ? (
            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}><CircularProgress color="warning" /></Box>
          ) : campaigns.length === 0 ? (
@@ -99,7 +99,7 @@ export default function AdvertiserDashboard() {
                 <Box key={c._id}>
                    <Box sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', '&:hover': { bgcolor: '#161616' }, transition: '0.3s' }}>
                       <Stack direction="row" spacing={3} alignItems="center">
-                         <Box sx={{ p: 2, bgcolor: 'rgba(250, 204, 21, 0.1)', borderRadius: 3, border: '1px solid rgba(250, 204, 21, 0.1)' }}>
+                         <Box sx={{ p: 2, bgcolor: 'rgba(250, 204, 21, 0.1)', borderRadius: 1, border: '1px solid rgba(250, 204, 21, 0.1)' }}>
                             <CampaignIcon sx={{ color: '#FACC15' }} />
                          </Box>
                          <Box>

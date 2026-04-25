@@ -140,7 +140,7 @@ export default function AdminSettingsPage() {
       <Grid container spacing={4}>
          {/* Global Charges */}
          <Grid size={{ xs: 12 }}>
-            <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4 }}>
+            <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                    <MonetizationOnIcon sx={{ color: '#FACC15' }} />
                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>Global Charge Rules</Typography>
@@ -170,7 +170,7 @@ export default function AdminSettingsPage() {
            { title: 'Transport Charges', field: 'transportChargePerVehicleType' }
          ].map((section) => (
            <Grid size={{ xs: 12, md: 6 }} key={section.field}>
-              <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 4, height: '100%' }}>
+              <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 1.5, height: '100%' }}>
                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>{section.title}</Typography>
                     <Button variant="outlined" size="small" startIcon={<AddIcon />} onClick={() => addItem(section.field)} sx={{ color: '#FACC15', borderColor: '#FACC15' }}>Add</Button>
@@ -208,7 +208,7 @@ export default function AdminSettingsPage() {
 
          <Grid size={{ xs: 12 }}>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-               <Button variant="contained" onClick={handleSave} disabled={saveLoading} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 8, py: 2, borderRadius: 3, '&:hover': { bgcolor: '#FDE047' }, boxShadow: '0 8px 24px rgba(250, 204, 21, 0.2)' }}>
+               <Button variant="contained" onClick={handleSave} disabled={saveLoading} sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 8, py: 2, borderRadius: 1, '&:hover': { bgcolor: '#FDE047' }, boxShadow: '0 8px 24px rgba(250, 204, 21, 0.2)' }}>
                   {saveLoading ? <CircularProgress size={24} color="inherit" /> : 'SAVE CONFIGURATION'}
                </Button>
             </Box>

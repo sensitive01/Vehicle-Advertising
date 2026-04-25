@@ -44,7 +44,7 @@ interface Vehicle {
   ownerContact: string;
   ownerEmail?: string;
   vehicleProof?: string;
-  parkingLocation: string;
+  parkingLocation: { address: string; lat?: number; lng?: number };
   adOptions: string[];
   images: string[];
   status: string;
@@ -232,7 +232,7 @@ export default function UsersPage() {
              <InfoBlock label="Routine" value={v.travelRoutine} />
              <InfoBlock label="Avg KM / Day" value={v.averageKmPerDay} />
              <InfoBlock label="Ad Options" value={v.adOptions?.join(', ')} />
-             <InfoBlock label="Parking Location" value={v.parkingLocation} />
+             <InfoBlock label="Parking Location" value={v.parkingLocation?.address || v.parkingLocation} />
           </Grid>
        </Grid>
     </Box>
@@ -246,7 +246,7 @@ export default function UsersPage() {
 
       {errorMsg && <Alert severity="error" sx={{ mb: 4 }}>{errorMsg}</Alert>}
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#1A1A1A' }}>
@@ -318,8 +318,8 @@ export default function UsersPage() {
       </Card>
 
       {/* Confirmation Dialog */}
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} PaperProps={{ sx: { bgcolor: '#1E1E1E', color: 'white', borderRadius: 4, minWidth: 320 } }}>
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} PaperProps={{ sx: { bgcolor: '#1E1E1E', color: 'white', borderRadius: 1.5, minWidth: 320 } }}>
+        <DialogTitle component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <WarningAmberIcon sx={{ color: '#FACC15' }} /> Confirm Action
         </DialogTitle>
         <DialogContent sx={{ mt: 1 }}>
@@ -332,8 +332,8 @@ export default function UsersPage() {
       </Dialog>
 
       {/* Vehicles Dialog */}
-      <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="lg" fullWidth PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 3, border: '1px solid #333' } }}>
-        <DialogTitle sx={{ borderBottom: '1px solid #222', p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="lg" fullWidth PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 1, border: '1px solid #333' } }}>
+        <DialogTitle component="div" sx={{ borderBottom: '1px solid #222', p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 900 }}>Fleet for <span style={{ color: '#FACC15' }}>{selectedUser?.fullName}</span></Typography>
             <Typography variant="body2" sx={{ color: 'zinc.500' }}>Official registered vehicles under this profile</Typography>
@@ -394,8 +394,8 @@ export default function UsersPage() {
       </Dialog>
 
       {/* Full Vehicle View Dialog */}
-      <Dialog open={viewOpen} onClose={() => setViewOpen(false)} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 4, border: '1px solid #333' } }}>
-        <DialogTitle sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Dialog open={viewOpen} onClose={() => setViewOpen(false)} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}>
+        <DialogTitle component="div" sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h5" sx={{ fontWeight: 900, textTransform: 'uppercase' }}>Vehicle <span style={{ color: '#FACC15' }}>Overview</span></Typography>
           <IconButton onClick={() => setViewOpen(false)} sx={{ color: 'zinc.500' }}><CloseIcon /></IconButton>
         </DialogTitle>

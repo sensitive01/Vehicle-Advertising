@@ -232,13 +232,13 @@ export default function LeadsPage() {
           variant="contained" 
           startIcon={<AddIcon />}
           onClick={handleOpenAdder}
-          sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 700, p: '10px 24px', borderRadius: 3, '&:hover': { bgcolor: '#FDE047' } }}
+          sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 700, p: '10px 24px', borderRadius: 1, '&:hover': { bgcolor: '#FDE047' } }}
         >
           Add New Lead
         </Button>
       </Box>
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 4, overflow: 'hidden' }}>
+      <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
         <TableContainer>
           <Table sx={{ minWidth: 800 }}>
             <TableHead sx={{ bgcolor: '#1A1A1A' }}>
@@ -336,13 +336,13 @@ export default function LeadsPage() {
       <Dialog 
         open={!!selectedLead} onClose={handleCloseViewer} maxWidth="md" fullWidth 
         PaperProps={{ sx: { 
-          bgcolor: '#1E1E1E', color: 'white', borderRadius: 3, border: '1px solid #333',
+          bgcolor: '#1E1E1E', color: 'white', borderRadius: 1, border: '1px solid #333',
           '&::-webkit-scrollbar': { display: 'none' },
           msOverflowStyle: 'none',
           scrollbarWidth: 'none'
         } }}
       >
-        <DialogTitle sx={{ borderBottom: '1px solid #333', pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle component="div" sx={{ borderBottom: '1px solid #333', pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>Lead <span style={{ color: '#FACC15' }}>Details</span></Typography>
           {selectedLead && (
             <Chip label={selectedLead.status} sx={{ bgcolor: 'rgba(250, 204, 21, 0.2)', color: '#FACC15', fontWeight: 'bold' }} />
@@ -389,7 +389,7 @@ export default function LeadsPage() {
 
               {selectedLead.quotedPrice && selectedLead.quotedPrice > 0 && (
                 <div className="col-span-1 md:col-span-2 mt-4">
-                  <Box sx={{ bgcolor: 'rgba(96, 165, 250, 0.05)', p: 3, border: '1px solid rgba(96, 165, 250, 0.2)', borderRadius: 4 }}>
+                  <Box sx={{ bgcolor: 'rgba(96, 165, 250, 0.05)', p: 3, border: '1px solid rgba(96, 165, 250, 0.2)', borderRadius: 1.5 }}>
                     <Typography sx={{ color: '#60A5FA', fontWeight: 900, mb: 1, textTransform: 'uppercase', fontSize: '0.75rem' }}>Active Quotation Detected</Typography>
                     <Typography variant="h5" sx={{ color: 'white', fontWeight: 900 }}>Total Value: ₹{selectedLead.quotedPrice.toLocaleString()}</Typography>
                   </Box>
@@ -427,13 +427,13 @@ export default function LeadsPage() {
       <Dialog 
         open={isQuoting} onClose={handleCloseQuoter} maxWidth="md" fullWidth 
         PaperProps={{ sx: { 
-          bgcolor: '#1E1E1E', color: 'white', borderRadius: 3, border: '1px solid #333',
+          bgcolor: '#1E1E1E', color: 'white', borderRadius: 1, border: '1px solid #333',
           '&::-webkit-scrollbar': { display: 'none' },
           msOverflowStyle: 'none',
           scrollbarWidth: 'none'
         } }}
       >
-        <DialogTitle sx={{ borderBottom: '1px solid #333', pb: 2 }}>
+        <DialogTitle component="div" sx={{ borderBottom: '1px solid #333', pb: 2 }}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>Create <span style={{ color: '#FACC15' }}>Quotation</span></Typography>
           <Typography variant="caption" sx={{ color: 'zinc.500' }}>For: {quotingLead?.contactName} ({quotingLead?.email})</Typography>
         </DialogTitle>
@@ -532,7 +532,7 @@ export default function LeadsPage() {
 
               {/* Summary Box */}
               <Grid size={{ xs: 12 }}>
-                <Box sx={{ bgcolor: 'rgba(250, 204, 21, 0.05)', p: 3, border: '1px solid rgba(250, 204, 21, 0.2)', borderRadius: 4 }}>
+                <Box sx={{ bgcolor: 'rgba(250, 204, 21, 0.05)', p: 3, border: '1px solid rgba(250, 204, 21, 0.2)', borderRadius: 1.5 }}>
                     <Grid container spacing={3} justifyContent="space-between" alignItems="center">
                       <Grid size={{ xs: 12, sm: 'auto' }}>
                           <Stack direction="row" spacing={4}>
@@ -559,7 +559,7 @@ export default function LeadsPage() {
                 <TextField 
                   fullWidth multiline rows={3} placeholder="Add any custom terms, duration details, or a personalized message for the advertiser here..."
                   value={quoteData.notes} onChange={(e) => setQuoteData({...quoteData, notes: e.target.value})}
-                  sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: '#D4D4D8', borderRadius: 3, fontSize: '0.85rem', '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}
+                  sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: '#D4D4D8', borderRadius: 1, fontSize: '0.85rem', '& fieldset': { borderColor: '#333' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } } }}
                 />
               </Grid>
             </Grid>
@@ -571,7 +571,7 @@ export default function LeadsPage() {
             variant="contained" 
             disabled={submitting}
             onClick={() => handleUpdateLead('Quoted')}
-            sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, borderRadius: 3, '&:hover': { bgcolor: '#FDE047' } }}
+            sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 900, px: 4, borderRadius: 1, '&:hover': { bgcolor: '#FDE047' } }}
           >
             {submitting ? <CircularProgress size={24} color="inherit" /> : 'GENERATE & EMAIL QUOTE'}
           </Button>
@@ -582,14 +582,14 @@ export default function LeadsPage() {
       <Dialog 
         open={isAdding} onClose={handleCloseAdder} maxWidth="sm" fullWidth 
         PaperProps={{ sx: { 
-          bgcolor: '#1E1E1E', color: 'white', borderRadius: 4, border: '1px solid #333',
+          bgcolor: '#1E1E1E', color: 'white', borderRadius: 1.5, border: '1px solid #333',
           '&::-webkit-scrollbar': { display: 'none' },
           msOverflowStyle: 'none',
           scrollbarWidth: 'none'
         } }}
       >
         <form onSubmit={handleCreateLead}>
-          <DialogTitle sx={{ borderBottom: '1px solid #333', pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <DialogTitle component="div" sx={{ borderBottom: '1px solid #333', pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5" sx={{ fontWeight: 800 }}>Add New <span style={{ color: '#FACC15' }}>Lead</span></Typography>
             <IconButton onClick={handleCloseAdder} sx={{ color: 'zinc.400' }}><CloseIcon /></IconButton>
           </DialogTitle>
@@ -607,7 +607,7 @@ export default function LeadsPage() {
                     fullWidth required placeholder="Enter full name"
                     value={newLead.contactName} onChange={(e) => setNewLead({...newLead, contactName: e.target.value})}
                     sx={{ 
-                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 1, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
                     }}
                   />
                 </Grid>
@@ -617,7 +617,7 @@ export default function LeadsPage() {
                     fullWidth required placeholder="+91 ..."
                     value={newLead.mobileNumber} onChange={(e) => setNewLead({...newLead, mobileNumber: e.target.value})}
                     sx={{ 
-                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 1, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
                     }}
                   />
                 </Grid>
@@ -627,7 +627,7 @@ export default function LeadsPage() {
                     fullWidth required type="email" placeholder="email@example.com"
                     value={newLead.email} onChange={(e) => setNewLead({...newLead, email: e.target.value})}
                     sx={{ 
-                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 1, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
                     }}
                   />
                 </Grid>
@@ -636,7 +636,7 @@ export default function LeadsPage() {
                   <FormControl fullWidth>
                     <Select 
                       value={newLead.vehicleType} onChange={(e) => setNewLead({...newLead, vehicleType: e.target.value as string})}
-                      sx={{ bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } }}
+                      sx={{ bgcolor: '#000', color: 'white', borderRadius: 1, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } }}
                     >
                       <MenuItem value="Any">Mixed Fleet</MenuItem>
                       <MenuItem value="Trucks">Trucks Only</MenuItem>
@@ -650,7 +650,7 @@ export default function LeadsPage() {
                   <FormControl fullWidth>
                     <Select 
                       value={newLead.status} onChange={(e) => setNewLead({...newLead, status: e.target.value as string})}
-                      sx={{ bgcolor: '#000', color: 'white', borderRadius: 3, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } }}
+                      sx={{ bgcolor: '#000', color: 'white', borderRadius: 1, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } }}
                     >
                       <MenuItem value="New">New Lead</MenuItem>
                       <MenuItem value="Contacted">Contacted</MenuItem>
@@ -665,7 +665,7 @@ export default function LeadsPage() {
                     fullWidth required multiline rows={4} placeholder="Describe the campaign requirements..."
                     value={newLead.requirementDetails} onChange={(e) => setNewLead({...newLead, requirementDetails: e.target.value})}
                     sx={{ 
-                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 4, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
+                      '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white', borderRadius: 1.5, '& fieldset': { borderColor: '#333' }, '&:hover fieldset': { borderColor: '#444' }, '&.Mui-focused fieldset': { borderColor: '#FACC15' } },
                     }}
                   />
                 </Grid>
@@ -676,7 +676,7 @@ export default function LeadsPage() {
             <Button onClick={handleCloseAdder} sx={{ color: 'zinc.400', fontWeight: 600 }}>Cancel</Button>
             <Button 
               type="submit" disabled={submitting} variant="contained" 
-              sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 800, p: '10px 24px', borderRadius: 3, '&:hover': { bgcolor: '#FDE047' } }}
+              sx={{ bgcolor: '#FACC15', color: 'black', fontWeight: 800, p: '10px 24px', borderRadius: 1, '&:hover': { bgcolor: '#FDE047' } }}
             >
               {submitting ? <CircularProgress size={24} color="inherit" /> : 'Create Lead'}
             </Button>
@@ -690,7 +690,7 @@ export default function LeadsPage() {
         onClose={() => setNotification({ ...notification, open: false })}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity={notification.severity} sx={{ borderRadius: 3, fontWeight: 700 }}>
+        <Alert severity={notification.severity} sx={{ borderRadius: 1, fontWeight: 700 }}>
           {notification.message}
         </Alert>
       </Snackbar>

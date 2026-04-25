@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IVehicle extends Document {
   userId: mongoose.Types.ObjectId;
+  vehicleId: string;
   registrationNumber: string;
   registrationType: 'Personal' | 'Yellow board';
   fuelType: 'Petrol' | 'Diesel' | 'CNG' | 'Electric' | 'Others';
@@ -49,6 +50,7 @@ export interface IVehicle extends Document {
 
 const VehicleSchema: Schema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  vehicleId: { type: String, unique: true },
   registrationNumber: { type: String, required: true },
   registrationType: { type: String, required: true, enum: ['Personal', 'Yellow board'] },
   fuelType: { type: String, required: true, enum: ['Petrol', 'Diesel', 'CNG', 'Electric', 'Others'] },
@@ -86,7 +88,7 @@ const VehicleSchema: Schema = new Schema({
   isBlocked: { type: Boolean, default: false },
   serviceReason: { type: String },
   
-  activeCampaignId: { type: Schema.Types.ObjectId, ref: 'Campaign', default: null },
+  activeCampaignId: { type: Schema.Types.ObjectId, ref: 'AdvertiserProfile', default: null },
   campaignStatus: { type: String, enum: ['NONE', 'PENDING', 'ACCEPTED', 'REJECTED'], default: 'NONE' },
   createdAt: { type: Date, default: Date.now }
 });

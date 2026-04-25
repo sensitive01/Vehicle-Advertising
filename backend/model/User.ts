@@ -6,6 +6,7 @@ export interface IUser extends Document {
   email: string;
   accountType: string;
   passwordHash: string;
+  userId: string;
   isProfileComplete: boolean;
   isBlocked: boolean;
   createdAt: Date;
@@ -17,6 +18,7 @@ const UserSchema: Schema = new Schema({
   email: { type: String, required: true, unique: true },
   accountType: { type: String, required: true, enum: ['fleet', 'advertiser', 'admin'] },
   passwordHash: { type: String, required: true },
+  userId: { type: String, unique: true },
   isProfileComplete: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
