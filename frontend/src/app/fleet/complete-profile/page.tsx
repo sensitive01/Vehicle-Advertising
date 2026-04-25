@@ -255,7 +255,7 @@ export default function FleetCompleteProfile() {
 
                {vehicle.images && vehicle.images.length > 0 && (
                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                   {vehicle.images.map((img, iIndex) => (
+                   {vehicle.images.map((img: string, iIndex: number) => (
                      <Box key={iIndex} sx={{ position: 'relative', width: 80, height: 60, borderRadius: 1, overflow: 'hidden', border: '1px solid #333' }}>
                        <img src={img} alt="Vehicle" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                        <IconButton size="small" onClick={() => handleRemoveImage(index, iIndex)} sx={{ position: 'absolute', top: 0, right: 0, bgcolor: 'rgba(0,0,0,0.6)', color: 'white', p: 0.2 }}>
