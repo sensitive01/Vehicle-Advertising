@@ -309,14 +309,27 @@ export default function AdvertiserCompleteProfile() {
                     <GroupLabel>Campaign Creatives & Size</GroupLabel>
                  </Box>
                  
-                 <Grid container spacing={4}>
+                  <Grid container spacing={4}>
+                    <Grid size={{ xs: 12, md: 7 }}>
+                       <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>CAMPAIGN IMAGES / CREATIVES</Typography>
+                       <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+                          {formData.adImages.map((img, i) => (
+                             <Box key={i} sx={{ position: 'relative', width: 100, height: 100, borderRadius: 2, overflow: 'hidden', border: '1px solid #333' }}>
+                                <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <IconButton size="small" onClick={() => setFormData(prev => ({ ...prev, adImages: prev.adImages.filter((_, idx) => idx !== i) }))} sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(255,0,0,0.8)', color: 'white', '&:hover': { bgcolor: 'red' }, p: 0.1 }}>
+                                   <CloseIcon sx={{ fontSize: 14 }} />
+                                </IconButton>
+                             </Box>
+                          ))}
+                          <Button variant="outlined" component="label" sx={{ width: 100, height: 100, border: '2px dashed #444', color: 'zinc.500', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                             {uploading ? <CircularProgress size={24} color="inherit" /> : <><CloudUploadIcon sx={{ fontSize: 24 }} /><Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 800 }}>UPLOAD</Typography></>}
                              <input type="file" hidden multiple onChange={handleImageUpload} />
                           </Button>
                        </Box>
                        <Typography variant="caption" sx={{ color: 'zinc.600' }}>Upload high-quality designs of your advertisement materials.</Typography>
                     </Grid>
 
-                    <Grid item xs={12} md={5}>
+                    <Grid size={{ xs: 12, md: 5 }}>
                        <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>CREATIVE DIMENSIONS (OPTIONAL)</Typography>
                        <Stack direction="row" spacing={2} alignItems="center">
                           <TextField fullWidth placeholder="Length" value={formData.adDimensions.length} onChange={(e) => setFormData({...formData, adDimensions: {...formData.adDimensions, length: e.target.value}})} sx={fieldStyle} />

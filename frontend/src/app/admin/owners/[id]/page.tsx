@@ -235,7 +235,7 @@ export default function OwnerProfilePage() {
           <CustomTabPanel value={activeTab} index={0}>
              {/* Personal Details Content */}
              <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h6" sx={{ color: 'white', mb: 3, fontWeight: 800 }}>Account Information</Typography>
                 <Stack spacing={3}>
                   <Box>
