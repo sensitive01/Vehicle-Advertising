@@ -93,7 +93,7 @@ export default function AdminDashboard() {
 
       <Grid container spacing={3} sx={{ mb: 6 }}>
         {statItems.map((item, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }} key={index}>
             <Card sx={{ 
               bgcolor: '#121212', 
               p: 3, 
@@ -122,7 +122,7 @@ export default function AdminDashboard() {
       </Grid>
 
       <Grid container spacing={4}>
-        <Grid item xs={12} lg={8}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <Card sx={{ bgcolor: '#121212', border: '1px solid #222', borderRadius: 1.5, overflow: 'hidden' }}>
             <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
               <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} lg={4}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           <Card sx={{ bgcolor: '#121212', p: 3, border: '1px solid #222', borderRadius: 1.5 }}>
             <Typography variant="h6" sx={{ color: 'white', mb: 3, fontWeight: 'bold' }}>
               System Health

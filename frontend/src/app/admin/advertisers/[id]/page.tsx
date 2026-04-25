@@ -16,6 +16,7 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import PersonIcon from '@mui/icons-material/Person';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -147,7 +148,7 @@ export default function AdvertiserProfilePage() {
           {/* Tab 0: Personal Details */}
           <CustomTabPanel value={activeTab} index={0}>
             <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h6" sx={{ color: 'white', mb: 3, fontWeight: 800 }}>Account Profile</Typography>
                 <Stack spacing={3}>
                   <Box>
@@ -164,16 +165,16 @@ export default function AdvertiserProfilePage() {
                   </Box>
                 </Stack>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Typography variant="h6" sx={{ color: 'white', mb: 3, fontWeight: 800 }}>Engagement Summary</Typography>
                 <Grid container spacing={2}>
-                   <Grid item xs={6}>
+                   <Grid size={{ xs: 6 }}>
                       <Card sx={{ p: 3, bgcolor: '#000', border: '1px solid #222', textAlign: 'center' }}>
                          <Typography variant="h4" sx={{ color: '#FACC15', fontWeight: 900 }}>{campaigns.length}</Typography>
                          <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 700 }}>TOTAL CAMPAIGNS</Typography>
                       </Card>
                    </Grid>
-                   <Grid item xs={6}>
+                   <Grid size={{ xs: 6 }}>
                       <Card sx={{ p: 3, bgcolor: '#000', border: '1px solid #222', textAlign: 'center' }}>
                          <Typography variant="h4" sx={{ color: '#4ADE80', fontWeight: 900 }}>{campaigns.filter(c => c.status === 'ACTIVE').length}</Typography>
                          <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 700 }}>ACTIVE NOW</Typography>
@@ -255,6 +256,3 @@ export default function AdvertiserProfilePage() {
     </Box>
   );
 }
-
-// Icons for Tabs
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';

@@ -194,27 +194,27 @@ export default function VehicleAdsPage() {
                <Box>
                   <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 3, textTransform: 'uppercase' }}>General Specifications</Typography>
                   <Grid container spacing={3}>
-                     <Grid item xs={6} md={4}>
+                     <Grid size={{ xs: 6, md: 4 }}>
                         <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, display: 'block' }}>BRAND</Typography>
                         <Typography sx={{ color: '#FACC15', fontWeight: 700 }}>{campaign.brandName}</Typography>
                      </Grid>
-                     <Grid item xs={6} md={4}>
+                     <Grid size={{ xs: 6, md: 4 }}>
                         <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, display: 'block' }}>CATEGORY</Typography>
                         <Typography sx={{ color: 'white', fontWeight: 700 }}>{campaign.businessCategory}</Typography>
                      </Grid>
-                     <Grid item xs={6} md={4}>
+                     <Grid size={{ xs: 6, md: 4 }}>
                         <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, display: 'block' }}>DURATION</Typography>
                         <Typography sx={{ color: 'white', fontWeight: 700 }}>{campaign.duration}</Typography>
                      </Grid>
-                     <Grid item xs={6} md={4}>
+                     <Grid size={{ xs: 6, md: 4 }}>
                         <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, display: 'block' }}>OPERATING LOCATION</Typography>
                         <Typography sx={{ color: 'white', fontWeight: 700 }}>{campaign.operatingLocation}</Typography>
                      </Grid>
-                     <Grid item xs={6} md={4}>
+                     <Grid size={{ xs: 6, md: 4 }}>
                         <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, display: 'block' }}>TARGET RADIUS</Typography>
                         <Typography sx={{ color: 'white', fontWeight: 700 }}>{campaign.averageRunningLocation?.radius || 0} KM</Typography>
                      </Grid>
-                     <Grid item xs={6} md={4}>
+                     <Grid size={{ xs: 6, md: 4 }}>
                         <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, display: 'block' }}>PIN CODE</Typography>
                         <Typography sx={{ color: 'white', fontWeight: 700 }}>{campaign.averageRunningLocation?.pin}</Typography>
                      </Grid>
@@ -233,7 +233,7 @@ export default function VehicleAdsPage() {
                   
                   <Grid container spacing={2}>
                     {campaign.creatives?.map((c: any, idx: number) => (
-                      <Grid item key={idx} xs={12} sm={6}>
+                      <Grid key={idx} size={{ xs: 12, sm: 6 }}>
                         <Paper sx={{ p: 2, bgcolor: '#000', border: '1px solid #333' }}>
                           <Box component="img" src={c.url} sx={{ width: '100%', height: 160, objectFit: 'contain', mb: 1.5 }} />
                           <Typography variant="caption" sx={{ color: '#FACC15', fontWeight: 800, display: 'block', textAlign: 'center', textTransform: 'uppercase' }}>{c.placement}</Typography>

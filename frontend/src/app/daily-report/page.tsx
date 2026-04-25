@@ -165,7 +165,7 @@ export default function DailyReportPage() {
 
         <Grid container spacing={4}>
           {/* Submission Form */}
-          <Grid item xs={12} lg={5}>
+          <Grid size={{ xs: 12, lg: 5 }}>
             <Card sx={cardStyle}>
                <Stack spacing={3}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
@@ -178,10 +178,10 @@ export default function DailyReportPage() {
                   </TextField>
 
                   <Grid container spacing={2}>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <TextField fullWidth type="number" label="Opening KM" value={formData.openingKm} onChange={(e) => setFormData({...formData, openingKm: Number(e.target.value)})} sx={fieldStyle} />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <TextField fullWidth type="number" label="Closing KM" value={formData.closingKm} onChange={(e) => setFormData({...formData, closingKm: Number(e.target.value)})} sx={fieldStyle} />
                     </Grid>
                   </Grid>
@@ -219,7 +219,7 @@ export default function DailyReportPage() {
           </Grid>
 
           {/* Recent History */}
-          <Grid item xs={12} lg={7}>
+          <Grid size={{ xs: 12, lg: 7 }}>
             <Card sx={{ ...cardStyle, p: 0, overflow: 'hidden' }}>
               <Box sx={{ p: 3, bgcolor: '#1A1A1A', display: 'flex', alignItems: 'center', gap: 1.5 }}>
                  <HistoryIcon sx={{ color: '#FACC15' }} />

@@ -111,13 +111,13 @@ export default function FleetDashboard() {
 
         {/* Consistent Stats Row */}
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <StatBox title="Registered Units" value={stats.totalVehicles} icon={<DirectionsCarIcon />} color="#FACC15" />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <StatBox title="Active Ads" value={stats.activeCampaigns} icon={<CampaignIcon />} color="#3B82F6" />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <StatBox title="Est. Income" value={`₹${stats.totalEarnings.toLocaleString()}`} icon={<AccountBalanceWalletIcon />} color="#10B981" />
           </Grid>
         </Grid>

@@ -361,7 +361,7 @@ export default function OwnerProfilePage() {
         >
           <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>General Information</Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 label="Registration Number" 
                 fullWidth 
@@ -370,7 +370,7 @@ export default function OwnerProfilePage() {
                 sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000' } }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth>
                 <InputLabel sx={{ color: 'zinc.500' }}>Registration Type</InputLabel>
                 <Select
@@ -384,7 +384,7 @@ export default function OwnerProfilePage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 label="Brand / Make" 
                 fullWidth 
@@ -393,7 +393,7 @@ export default function OwnerProfilePage() {
                 sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000' } }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 label="Vehicle Model" 
                 fullWidth 
@@ -402,7 +402,7 @@ export default function OwnerProfilePage() {
                 sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000' } }}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField 
                 label="Variant" 
                 fullWidth 
@@ -411,7 +411,7 @@ export default function OwnerProfilePage() {
                 sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000' } }}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField 
                 label="Color" 
                 fullWidth 
@@ -420,7 +420,7 @@ export default function OwnerProfilePage() {
                 sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000' } }}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth>
                 <InputLabel sx={{ color: 'zinc.500' }}>Fuel Type</InputLabel>
                 <Select
@@ -441,7 +441,7 @@ export default function OwnerProfilePage() {
 
           <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Classification & Usage</Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth>
                 <InputLabel sx={{ color: 'zinc.500' }}>Category</InputLabel>
                 <Select
@@ -457,7 +457,7 @@ export default function OwnerProfilePage() {
             </Grid>
             
             {editData.vehicleCategory === 'Passenger' && (
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth>
                   <InputLabel sx={{ color: 'zinc.500' }}>Passenger Subtype</InputLabel>
                   <Select
@@ -477,7 +477,7 @@ export default function OwnerProfilePage() {
             )}
 
             {editData.passengerSubtype === 'Car/Jeep' && editData.vehicleCategory === 'Passenger' && (
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth>
                   <InputLabel sx={{ color: 'zinc.500' }}>Car Style</InputLabel>
                   <Select
@@ -496,7 +496,7 @@ export default function OwnerProfilePage() {
             )}
 
             {editData.vehicleCategory === 'Goods' && (
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth>
                   <InputLabel sx={{ color: 'zinc.500' }}>Goods Subtype</InputLabel>
                   <Select
@@ -514,7 +514,7 @@ export default function OwnerProfilePage() {
               </Grid>
             )}
 
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField 
                 label="Seating Capacity" 
                 fullWidth 
@@ -524,7 +524,7 @@ export default function OwnerProfilePage() {
                 sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000' } }}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth>
                 <InputLabel sx={{ color: 'zinc.500' }}>Travel Routine</InputLabel>
                 <Select
@@ -541,7 +541,7 @@ export default function OwnerProfilePage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField 
                 label="Average KM per Day" 
                 fullWidth 
@@ -583,7 +583,7 @@ export default function OwnerProfilePage() {
 
           <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Verification & Maintenance</Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
                <FormControl fullWidth>
                 <InputLabel sx={{ color: 'zinc.500' }}>Verification Status</InputLabel>
                 <Select
@@ -601,7 +601,7 @@ export default function OwnerProfilePage() {
               </FormControl>
             </Grid>
             {editData.status === 'Under Service' && (
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField 
                   label="Service Reason" 
                   fullWidth 
@@ -615,7 +615,7 @@ export default function OwnerProfilePage() {
 
           <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Owner Documentation Info</Typography>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 label="Owner Name (on RC)" 
                 fullWidth 
@@ -624,7 +624,7 @@ export default function OwnerProfilePage() {
                 sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000' } }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 label="Owner Contact" 
                 fullWidth 
