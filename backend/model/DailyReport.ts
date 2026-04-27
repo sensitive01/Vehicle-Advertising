@@ -15,6 +15,8 @@ export interface IDailyReport extends Document {
   damageReported: boolean;
   damageProof?: string;
   damageReason?: string;
+  payoutStatus: 'Pending' | 'Paid';
+  payoutAmount: number;
   createdAt: Date;
 }
 
@@ -26,13 +28,15 @@ const DailyReportSchema: Schema = new Schema({
   openingKm: { type: Number, required: true },
   openingProof: { type: String },
   closingKm: { type: Number, required: true },
-  closingProof: { type: String, required: true },
+  closingProof: { type: String },
   kmDriven: { type: Number, required: true },
   reasonIfNotRunning: { type: String },
   drivenBy: { type: String, required: true },
   damageReported: { type: Boolean, default: false },
   damageProof: { type: String },
   damageReason: { type: String },
+  payoutStatus: { type: String, enum: ['Pending', 'Paid'], default: 'Pending' },
+  payoutAmount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }
 });
 

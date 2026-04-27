@@ -44,7 +44,7 @@ export default function FleetCompleteProfile() {
     if (!query || query.length < 3) return;
     setLoadingLocations(true);
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/search-location?q=${encodeURIComponent(query)}`);
       const data = await res.json();
       setLocationOptions(data.map((item: any) => ({
         label: item.display_name,

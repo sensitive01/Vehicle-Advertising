@@ -1,5 +1,12 @@
 'use client';
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamic import for Map component to avoid SSR issues with Leaflet
+const MapPicker = dynamic(() => import('../../../components/MapPicker'), { 
+  ssr: false,
+  loading: () => <Box sx={{ height: 250, bgcolor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={20} /></Box>
+});
 import { 
   Box, Container, Typography, Card, TextField, MenuItem, 
   Button, Divider, FormGroup, FormControlLabel, Checkbox, 
@@ -39,7 +46,8 @@ export default function AdvertiserCompleteProfile() {
     serviceCharges: '' as string | number, 
     gst: 18 as string | number,
     adImages: [] as string[],
-    adDimensions: { length: '', width: '' }
+    adDimensions: { length: '', width: '' },
+    startDate: new Date().toISOString().split('T')[0]
   });
 
   const handleToggleAdOption = (opt: string) => {
@@ -80,7 +88,7 @@ export default function AdvertiserCompleteProfile() {
     if (!query || query.length < 3) return;
     setLoadingLocations(true);
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/search-location?q=${encodeURIComponent(query)}`);
       const data = await res.json();
       setLocationOptions(data.map((item: any) => ({
         label: item.display_name,
@@ -93,6 +101,23 @@ export default function AdvertiserCompleteProfile() {
     } finally {
       setLoadingLocations(false);
     }
+  };
+
+  const reverseGeocode = async (lat: number, lon: number) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/reverse-geocode?lat=${lat}&lon=${lon}`);
+      const data = await res.json();
+      if (data && data.display_name) {
+        setFormData(prev => ({ ...prev, operatingLocation: data.display_name }));
+        setSelectedCoords({ lat: String(lat), lon: String(lon) });
+      }
+    } catch (err) {
+      console.error('Reverse geocode failed:', err);
+    }
+  };
+
+  const handleMapLocationSelect = (lat: number, lng: number) => {
+    reverseGeocode(lat, lng);
   };
 
   const handleSubmit = async () => {
@@ -231,14 +256,10 @@ export default function AdvertiserCompleteProfile() {
                   <Grid size={{ xs: 12 }}>
                       <Box sx={{ width: '100%', height: 250, borderRadius: 2, overflow: 'hidden', border: '1px solid #333', bgcolor: '#000', position: 'relative' }}>
                          {selectedCoords ? (
-                           <iframe 
-                            width="100%" 
-                            height="100%" 
-                            frameBorder="0" 
-                            scrolling="no" 
-                            marginHeight={0} 
-                            marginWidth={0} 
-                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(selectedCoords.lon)-0.05}%2C${Number(selectedCoords.lat)-0.05}%2C${Number(selectedCoords.lon)+0.05}%2C${Number(selectedCoords.lat)+0.05}&layer=mapnik&marker=${selectedCoords.lat}%2C${selectedCoords.lon}`}
+                           <MapPicker 
+                             lat={selectedCoords ? Number(selectedCoords.lat) : 0} 
+                             lng={selectedCoords ? Number(selectedCoords.lon) : 0} 
+                             onLocationSelect={handleMapLocationSelect}
                            />
                          ) : (
                            <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'zinc.600', flexDirection: 'column', gap: 1 }}>
@@ -270,10 +291,14 @@ export default function AdvertiserCompleteProfile() {
                             <MenuItem value="Bus">Public Transport (Buses)</MenuItem>
                          </TextField>
                       </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                         <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>NUMBER OF VEHICLES NEEDED</Typography>
-                         <TextField fullWidth type="number" placeholder="Enter quantity" value={formData.numberOfVehicles} onChange={(e) => handleNumChange('numberOfVehicles', e.target.value)} sx={fieldStyle} />
-                      </Grid>
+                       <Grid size={{ xs: 12, md: 4 }}>
+                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>QTY NEEDED</Typography>
+                          <TextField fullWidth type="number" placeholder="Enter quantity" value={formData.numberOfVehicles} onChange={(e) => handleNumChange('numberOfVehicles', e.target.value)} sx={fieldStyle} />
+                       </Grid>
+                       <Grid size={{ xs: 12, md: 4 }}>
+                          <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>START DATE</Typography>
+                          <TextField fullWidth type="date" value={formData.startDate} onChange={(e) => setFormData({...formData, startDate: e.target.value})} sx={fieldStyle} />
+                       </Grid>
                    </Grid>
 
                    <Box>

@@ -37,6 +37,7 @@ export interface IVehicle extends Document {
   };
   
   adOptions: string[]; // Left, Right doors, front bonnet, Rear door, Roof carrier handles
+  adOptionImages?: { [key: string]: string };
   status: 'Pending Verification' | 'Approved' | 'Rejected' | 'Under Service' | 'Not Operational';
   isBlocked?: boolean; // Managed by admin
   serviceReason?: string;
@@ -84,6 +85,7 @@ const VehicleSchema: Schema = new Schema({
   },
   
   adOptions: { type: [String], default: [] },
+  adOptionImages: { type: Map, of: String, default: {} },
   status: { type: String, default: 'Pending Verification', enum: ['Pending Verification', 'Approved', 'Rejected', 'Under Service', 'Not Operational'] },
   isBlocked: { type: Boolean, default: false },
   serviceReason: { type: String },

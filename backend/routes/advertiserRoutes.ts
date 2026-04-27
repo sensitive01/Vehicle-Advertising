@@ -39,7 +39,11 @@ router.get('/my-campaigns', verifyToken, async (req: any, res: any) => {
 
 router.get('/all', verifyToken, async (req: any, res: any) => {
   try {
-    const profiles = await AdvertiserProfile.find().populate('userId', 'fullName email mobileNumber');
+    const profiles = await AdvertiserProfile.find().populate({
+      path: 'userId',
+      model: 'User',
+      select: 'fullName email mobileNumber'
+    });
     res.status(200).json({ success: true, data: profiles });
   } catch (err) {
     console.error(err);
@@ -63,7 +67,12 @@ router.get('/user/:userId', verifyToken, async (req: any, res: any) => {
 router.patch('/status/:id', verifyToken, async (req: any, res: any) => {
   try {
     const { status } = req.body;
-    const profile = await AdvertiserProfile.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    const profile = await AdvertiserProfile.findByIdAndUpdate(req.params.id, { status }, { new: true })
+      .populate({
+        path: 'userId',
+        model: 'User',
+        select: 'fullName email mobileNumber'
+      });
     res.status(200).json({ success: true, data: profile });
   } catch (err) {
     console.error(err);
@@ -105,6 +114,43 @@ router.post('/assign-vehicles', verifyToken, async (req: any, res: any) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error assigning vehicles' });
+  }
+});
+
+router.patch('/quote/:id', verifyToken, async (req: any, res: any) => {
+  try {
+    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+    const updateData = req.body;
+    const profile = await AdvertiserProfile.findByIdAndUpdate(req.params.id, updateData, { new: true })
+      .populate({
+        path: 'userId',
+        model: 'User',
+        select: 'fullName email mobileNumber'
+      });
+    res.status(200).json({ success: true, message: 'Quotation updated successfully!', data: profile });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error updating quotation' });
+  }
+});
+
+router.patch('/update/:id', verifyToken, async (req: any, res: any) => {
+  try {
+    const campaign = await AdvertiserProfile.findById(req.params.id);
+    if (!campaign) return res.status(404).json({ success: false, message: 'Campaign not found' });
+    
+    // Check ownership
+    if (campaign.userId.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const updated = await AdvertiserProfile.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json({ success: true, data: updated });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error updating campaign' });
   }
 });
 

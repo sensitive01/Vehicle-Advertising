@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { 
   Container, Typography, Card, Grid, Box, Chip, Divider, 
-  Avatar, CircularProgress, Alert, Button
+  Avatar, CircularProgress, Alert, Button,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 } from '@mui/material';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -13,6 +14,8 @@ export default function MyAdvertisementsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
 
   useEffect(() => {
     fetchMyCampaigns();
@@ -82,97 +85,82 @@ export default function MyAdvertisementsPage() {
            </Typography>
         </Card>
       ) : (
-        <Grid container spacing={4}>
-          {campaigns.map((camp) => (
-            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={camp._id}>
-              <Card sx={{ 
-                bgcolor: '#121212', 
-                border: '1px solid #222', 
-                borderRadius: 5, 
-                overflow: 'hidden',
-                transition: 'transform 0.3s ease',
-                '&:hover': { transform: 'translateY(-8px)', borderColor: '#FACC15' }
-              }}>
-                <Box sx={{ p: 4 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                       <Avatar sx={{ bgcolor: 'rgba(250, 204, 21, 0.1)', color: '#FACC15', width: 48, height: 48 }}>
-                          <CampaignIcon />
-                       </Avatar>
-                       <Box>
-                          <Typography variant="h6" sx={{ color: 'white', fontWeight: 900 }}>{camp.brandName}</Typography>
-                          <Typography variant="caption" sx={{ color: 'zinc.500', textTransform: 'uppercase', letterSpacing: 1 }}>{camp.productType || 'Advertisement'}</Typography>
-                       </Box>
-                    </Box>
-                    <Chip 
-                       label={camp.status === 'ACCEPTED' ? 'ACTIVE' : 'PENDING'} 
-                       size="small"
-                       sx={{ 
-                         bgcolor: camp.status === 'ACCEPTED' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(250, 204, 21, 0.1)', 
-                         color: camp.status === 'ACCEPTED' ? '#4ADE80' : '#FACC15',
-                         fontWeight: 900,
-                         fontSize: '0.65rem'
-                       }} 
-                    />
-                  </Box>
-
-                  <Grid container spacing={2} sx={{ mb: 3 }}>
-                     <Grid size={{ xs: 6 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                           <DirectionsCarIcon sx={{ fontSize: 18, color: 'zinc.500' }} />
-                           <Typography variant="body2" sx={{ color: 'white', fontWeight: 700 }}>{camp.vehicles.length} Vehicles</Typography>
-                        </Box>
-                     </Grid>
-                     <Grid size={{ xs: 6 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                           <PaidIcon sx={{ fontSize: 18, color: 'zinc.500' }} />
-                           <Typography variant="body2" sx={{ color: 'white', fontWeight: 700 }}>₹{camp.budget || 'N/A'}</Typography>
-                        </Box>
-                     </Grid>
-                     <Grid size={{ xs: 12 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                           <CalendarMonthIcon sx={{ fontSize: 18, color: 'zinc.500' }} />
-                           <Typography variant="body2" sx={{ color: 'zinc.400' }}>Duration: {camp.campaignDuration || 'TBD'}</Typography>
-                        </Box>
-                     </Grid>
-                  </Grid>
-
-                  <Divider sx={{ borderColor: '#222', mb: 3 }} />
-                  
-                  <Box sx={{ mb: 3 }}>
-                     <Typography variant="caption" sx={{ color: 'zinc.600', textTransform: 'uppercase', fontWeight: 900, mb: 1, display: 'block' }}>Registered Fleet</Typography>
-                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                        {camp.vehicles.map((v: any) => (
-                           <Chip 
-                              key={v._id} 
-                              label={v.registrationNumber} 
-                              size="small" 
-                              variant="outlined" 
-                              sx={{ color: 'zinc.400', borderColor: '#333', fontSize: '0.6rem' }} 
-                           />
-                        ))}
-                     </Box>
-                  </Box>
-
-                  <Button 
-                    fullWidth 
-                    variant="outlined" 
-                    sx={{ 
-                      borderColor: '#333', 
-                      color: 'white', 
-                      borderRadius: 1, 
-                      fontWeight: 800,
-                      '&:hover': { bgcolor: '#1A1A1A', borderColor: '#FACC15' }
-                    }}
-                    onClick={() => window.location.href = `/fleet/vehicles`}
-                  >
-                    Manage Vehicles
-                  </Button>
-                </Box>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <Card sx={{ bgcolor: '#121212', border: '1px solid #222', borderRadius: 2, overflow: 'hidden' }}>
+           <TableContainer>
+              <Table>
+                 <TableHead sx={{ bgcolor: '#1A1A1A' }}>
+                    <TableRow>
+                       <TableCell sx={{ color: '#FACC15', fontWeight: 900, textTransform: 'uppercase', fontSize: '0.75rem' }}>Brand / Campaign</TableCell>
+                       <TableCell sx={{ color: '#FACC15', fontWeight: 900, textTransform: 'uppercase', fontSize: '0.75rem' }}>Assigned Vehicles</TableCell>
+                       <TableCell sx={{ color: '#FACC15', fontWeight: 900, textTransform: 'uppercase', fontSize: '0.75rem' }}>Est. Monthly Income</TableCell>
+                       <TableCell sx={{ color: '#FACC15', fontWeight: 900, textTransform: 'uppercase', fontSize: '0.75rem' }}>Duration</TableCell>
+                       <TableCell sx={{ color: '#FACC15', fontWeight: 900, textTransform: 'uppercase', fontSize: '0.75rem' }}>Status</TableCell>
+                       <TableCell sx={{ color: '#FACC15', fontWeight: 900, textTransform: 'uppercase', fontSize: '0.75rem' }} align="center">Actions</TableCell>
+                    </TableRow>
+                 </TableHead>
+                 <TableBody>
+                    {campaigns.map((camp) => (
+                       <TableRow key={camp._id} sx={{ '&:hover': { bgcolor: '#161616' } }}>
+                          <TableCell>
+                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Avatar sx={{ bgcolor: 'rgba(250, 204, 21, 0.1)', color: '#FACC15', width: 40, height: 40, fontSize: '1rem', fontWeight: 900 }}>
+                                   {camp.brandName?.[0]}
+                                </Avatar>
+                                <Box>
+                                   <Typography sx={{ color: 'white', fontWeight: 800 }}>{camp.brandName}</Typography>
+                                   <Typography variant="caption" sx={{ color: 'zinc.600' }}>{camp.adId || 'CP------'}</Typography>
+                                </Box>
+                             </Box>
+                          </TableCell>
+                          <TableCell>
+                             <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', maxWidth: 200 }}>
+                                {camp.vehicles.map((v: any) => (
+                                   <Chip 
+                                      key={v._id} 
+                                      label={v.registrationNumber} 
+                                      size="small" 
+                                      sx={{ height: 20, fontSize: '0.65rem', bgcolor: '#000', color: 'zinc.400', border: '1px solid #222' }} 
+                                   />
+                                ))}
+                             </Box>
+                          </TableCell>
+                          <TableCell>
+                             <Typography sx={{ color: '#4ADE80', fontWeight: 900 }}>₹ {(camp.rentalChargesPerKm * camp.averageKm * camp.vehicles.length || 0).toLocaleString('en-IN')}</Typography>
+                             <Typography variant="caption" sx={{ color: 'zinc.600', fontSize: '0.6rem' }}>₹{camp.rentalChargesPerKm}/KM per vehicle</Typography>
+                          </TableCell>
+                          <TableCell>
+                             <Typography sx={{ color: 'zinc.300', fontWeight: 700 }}>{camp.duration}</Typography>
+                          </TableCell>
+                          <TableCell>
+                             <Chip 
+                                label={camp.status === 'ACCEPTED' ? 'ACTIVE' : 'PENDING'} 
+                                size="small"
+                                sx={{ 
+                                   bgcolor: camp.status === 'ACCEPTED' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(250, 204, 21, 0.1)', 
+                                   color: camp.status === 'ACCEPTED' ? '#4ADE80' : '#FACC15',
+                                   fontWeight: 900, fontSize: '0.65rem'
+                                }} 
+                             />
+                          </TableCell>
+                          <TableCell align="center">
+                             <Button 
+                                size="small"
+                                variant="outlined"
+                                onClick={() => window.location.href = '/fleet/vehicles'}
+                                sx={{ 
+                                   borderColor: '#333', color: 'zinc.400', fontWeight: 800, fontSize: '0.7rem',
+                                   '&:hover': { borderColor: '#FACC15', color: 'white', bgcolor: 'transparent' }
+                                }}
+                             >
+                                Manage Fleet
+                             </Button>
+                          </TableCell>
+                       </TableRow>
+                    ))}
+                 </TableBody>
+              </Table>
+           </TableContainer>
+        </Card>
       )}
     </Container>
   );

@@ -19,10 +19,11 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 export default function FleetDashboard() {
   const [fleet, setFleet] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [transactions, setTransactions] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalVehicles: 0,
-    activeCampaigns: 0,
-    totalEarnings: 0
+    activeCampaigns: 0
   });
 
   useEffect(() => {
@@ -35,26 +36,39 @@ export default function FleetDashboard() {
       const token = localStorage.getItem('token');
       if (!token) return;
       const headers = { Authorization: `Bearer ${token}` };
-      const fleetRes = await axios.get(`${API_URL}/api/fleet/myfleet`, { headers });
+      
+      // Fetch Fleet, User Profile (for wallet), and Transactions
+      const [fleetRes, userRes] = await Promise.all([
+        axios.get(`${API_URL}/api/fleet/myfleet`, { headers }),
+        axios.get(`${API_URL}/api/auth/me`, { headers })
+      ]);
+
       const fleetData = fleetRes.data.data || [];
+      const userData = userRes.data.data || {};
+      
       setFleet(fleetData);
 
+      // Fetch Transactions
+      const txRes = await axios.get(`${API_URL}/api/transactions/user/${userData._id}`, { headers });
+      const txData = txRes.data.data || [];
+      setTransactions(txData);
+
+      // Fallback: If wallet balance is 0, calculate from transactions
+      let balance = userData.walletBalance || 0;
+      if (balance === 0 && txData.length > 0) {
+        balance = txData.filter((t: any) => t.status === 'Completed' && t.type === 'Credit')
+                        .reduce((sum: number, t: any) => sum + t.amount, 0);
+      }
+      setWalletBalance(balance);
+
       let activeCount = 0;
-      let earnings = 0;
       fleetData.forEach((v: any) => {
-        if (v.activeCampaignId) {
-          activeCount++;
-          const campaign = v.activeCampaignId;
-          if (typeof campaign === 'object') {
-             earnings += (Number(campaign.rentalChargesPerKm || 0) * Number(campaign.averageKm || 0));
-          }
-        }
+        if (v.activeCampaignId) activeCount++;
       });
 
       setStats({
         totalVehicles: fleetData.length,
-        activeCampaigns: activeCount,
-        totalEarnings: earnings
+        activeCampaigns: activeCount
       });
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -97,7 +111,6 @@ export default function FleetDashboard() {
       
       <Stack spacing={4}>
         
-        {/* Consistent Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Stack direction="row" spacing={2} alignItems="center">
             <Typography variant="h4" sx={{ color: 'white', fontWeight: 900, textTransform: 'uppercase' }}>
@@ -109,7 +122,6 @@ export default function FleetDashboard() {
           </IconButton>
         </Box>
 
-        {/* Consistent Stats Row */}
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 4 }}>
             <StatBox title="Registered Units" value={stats.totalVehicles} icon={<DirectionsCarIcon />} color="#FACC15" />
@@ -118,78 +130,88 @@ export default function FleetDashboard() {
             <StatBox title="Active Ads" value={stats.activeCampaigns} icon={<CampaignIcon />} color="#3B82F6" />
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
-            <StatBox title="Est. Income" value={`₹${stats.totalEarnings.toLocaleString()}`} icon={<AccountBalanceWalletIcon />} color="#10B981" />
+            <StatBox title="Wallet Balance" value={`₹${walletBalance.toLocaleString()}`} icon={<AccountBalanceWalletIcon />} color="#10B981" />
           </Grid>
         </Grid>
 
-        {/* Consistent Table Styling */}
-        <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
-          <Box sx={{ p: 2.5, bgcolor: '#121212', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase' }}>Vehicle Status Matrix</Typography>
-            <Typography sx={{ color: '#10B981', fontSize: '0.7rem', fontWeight: 800 }}>LIVE SYNC ENABLED</Typography>
-          </Box>
-          
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ bgcolor: '#1A1A1A' }}>
-                <TableRow>
-                  <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold', fontSize: '0.85rem' }}>Photos</TableCell>
-                  <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold', fontSize: '0.85rem' }}>Vehicle Details</TableCell>
-                  <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold', fontSize: '0.85rem' }}>Verification</TableCell>
-                  <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold', fontSize: '0.85rem' }}>Active Campaign</TableCell>
-                  <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold', fontSize: '0.85rem' }} align="right">Revenue</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {fleet.length > 0 ? (
-                  fleet.map((v) => (
-                    <TableRow key={v._id} sx={{ '&:hover': { bgcolor: '#1A1A1A' } }}>
-                      <TableCell sx={{ borderBottom: '1px solid #222' }}>
-                        <Avatar variant="rounded" src={v.images?.[0]} sx={{ width: 60, height: 40, bgcolor: '#1A1A1A', borderRadius: 1.5, border: '1px solid #333' }} />
-                      </TableCell>
-                      <TableCell sx={{ borderBottom: '1px solid #222' }}>
-                        <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.95rem' }}>{v.registrationNumber}</Typography>
-                        <Typography sx={{ color: '#A1A1AA', fontSize: '0.75rem' }}>{v.make} {v.vehicleModel}</Typography>
-                      </TableCell>
-                      <TableCell sx={{ borderBottom: '1px solid #222' }}>
-                        <Box sx={{ 
-                          px: 1.5, py: 0.5, borderRadius: 1, display: 'inline-block',
-                          bgcolor: v.status === 'Verified' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(250, 204, 21, 0.1)',
-                          color: v.status === 'Verified' ? '#4ADE80' : '#FACC15',
-                          fontSize: '0.7rem', fontWeight: 'bold'
-                        }}>
-                          {v.status || 'Pending'}
-                        </Box>
-                      </TableCell>
-                      <TableCell sx={{ borderBottom: '1px solid #222' }}>
-                        {v.activeCampaignId ? (
-                           <Typography sx={{ color: '#3B82F6', fontWeight: 700, fontSize: '0.85rem' }}>
-                              {typeof v.activeCampaignId === 'object' ? v.activeCampaignId.brandName : 'Active'}
-                           </Typography>
-                        ) : (
-                           <Typography sx={{ color: 'zinc.700', fontSize: '0.8rem', fontWeight: 700 }}>NONE</Typography>
-                        )}
-                      </TableCell>
-                      <TableCell sx={{ borderBottom: '1px solid #222' }} align="right">
-                        <Typography sx={{ color: 'white', fontWeight: 800, fontSize: '0.95rem' }}>
-                          ₹{v.activeCampaignId ? (typeof v.activeCampaignId === 'object' ? (v.activeCampaignId.rentalChargesPerKm * v.activeCampaignId.averageKm).toLocaleString() : '0') : '0'}
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )
-                )) : (
-                  <TableRow>
-                    <TableCell colSpan={5} sx={{ textAlign: 'center', py: 10, color: 'zinc.600' }}>
-                       <Typography sx={{ fontWeight: 700 }}>No vehicles registered yet.</Typography>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Card>
+        <Grid container spacing={4}>
+           <Grid size={{ xs: 12, lg: 8 }}>
+              <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden' }}>
+                <Box sx={{ p: 2.5, bgcolor: '#121212', borderBottom: '1px solid #333' }}>
+                  <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase' }}>Vehicle Matrix</Typography>
+                </Box>
+                
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead sx={{ bgcolor: '#1A1A1A' }}>
+                      <TableRow>
+                        <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Vehicle</TableCell>
+                        <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Status</TableCell>
+                        <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }}>Campaign</TableCell>
+                        <TableCell sx={{ color: '#A1A1AA', fontWeight: 'bold' }} align="right">Monthly Earn</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {fleet.length > 0 ? (
+                        fleet.map((v) => (
+                          <TableRow key={v._id} sx={{ '&:hover': { bgcolor: '#1A1A1A' } }}>
+                            <TableCell sx={{ borderBottom: '1px solid #222' }}>
+                              <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.85rem' }}>{v.registrationNumber}</Typography>
+                              <Typography sx={{ color: '#A1A1AA', fontSize: '0.7rem' }}>{v.make} {v.vehicleModel}</Typography>
+                            </TableCell>
+                            <TableCell sx={{ borderBottom: '1px solid #222' }}>
+                              <Chip label={v.status || 'Pending'} size="small" sx={{ bgcolor: v.status === 'Verified' || v.status === 'Approved' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(250, 204, 21, 0.1)', color: v.status === 'Verified' || v.status === 'Approved' ? '#4ADE80' : '#FACC15', fontSize: '0.65rem', fontWeight: 800 }} />
+                            </TableCell>
+                            <TableCell sx={{ borderBottom: '1px solid #222' }}>
+                              <Typography sx={{ color: '#3B82F6', fontWeight: 700, fontSize: '0.8rem' }}>{v.activeCampaignId?.brandName || 'NONE'}</Typography>
+                            </TableCell>
+                            <TableCell sx={{ borderBottom: '1px solid #222' }} align="right">
+                              <Typography sx={{ color: 'white', fontWeight: 800, fontSize: '0.85rem' }}>₹{(v.activeCampaignId?.rentalChargesPerKm * 300 || 0).toLocaleString()}</Typography>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={4} align="center" sx={{ py: 8, color: 'zinc.600', fontWeight: 700 }}>
+                            No vehicles registered yet.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Card>
+           </Grid>
 
-        {/* Consistent Promo Footer */}
+           <Grid size={{ xs: 12, lg: 4 }}>
+              <Card sx={{ bgcolor: '#121212', border: '1px solid #333', borderRadius: 1.5, overflow: 'hidden', height: '100%' }}>
+                <Box sx={{ p: 2.5, bgcolor: '#121212', borderBottom: '1px solid #333', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                   <TrendingUpIcon sx={{ color: '#10B981' }} />
+                   <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase' }}>Recent Payouts</Typography>
+                </Box>
+                <Box sx={{ p: 0 }}>
+                   {transactions.length > 0 ? (
+                      transactions.slice(0, 5).map((t, idx) => (
+                        <Box key={t._id} sx={{ p: 2, borderBottom: idx !== 4 ? '1px solid #222' : 'none', '&:hover': { bgcolor: '#1A1A1A' } }}>
+                           <Stack direction="row" justifyContent="space-between" alignItems="center">
+                              <Box>
+                                 <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.85rem' }}>₹{t.amount.toLocaleString()}</Typography>
+                                 <Typography variant="caption" sx={{ color: 'zinc.500' }}>ID: {t.transactionId}</Typography>
+                              </Box>
+                              <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 700 }}>{new Date(t.createdAt).toLocaleDateString('en-GB')}</Typography>
+                           </Stack>
+                        </Box>
+                      ))
+                   ) : (
+                      <Box sx={{ p: 10, textAlign: 'center' }}>
+                         <Typography variant="caption" sx={{ color: 'zinc.600' }}>No payouts received yet.</Typography>
+                      </Box>
+                   )}
+                </Box>
+              </Card>
+           </Grid>
+        </Grid>
+
         <Card sx={{ p: 4, bgcolor: '#FACC15', borderRadius: 1.5 }}>
            <Stack direction="row" flexWrap="wrap" justifyContent="space-between" alignItems="center" gap={3}>
               <Box>

@@ -9,6 +9,7 @@ export interface IUser extends Document {
   userId: string;
   isProfileComplete: boolean;
   isBlocked: boolean;
+  walletBalance: number;
   createdAt: Date;
 }
 
@@ -21,6 +22,7 @@ const UserSchema: Schema = new Schema({
   userId: { type: String, unique: true },
   isProfileComplete: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
+  walletBalance: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Box, Typography, Grid, Card, Button, Stack, Chip, Divider, 
-  CircularProgress, IconButton, Tooltip, Paper 
+  CircularProgress, IconButton, Tooltip, Paper, Table, TableBody, 
+  TableCell, TableContainer, TableHead, TableRow 
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CampaignIcon from '@mui/icons-material/Campaign';
@@ -35,9 +36,14 @@ export default function AdvertiserDashboard() {
     finally { setLoading(false); }
   };
 
+  const totalBudget = campaigns.reduce((acc, c) => {
+    if (c.quotedPrice > 0) return acc + c.quotedPrice;
+    return acc + (c.rentalChargesPerKm * c.averageKm * (c.numberOfVehicles || 1));
+  }, 0);
+
   const stats = [
     { label: 'Active Campaigns', value: campaigns.length, icon: <CampaignIcon sx={{ color: '#FACC15' }} />, color: '#FACC15' },
-    { label: 'Total Budget (Est)', value: `₹ ${campaigns.reduce((acc, c) => acc + (c.rentalChargesPerKm * c.averageKm || 0), 0).toLocaleString('en-IN')}`, icon: <TrendingUpIcon sx={{ color: '#4ADE80' }} />, color: '#4ADE80' },
+    { label: 'Total Budget (Est)', value: `₹ ${totalBudget.toLocaleString('en-IN')}`, icon: <TrendingUpIcon sx={{ color: '#4ADE80' }} />, color: '#4ADE80' },
     { label: 'Partner Vehicles', value: campaigns.reduce((acc, c) => acc + c.numberOfVehicles, 0), icon: <DirectionsCarIcon sx={{ color: '#3B82F6' }} />, color: '#3B82F6' },
   ];
 
@@ -82,56 +88,68 @@ export default function AdvertiserDashboard() {
          <Link href="/advertiser/my-advertisements" style={{ textDecoration: 'none', color: '#FACC15', fontWeight: 700, fontSize: '0.9rem' }}>VIEW ALL →</Link>
       </Box>
 
-      <Card sx={{ bgcolor: '#121212', border: '1px solid #222', borderRadius: 1.5, overflow: 'hidden' }}>
-         {loading ? (
-           <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}><CircularProgress color="warning" /></Box>
-         ) : campaigns.length === 0 ? (
-           <Box sx={{ py: 10, textAlign: 'center' }}>
-              <CampaignIcon sx={{ fontSize: 60, color: 'zinc.800', mb: 2 }} />
-              <Typography variant="h6" sx={{ color: 'zinc.600' }}>No advertising requests found.</Typography>
-              <Link href="/advertiser/complete-profile" style={{ textDecoration: 'none' }}>
-                <Button sx={{ mt: 2, color: '#FACC15', fontWeight: 800 }}>Create your first campaign request</Button>
-              </Link>
-           </Box>
-         ) : (
-           <Box>
-              {campaigns.slice(0, 5).map((c, i) => (
-                <Box key={c._id}>
-                   <Box sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', '&:hover': { bgcolor: '#161616' }, transition: '0.3s' }}>
-                      <Stack direction="row" spacing={3} alignItems="center">
-                         <Box sx={{ p: 2, bgcolor: 'rgba(250, 204, 21, 0.1)', borderRadius: 1, border: '1px solid rgba(250, 204, 21, 0.1)' }}>
-                            <CampaignIcon sx={{ color: '#FACC15' }} />
-                         </Box>
-                         <Box>
-                            <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>{c.brandName}</Typography>
-                            <Stack direction="row" spacing={2} sx={{ mt: 0.5 }}>
-                               <Typography variant="caption" sx={{ color: 'zinc.500', display: 'flex', alignItems: 'center', gap: 0.5 }}><GpsFixedIcon sx={{ fontSize: 14 }} /> {c.operatingLocation}</Typography>
-                               <Typography variant="caption" sx={{ color: 'zinc.500', display: 'flex', alignItems: 'center', gap: 0.5 }}><DirectionsCarIcon sx={{ fontSize: 14 }} /> {c.targetVehicleType} Fleet</Typography>
-                            </Stack>
-                         </Box>
-                      </Stack>
-                      
-                      <Stack direction="row" spacing={6} alignItems="center">
-                         <Box sx={{ textAlign: 'right' }}>
-                            <Typography variant="body2" sx={{ color: 'zinc.500', fontWeight: 700 }}>MONTHLY BUDGET</Typography>
-                            <Typography variant="h6" sx={{ color: '#4ADE80', fontWeight: 900 }}>₹ {(c.rentalChargesPerKm * c.averageKm || 0).toLocaleString('en-IN')}</Typography>
-                         </Box>
-                         <Box>
-                            <Chip label="UNDER REVIEW" size="small" sx={{ bgcolor: 'rgba(250, 204, 21, 0.1)', color: '#FACC15', fontWeight: 800, borderRadius: 1.5 }} />
-                         </Box>
-                         <Tooltip title="View Details">
-                            <IconButton sx={{ color: 'zinc.600', '&:hover': { color: '#FACC15', bgcolor: 'rgba(250, 204, 21, 0.1)' } }}>
-                               <VisibilityIcon />
-                            </IconButton>
-                         </Tooltip>
-                      </Stack>
-                   </Box>
-                   {i < campaigns.length - 1 && <Divider sx={{ borderColor: '#222' }} />}
-                </Box>
-              ))}
-           </Box>
-         )}
-      </Card>
+      <TableContainer component={Paper} sx={{ bgcolor: '#121212', border: '1px solid #222', borderRadius: 1.5, overflow: 'hidden', boxShadow: 'none' }}>
+         <Table size="small">
+            <TableHead sx={{ bgcolor: '#1A1A1A' }}>
+               <TableRow>
+                  <TableCell sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.75rem', py: 2 }}>Campaign</TableCell>
+                  <TableCell sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.75rem' }}>Location</TableCell>
+                  <TableCell sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.75rem' }}>Fleet</TableCell>
+                  <TableCell sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.75rem' }} align="right">Budget</TableCell>
+                  <TableCell sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.75rem' }} align="center">Status</TableCell>
+                  <TableCell sx={{ color: 'zinc.500', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.75rem' }} align="right">Action</TableCell>
+               </TableRow>
+            </TableHead>
+            <TableBody>
+               {loading ? (
+                 <TableRow><TableCell colSpan={6} align="center" sx={{ py: 8 }}><CircularProgress color="warning" /></TableCell></TableRow>
+               ) : campaigns.length === 0 ? (
+                 <TableRow><TableCell colSpan={6} align="center" sx={{ py: 8, color: 'zinc.600', fontWeight: 700 }}>No advertising requests found.</TableCell></TableRow>
+               ) : (
+                 campaigns.slice(0, 5).map((c) => (
+                    <TableRow key={c._id} sx={{ '&:hover': { bgcolor: '#1A1A1A' } }}>
+                       <TableCell sx={{ borderBottom: '1px solid #222' }}>
+                          <Typography sx={{ color: 'white', fontWeight: 800, fontSize: '0.85rem' }}>{c.brandName}</Typography>
+                          <Typography variant="caption" sx={{ color: 'zinc.500' }}>ID: {c._id.substring(18).toUpperCase()}</Typography>
+                       </TableCell>
+                       <TableCell sx={{ borderBottom: '1px solid #222' }}>
+                          <Typography variant="caption" sx={{ color: 'zinc.400', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                             <GpsFixedIcon sx={{ fontSize: 14 }} /> {c.operatingLocation?.length > 25 ? c.operatingLocation.substring(0, 25) + '...' : c.operatingLocation}
+                          </Typography>
+                       </TableCell>
+                       <TableCell sx={{ borderBottom: '1px solid #222' }}>
+                          <Typography sx={{ color: 'white', fontWeight: 700, fontSize: '0.8rem' }}>{c.numberOfVehicles} {c.targetVehicleType}</Typography>
+                       </TableCell>
+                       <TableCell sx={{ borderBottom: '1px solid #222' }} align="right">
+                          <Typography sx={{ color: '#4ADE80', fontWeight: 900, fontSize: '0.9rem' }}>
+                             ₹ {(c.quotedPrice > 0 ? c.quotedPrice : (c.rentalChargesPerKm * c.averageKm * (c.numberOfVehicles || 1))).toLocaleString('en-IN')}
+                          </Typography>
+                       </TableCell>
+                       <TableCell sx={{ borderBottom: '1px solid #222' }} align="center">
+                          <Chip 
+                             label={c.status || 'UNDER REVIEW'} 
+                             size="small" 
+                             sx={{ 
+                                bgcolor: 'rgba(250, 204, 21, 0.1)', 
+                                color: '#FACC15', 
+                                fontWeight: 800, 
+                                fontSize: '0.6rem' 
+                             }} 
+                          />
+                       </TableCell>
+                       <TableCell sx={{ borderBottom: '1px solid #222' }} align="right">
+                          <Tooltip title="View Details">
+                             <IconButton size="small" sx={{ color: 'zinc.600', '&:hover': { color: '#FACC15' } }}>
+                                <VisibilityIcon fontSize="small" />
+                             </IconButton>
+                          </Tooltip>
+                       </TableCell>
+                    </TableRow>
+                 ))
+               )}
+            </TableBody>
+         </Table>
+      </TableContainer>
     </Box>
   );
 }

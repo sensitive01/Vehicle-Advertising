@@ -17,10 +17,12 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import PersonIcon from '@mui/icons-material/Person';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import EditIcon from '@mui/icons-material/Edit';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import CancelIcon from '@mui/icons-material/Cancel';
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -56,15 +58,34 @@ export default function OwnerProfilePage() {
   const [owner, setOwner] = useState<any>(null);
   const [fleet, setFleet] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [fleetProfile, setFleetProfile] = useState<any>(null);
+  
   const [loading, setLoading] = useState(true);
+  const [viewCampOpen, setViewCampOpen] = useState(false);
+  const [selectedCampDetail, setSelectedCampDetail] = useState<any>(null);
   
   // Edit State
   const [editVehicle, setEditVehicle] = useState<any>(null);
   const [editData, setEditData] = useState<any>({});
+  
+  // Confirmation Dialog State
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean, type: 'verify' | 'reject', vehicle: any }>({
+    open: false,
+    type: 'verify',
+    vehicle: null
+  });
 
   useEffect(() => {
     if (id) fetchData();
   }, [id]);
+
+    const handleOpenCampDetails = (camp: any) => {
+    const campaign = fleet.find(v => (v.activeCampaignId?._id || v.activeCampaignId) === camp.id)?.activeCampaignId;
+    if (campaign && typeof campaign === 'object') {
+      setSelectedCampDetail(campaign);
+      setViewCampOpen(true);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -81,6 +102,9 @@ export default function OwnerProfilePage() {
 
       const transRes = await axios.get(`${API_URL}/api/transactions/user/${id}`, { headers });
       setTransactions(transRes.data.data || []);
+
+      const profileRes = await axios.get(`${API_URL}/api/fleet/profile/${id}`, { headers });
+      if (profileRes.data.success) setFleetProfile(profileRes.data.data);
 
     } catch (err) {
       console.error('Error fetching owner profile:', err);
@@ -154,8 +178,29 @@ export default function OwnerProfilePage() {
     }
   };
 
+  const processVerification = async () => {
+    const { type, vehicle } = confirmDialog;
+    const token = localStorage.getItem('token');
+    const endpoint = type === 'verify' ? 'approve' : 'reject';
+    
+    try {
+      await axios.patch(`${API_URL}/api/fleet/${endpoint}/${vehicle._id}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setConfirmDialog({ ...confirmDialog, open: false });
+      fetchData();
+    } catch (err) {
+      console.error(`Error during ${type}:`, err);
+    }
+  };
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
   };
 
   if (loading) {
@@ -248,6 +293,52 @@ export default function OwnerProfilePage() {
                   </Box>
                 </Stack>
               </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="h6" sx={{ color: 'white', mb: 3, fontWeight: 800 }}>Banking Details</Typography>
+                {fleetProfile?.bankDetails ? (
+                  <Stack spacing={3}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Account Holder</Typography>
+                        <Typography sx={{ color: 'white', fontWeight: 700 }}>{fleetProfile.bankDetails.accountHolderName}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Bank Name</Typography>
+                        <Typography sx={{ color: 'white', fontWeight: 700 }}>{fleetProfile.bankDetails.bankName}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Account Number</Typography>
+                        <Typography sx={{ color: '#FACC15', fontWeight: 700 }}>{fleetProfile.bankDetails.accountNumber}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>IFSC Code</Typography>
+                        <Typography sx={{ color: 'white', fontWeight: 700 }}>{fleetProfile.bankDetails.ifscCode}</Typography>
+                      </Box>
+                    </Box>
+                    
+                    {fleetProfile.bankDetails.passbookProof && (
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase', display: 'block', mb: 1.5 }}>Verification Proof (Passbook/Cheque)</Typography>
+                        <Paper 
+                          sx={{ 
+                            width: 'fit-content', p: 1, bgcolor: '#000', border: '1px solid #333', borderRadius: 2, cursor: 'pointer',
+                            transition: 'all 0.2s', '&:hover': { transform: 'scale(1.02)', borderColor: '#FACC15' }
+                          }}
+                          onClick={() => window.open(fleetProfile.bankDetails.passbookProof, '_blank')}
+                        >
+                          <img src={fleetProfile.bankDetails.passbookProof} style={{ width: 240, height: 150, objectFit: 'cover', borderRadius: 8 }} />
+                        </Paper>
+                      </Box>
+                    )}
+                  </Stack>
+                ) : (
+                  <Box sx={{ p: 6, bgcolor: '#0A0A0A', borderRadius: 2, border: '1px dashed #333', textAlign: 'center' }}>
+                    <AccountBalanceIcon sx={{ fontSize: 48, color: 'zinc.800', mb: 2 }} />
+                    <Typography sx={{ color: 'zinc.600', fontWeight: 600 }}>No banking details configured yet.</Typography>
+                  </Box>
+                )}
+              </Grid>
             </Grid>
           </CustomTabPanel>
 
@@ -267,6 +358,7 @@ export default function OwnerProfilePage() {
                       <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>VEHICLE INFO</TableCell>
                       <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>REGISTRATION</TableCell>
                       <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>STATUS</TableCell>
+                       <TableCell sx={{ color: '#FACC15', fontWeight: 800 }} align="right">ACTIONS</TableCell>
                       <TableCell sx={{ color: '#FACC15', fontWeight: 800 }} align="center">ACTIONS</TableCell>
                     </TableRow>
                   </TableHead>
@@ -286,12 +378,30 @@ export default function OwnerProfilePage() {
                         </TableCell>
                         <TableCell align="center">
                           <Stack direction="row" spacing={1} justifyContent="center">
-                             <IconButton size="small" sx={{ color: 'white' }} onClick={() => handleEditVehicle(vehicle)}>
-                               <EditIcon fontSize="small" />
-                             </IconButton>
-                             <IconButton size="small" sx={{ color: '#FACC15' }} onClick={() => router.push(`/admin/fleet/${vehicle._id}/ads?ownerId=${id}&tab=1`)}>
-                               <CampaignIcon fontSize="small" />
-                             </IconButton>
+                             {vehicle.status === 'Pending Verification' && (
+                               <>
+                                 <Tooltip title="Verify Vehicle">
+                                   <IconButton size="small" sx={{ color: '#4ADE80' }} onClick={() => setConfirmDialog({ open: true, type: 'verify', vehicle })}>
+                                     <CheckCircleIcon fontSize="small" />
+                                   </IconButton>
+                                 </Tooltip>
+                                 <Tooltip title="Reject Vehicle">
+                                   <IconButton size="small" sx={{ color: '#F87171' }} onClick={() => setConfirmDialog({ open: true, type: 'reject', vehicle })}>
+                                     <CancelIcon fontSize="small" />
+                                   </IconButton>
+                                 </Tooltip>
+                               </>
+                             )}
+                             <Tooltip title="Edit Specifications">
+                               <IconButton size="small" sx={{ color: 'white' }} onClick={() => handleEditVehicle(vehicle)}>
+                                 <EditIcon fontSize="small" />
+                               </IconButton>
+                             </Tooltip>
+                             <Tooltip title="View Ad Campaigns">
+                               <IconButton size="small" sx={{ color: '#FACC15' }} onClick={() => router.push(`/admin/fleet/${vehicle._id}/ads?ownerId=${id}&tab=1`)}>
+                                 <CampaignIcon fontSize="small" />
+                               </IconButton>
+                             </Tooltip>
                           </Stack>
                         </TableCell>
                       </TableRow>
@@ -323,6 +433,11 @@ export default function OwnerProfilePage() {
                         <TableCell sx={{ color: 'white', fontWeight: 700 }}>{camp.vehicleCount} Units</TableCell>
                         <TableCell sx={{ color: '#4ADE80', fontWeight: 900 }}>₹{camp.totalMonthlyEarnings.toLocaleString()}</TableCell>
                         <TableCell><Chip label={camp.status} size="small" sx={{ bgcolor: '#FACC1515', color: '#FACC15', fontWeight: 800 }} /></TableCell>
+                        <TableCell align="right">
+                           <IconButton size="small" onClick={() => handleOpenCampDetails(camp)} sx={{ color: '#FACC15', bgcolor: 'rgba(250, 204, 21, 0.05)' }}>
+                              <VisibilityIcon fontSize="small" />
+                           </IconButton>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -359,6 +474,19 @@ export default function OwnerProfilePage() {
             msOverflowStyle: 'none'
           }}
         >
+          <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Vehicle Photos</Typography>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 4, p: 2, bgcolor: '#000', borderRadius: 2, border: '1px solid #222' }}>
+            {editData.images && editData.images.length > 0 ? (
+              editData.images.map((img: string, i: number) => (
+                <Paper key={i} sx={{ width: 120, height: 90, overflow: 'hidden', borderRadius: 2, border: '1px solid #333' }}>
+                  <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </Paper>
+              ))
+            ) : (
+              <Typography sx={{ color: 'zinc.600', fontSize: '0.8rem' }}>No main photos uploaded</Typography>
+            )}
+          </Box>
+
           <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>General Information</Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid size={{ xs: 12, sm: 6 }}>
@@ -579,6 +707,24 @@ export default function OwnerProfilePage() {
                 ))}
               </Select>
             </FormControl>
+
+            {editData.adOptionImages && Object.keys(editData.adOptionImages).length > 0 && (
+              <Box sx={{ mt: 2, p: 2, bgcolor: '#000', borderRadius: 2, border: '1px solid #222' }}>
+                <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 800, mb: 1, display: 'block', textTransform: 'uppercase' }}>Current Ad Space Photos</Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  {Object.entries(editData.adOptionImages).map(([opt, url]: [string, any]) => (
+                    <Tooltip key={opt} title={opt}>
+                      <Paper sx={{ width: 100, height: 75, overflow: 'hidden', borderRadius: 1.5, border: '1px solid #333', position: 'relative' }}>
+                        <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, bgcolor: 'rgba(0,0,0,0.6)', p: 0.5 }}>
+                           <Typography sx={{ color: 'white', fontSize: '0.6rem', textAlign: 'center', fontWeight: 700 }}>{opt}</Typography>
+                        </Box>
+                      </Paper>
+                    </Tooltip>
+                  ))}
+                </Box>
+              </Box>
+            )}
           </Box>
 
           <Typography variant="subtitle2" sx={{ color: 'zinc.600', fontWeight: 800, mb: 2, textTransform: 'uppercase' }}>Verification & Maintenance</Typography>
@@ -652,6 +798,106 @@ export default function OwnerProfilePage() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog 
+        open={confirmDialog.open} 
+        onClose={() => setConfirmDialog({ ...confirmDialog, open: false })}
+        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}
+      >
+        <DialogTitle sx={{ fontWeight: 900, borderBottom: '1px solid #222' }}>
+           Confirm <span style={{ color: confirmDialog.type === 'verify' ? '#4ADE80' : '#F87171' }}>{confirmDialog.type === 'verify' ? 'Verification' : 'Rejection'}</span>
+        </DialogTitle>
+        <DialogContent sx={{ p: 4, pt: 3 }}>
+           <Typography sx={{ color: 'zinc.400' }}>
+              Are you sure you want to {confirmDialog.type === 'verify' ? 'APPROVE' : 'REJECT'} the vehicle 
+              <strong> {confirmDialog.vehicle?.registrationNumber}</strong> ({confirmDialog.vehicle?.make} {confirmDialog.vehicle?.vehicleModel})?
+           </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, gap: 2 }}>
+           <Button onClick={() => setConfirmDialog({ ...confirmDialog, open: false })} sx={{ color: 'zinc.500' }}>Cancel</Button>
+           <Button 
+             variant="contained" 
+             onClick={processVerification}
+             sx={{ 
+               bgcolor: confirmDialog.type === 'verify' ? '#4ADE80' : '#F87171', 
+               color: 'black', 
+               fontWeight: 900,
+               '&:hover': { bgcolor: confirmDialog.type === 'verify' ? '#22C55E' : '#EF4444' }
+             }}
+           >
+              Confirm {confirmDialog.type === 'verify' ? 'Approval' : 'Rejection'}
+           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Campaign Details Dialog */}
+      <Dialog 
+        open={viewCampOpen} 
+        onClose={() => setViewCampOpen(false)} 
+        maxWidth="md" 
+        fullWidth 
+        PaperProps={{ sx: { bgcolor: '#121212', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}
+      >
+        <DialogTitle component="div" sx={{ p: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
+           <Typography variant="h5" sx={{ fontWeight: 900, textTransform: 'uppercase' }}>Campaign <span style={{ color: '#FACC15' }}>Details</span></Typography>
+           <IconButton onClick={() => setViewCampOpen(false)} sx={{ color: 'zinc.500' }}><CancelIcon /></IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 4 }}>
+           {selectedCampDetail && (
+             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <Grid container spacing={3}>
+                   <Grid size={{ xs: 12, md: 4 }}>
+                      <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Brand Name</Typography>
+                      <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>{selectedCampDetail.brandName}</Typography>
+                   </Grid>
+                   <Grid size={{ xs: 12, md: 4 }}>
+                      <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Category</Typography>
+                      <Typography variant="body1" sx={{ color: 'zinc.300', fontWeight: 700 }}>{selectedCampDetail.businessCategory}</Typography>
+                   </Grid>
+                   <Grid size={{ xs: 12, md: 4 }}>
+                      <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Operating City</Typography>
+                      <Typography variant="body1" sx={{ color: 'zinc.300', fontWeight: 700 }}>{selectedCampDetail.operatingLocation}</Typography>
+                   </Grid>
+                </Grid>
+                
+                <Divider sx={{ borderColor: '#222' }} />
+                
+                <Grid container spacing={3}>
+                   <Grid size={{ xs: 6, md: 3 }}>
+                      <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Rental/KM</Typography>
+                      <Typography variant="h6" sx={{ color: '#4ADE80', fontWeight: 900 }}>₹{selectedCampDetail.rentalChargesPerKm}</Typography>
+                   </Grid>
+                   <Grid size={{ xs: 6, md: 3 }}>
+                      <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Expected KM</Typography>
+                      <Typography variant="h6" sx={{ color: 'white', fontWeight: 900 }}>{selectedCampDetail.averageKm}</Typography>
+                   </Grid>
+                   <Grid size={{ xs: 6, md: 3 }}>
+                      <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Duration</Typography>
+                      <Typography variant="body1" sx={{ color: 'zinc.300', fontWeight: 700 }}>{selectedCampDetail.duration}</Typography>
+                   </Grid>
+                   <Grid size={{ xs: 6, md: 3 }}>
+                      <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 800, textTransform: 'uppercase' }}>Campaign Status</Typography>
+                      <Chip label={selectedCampDetail.status} size="small" sx={{ bgcolor: 'rgba(34, 197, 94, 0.1)', color: '#4ADE80', fontWeight: 800, mt: 0.5 }} />
+                   </Grid>
+                </Grid>
+
+                <Box sx={{ p: 3, bgcolor: '#1A1A1A', borderRadius: 2, border: '1px solid #222' }}>
+                   <Typography variant="caption" sx={{ color: 'zinc.600', fontWeight: 900, mb: 1, display: 'block', textTransform: 'uppercase' }}>Ad Placement Details</Typography>
+                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {selectedCampDetail.adOptions?.map((opt: string) => (
+                        <Chip key={opt} label={opt} size="small" variant="outlined" sx={{ color: '#FACC15', borderColor: '#FACC1540', fontWeight: 700 }} />
+                      ))}
+                   </Box>
+                </Box>
+             </Box>
+           )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3, borderTop: '1px solid #222' }}>
+           <Button onClick={() => setViewCampOpen(false)} sx={{ color: '#FACC15', fontWeight: 800 }}>Close Details</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
+

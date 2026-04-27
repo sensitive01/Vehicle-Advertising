@@ -1,11 +1,18 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamic import for Map component to avoid SSR issues with Leaflet
+const MapPicker = dynamic(() => import('../../../components/MapPicker'), { 
+  ssr: false,
+  loading: () => <Box sx={{ height: 200, bgcolor: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><CircularProgress size={20} /></Box>
+});
 import { 
   Box, Typography, Card, Table, TableBody, TableCell, TableContainer, 
   TableHead, TableRow, Button, Dialog, DialogTitle, DialogContent, 
   DialogActions, TextField, MenuItem, IconButton, CircularProgress, Chip,
   TablePagination, Tooltip, Paper, Divider, Checkbox, FormControlLabel, FormGroup,
-  Avatar, Grid, Stack, Alert
+  Avatar, Grid, Stack, Alert, Autocomplete
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -47,6 +54,7 @@ interface Vehicle {
     lng?: number;
   };
   adOptions: string[];
+  adOptionImages?: { [key: string]: string };
   images: string[];
   status?: string;
   activeCampaignId?: any;
@@ -70,6 +78,7 @@ const emptyVehicle: Vehicle = {
   parkingLocation: { address: '', lat: 0, lng: 0 },
   seatingCapacity: '',
   adOptions: [],
+  adOptionImages: {},
   images: []
 };
 
@@ -78,7 +87,7 @@ export default function MyVehiclesPage() {
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
   const [step, setStep] = useState(1);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -89,6 +98,11 @@ export default function MyVehiclesPage() {
   const [campaignDialogOpen, setCampaignDialogOpen] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+
+  // Location Search State
+  const [locationOptions, setLocationOptions] = useState<any[]>([]);
+  const [loadingLocations, setLoadingLocations] = useState(false);
+  const [selectedCoords, setSelectedCoords] = useState<{lat: string, lon: string} | null>(null);
 
   useEffect(() => {
     fetchMyVehicles();
@@ -129,6 +143,7 @@ export default function MyVehiclesPage() {
     setFormData({ ...emptyVehicle });
     setMode('add');
     setStep(1);
+    setSelectedCoords(null);
     setOpenDialog(true);
   };
 
@@ -137,8 +152,14 @@ export default function MyVehiclesPage() {
       ...v, 
       images: v.images || [], 
       adOptions: v.adOptions || [],
+      adOptionImages: v.adOptionImages || {},
       parkingLocation: v.parkingLocation || { address: '', lat: 0, lng: 0 }
     });
+    if (v.parkingLocation?.lat && v.parkingLocation?.lng) {
+      setSelectedCoords({ lat: String(v.parkingLocation.lat), lon: String(v.parkingLocation.lng) });
+    } else {
+      setSelectedCoords(null);
+    }
     setMode('edit');
     setStep(1);
     setOpenDialog(true);
@@ -149,8 +170,14 @@ export default function MyVehiclesPage() {
       ...v, 
       images: v.images || [], 
       adOptions: v.adOptions || [],
+      adOptionImages: v.adOptionImages || {},
       parkingLocation: v.parkingLocation || { address: '', lat: 0, lng: 0 }
     });
+    if (v.parkingLocation?.lat && v.parkingLocation?.lng) {
+      setSelectedCoords({ lat: String(v.parkingLocation.lat), lon: String(v.parkingLocation.lng) });
+    } else {
+      setSelectedCoords(null);
+    }
     setMode('view');
     setOpenDialog(true);
   };
@@ -196,9 +223,12 @@ export default function MyVehiclesPage() {
     finally { setSubmitting(false); }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'images' | 'vehicleProof') => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'images' | 'vehicleProof' | 'adOption', optionName?: string) => {
     if (!e.target.files) return;
-    setUploading(true);
+    
+    const uploadKey = field === 'adOption' ? `ad-${optionName}` : field;
+    setUploadingField(uploadKey);
+    
     const files = Array.from(e.target.files);
     const urls: string[] = [];
 
@@ -214,10 +244,62 @@ export default function MyVehiclesPage() {
 
     if (field === 'images') {
       setFormData(prev => ({ ...prev, images: [...prev.images, ...urls] }));
-    } else {
+    } else if (field === 'vehicleProof') {
       setFormData(prev => ({ ...prev, vehicleProof: urls[0] }));
+    } else if (field === 'adOption' && optionName) {
+      setFormData(prev => ({
+        ...prev,
+        adOptionImages: {
+          ...(prev.adOptionImages || {}),
+          [optionName]: urls[0]
+        }
+      }));
     }
-    setUploading(false);
+    setUploadingField(null);
+  };
+
+  const searchLocations = async (query: string) => {
+    if (!query || query.length < 3) return;
+    setLoadingLocations(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/search-location?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      setLocationOptions(data.map((item: any) => ({
+        label: item.display_name,
+        value: item.display_name,
+        lat: item.lat,
+        lon: item.lon
+      })));
+    } catch (err) {
+      console.error('Location search failed:', err);
+    } finally {
+      setLoadingLocations(false);
+    }
+  };
+
+  const reverseGeocode = async (lat: number, lon: number) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fleet/reverse-geocode?lat=${lat}&lon=${lon}`);
+      const data = await res.json();
+      if (data && data.display_name) {
+        setFormData(prev => ({
+          ...prev,
+          parkingLocation: {
+            ...prev.parkingLocation,
+            address: data.display_name,
+            lat,
+            lng: lon
+          }
+        }));
+        setSelectedCoords({ lat: String(lat), lon: String(lon) });
+      }
+    } catch (err) {
+      console.error('Reverse geocode failed:', err);
+    }
+  };
+
+  const handleMapLocationSelect = (lat: number, lng: number) => {
+    reverseGeocode(lat, lng);
   };
 
   const customFieldStyle = {
@@ -286,10 +368,90 @@ export default function MyVehiclesPage() {
           <Grid size={{ xs: 12, md: 6 }}>
              <InfoBlock label="Routine" value={formData.travelRoutine} />
              <InfoBlock label="Avg KM / Day" value={formData.averageKmPerDay} />
-             <InfoBlock label="Ad Options" value={(formData.adOptions || []).join(', ')} />
-             <InfoBlock label="Parking Location" value={formData.parkingLocation?.address} />
+              <InfoBlock label="Ad Options" value={(formData.adOptions || []).join(', ')} />
+              {formData.adOptionImages && Object.keys(formData.adOptionImages).length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                  <Label>Ad Space Photos</Label>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                    {Object.entries(formData.adOptionImages).map(([opt, url]) => (
+                      <Tooltip key={opt} title={opt}>
+                        <Paper sx={{ width: 80, height: 60, overflow: 'hidden', borderRadius: 1, border: '1px solid #333' }}>
+                          <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </Paper>
+                      </Tooltip>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+              <Box sx={{ mb: 1 }}>
+                <InfoBlock label="Parking Location" value={formData.parkingLocation?.address} />
+                {formData.parkingLocation?.lat && formData.parkingLocation?.lng && (
+                  <Box sx={{ mt: 1, width: '100%', height: 200, borderRadius: 1.5, overflow: 'hidden', border: '1px solid #333', bgcolor: '#000' }}>
+                    <MapPicker 
+                      lat={Number(formData.parkingLocation.lat)} 
+                      lng={Number(formData.parkingLocation.lng)} 
+                      onLocationSelect={() => {}} // Read only in view mode
+                    />
+                  </Box>
+                )}
+              </Box>
           </Grid>
        </Grid>
+
+        <Divider sx={{ borderColor: '#333', my: 2 }} />
+        <Box sx={{ p: 2, bgcolor: 'rgba(250, 204, 21, 0.05)', borderRadius: 2, border: '1px solid rgba(250, 204, 21, 0.2)' }}>
+           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+              <AssessmentIcon sx={{ color: '#FACC15' }} />
+              <Typography variant="h6" sx={{ fontWeight: 800 }}>Assigned Campaign Details</Typography>
+           </Box>
+           
+           {formData.activeCampaignId ? (
+              <Grid container spacing={3}>
+                 <Grid size={{ xs: 12, md: 4 }}>
+                    <InfoBlock label="Brand Name" value={formData.activeCampaignId.brandName} />
+                    <InfoBlock label="Campaign ID" value={formData.activeCampaignId.adId} />
+                    <InfoBlock label="Category" value={formData.activeCampaignId.businessCategory} />
+                 </Grid>
+                 <Grid size={{ xs: 12, md: 4 }}>
+                    <InfoBlock label="Payout Rate" value={`₹ ${formData.activeCampaignId.rentalChargesPerKm} / KM`} />
+                    <InfoBlock label="Duration" value={formData.activeCampaignId.duration} />
+                    <InfoBlock label="Target Location" value={formData.activeCampaignId.operatingLocation} />
+                 </Grid>
+                 <Grid size={{ xs: 12, md: 4 }}>
+                    <Label>Status</Label>
+                    <Chip 
+                       label={formData.campaignStatus || 'NONE'} 
+                       size="small" 
+                       sx={{ 
+                          bgcolor: formData.campaignStatus === 'ACCEPTED' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(250, 204, 21, 0.1)', 
+                          color: formData.campaignStatus === 'ACCEPTED' ? '#4ADE80' : '#FACC15', 
+                          fontWeight: 900, mt: 0.5 
+                       }} 
+                    />
+                    <Box sx={{ mt: 2 }}>
+                       <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 700 }}>Start Date</Typography>
+                       <Typography sx={{ color: 'white', fontWeight: 600 }}>{formData.activeCampaignId.startDate ? new Date(formData.activeCampaignId.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}</Typography>
+                    </Box>
+                 </Grid>
+                 {formData.activeCampaignId.adImages?.length > 0 && (
+                    <Grid size={{ xs: 12 }}>
+                       <Label>Campaign Creatives / Ad Preview</Label>
+                       <Box sx={{ display: 'flex', gap: 1, mt: 1, overflowX: 'auto', pb: 1 }}>
+                          {formData.activeCampaignId.adImages.map((img, i) => (
+                             <Paper key={i} sx={{ minWidth: 150, height: 100, overflow: 'hidden', borderRadius: 1, border: '1px solid #333', flexShrink: 0 }}>
+                                <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                             </Paper>
+                          ))}
+                       </Box>
+                    </Grid>
+                 )}
+              </Grid>
+           ) : (
+              <Box sx={{ py: 4, textAlign: 'center' }}>
+                 <Typography sx={{ color: 'zinc.600', fontStyle: 'italic' }}>No campaign currently assigned to this vehicle.</Typography>
+              </Box>
+           )}
+        </Box>
     </Box>
   );
 
@@ -308,7 +470,7 @@ export default function MyVehiclesPage() {
                     </Paper>
                   ))}
                   <Button variant="outlined" component="label" sx={{ width: 100, height: 75, border: '2px dashed #444', color: 'zinc.500', display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                      {uploading ? <CircularProgress size={20} color="inherit" /> : <><CloudUploadIcon sx={{ fontSize: 20 }} /><Typography variant="caption" sx={{ fontSize: '0.6rem' }}>ADD PHOTOS</Typography></>}
+                      {uploadingField === 'images' ? <CircularProgress size={20} color="inherit" /> : <><CloudUploadIcon sx={{ fontSize: 20 }} /><Typography variant="caption" sx={{ fontSize: '0.6rem' }}>ADD PHOTOS</Typography></>}
                       <input type="file" hidden multiple onChange={(e) => handleImageUpload(e, 'images')} />
                   </Button>
                 </Box>
@@ -402,14 +564,77 @@ export default function MyVehiclesPage() {
              </Box>
              <Box>
                <Label>Parking Location</Label>
-               <TextField 
-                fullWidth 
-                multiline 
-                rows={2} 
-                value={formData.parkingLocation?.address || ''} 
-                onChange={(e) => setFormData({ ...formData, parkingLocation: { ...formData.parkingLocation, address: e.target.value } })} 
-                sx={customFieldStyle}
-               />
+               <Autocomplete
+                  fullWidth
+                  freeSolo
+                  options={locationOptions}
+                  loading={loadingLocations}
+                  value={formData.parkingLocation?.address || ''}
+                  onInputChange={(e, value) => {
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      parkingLocation: { ...(prev.parkingLocation || {}), address: value } 
+                    }));
+                    searchLocations(value);
+                  }}
+                  onChange={(e, value: any) => {
+                    const label = typeof value === 'string' ? value : value?.label;
+                    if (label) {
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        parkingLocation: { 
+                          ...(prev.parkingLocation || {}), 
+                          address: label,
+                          lat: value?.lat ? Number(value.lat) : prev.parkingLocation?.lat,
+                          lng: value?.lon ? Number(value.lon) : prev.parkingLocation?.lng
+                        } 
+                      }));
+                      if (value?.lat && value?.lon) {
+                        setSelectedCoords({ lat: value.lat, lon: value.lon });
+                      }
+                    }
+                  }}
+                  ListboxProps={{
+                    sx: {
+                      bgcolor: '#121212',
+                      color: 'white',
+                      '& .MuiAutocomplete-option': {
+                        borderBottom: '1px solid #222',
+                        fontSize: '0.85rem',
+                        py: 1.5
+                      }
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      placeholder="Search for parking address..."
+                      sx={customFieldStyle}
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <React.Fragment>
+                            {loadingLocations ? <CircularProgress color="inherit" size={20} /> : null}
+                            {params.InputProps.endAdornment}
+                          </React.Fragment>
+                        ),
+                      }}
+                    />
+                  )}
+                />
+             </Box>
+
+             {/* Interactive Map Picker */}
+             <Box sx={{ width: '100%', height: 300, borderRadius: 2, overflow: 'hidden', border: '1px solid #333', bgcolor: '#000', position: 'relative', mt: 2 }}>
+                <MapPicker 
+                  lat={selectedCoords ? Number(selectedCoords.lat) : Number(formData.parkingLocation?.lat)} 
+                  lng={selectedCoords ? Number(selectedCoords.lon) : Number(formData.parkingLocation?.lng)} 
+                  onLocationSelect={handleMapLocationSelect}
+                />
+                <Box sx={{ position: 'absolute', bottom: 10, left: 10, zIndex: 1000, bgcolor: 'rgba(0,0,0,0.7)', p: 1, borderRadius: 1, border: '1px solid #444' }}>
+                   <Typography variant="caption" sx={{ color: '#FACC15', fontWeight: 800 }}>TIP: CLICK ON MAP TO PINPOINT EXACT LOCATION</Typography>
+                </Box>
              </Box>
           </Box>
         );
@@ -430,7 +655,7 @@ export default function MyVehiclesPage() {
                 <Label>Vehicle Proof (RC / Insurance)</Label>
                 <Box sx={{ position: 'relative' }}>
                    <Button variant="outlined" component="label" sx={{ width: '100%', height: 160, border: '2px dashed #444', color: 'white', display: 'flex', flexDirection: 'column', gap: 1, position: 'relative', overflow: 'hidden', p: 0.5, bgcolor: '#000' }}>
-                     {uploading ? <CircularProgress size={24} color="inherit" /> : formData.vehicleProof ? <img src={formData.vehicleProof} style={{ width: 'auto', maxWidth: '100%', height: 'auto', maxHeight: '100%', objectFit: 'contain' }} /> : <><CloudUploadIcon sx={{ color: '#FACC15' }}/><Typography variant="caption" sx={{ color: 'zinc.500' }}>UPLOAD RC / INSURANCE</Typography></>}
+                     {uploadingField === 'vehicleProof' ? <CircularProgress size={24} color="inherit" /> : formData.vehicleProof ? <img src={formData.vehicleProof} style={{ width: 'auto', maxWidth: '100%', height: 'auto', maxHeight: '100%', objectFit: 'contain' }} /> : <><CloudUploadIcon sx={{ color: '#FACC15' }}/><Typography variant="caption" sx={{ color: 'zinc.500' }}>UPLOAD RC / INSURANCE</Typography></>}
                      {!formData.vehicleProof && <input type="file" hidden onChange={(e) => handleImageUpload(e, 'vehicleProof')} />}
                    </Button>
                    {formData.vehicleProof && <IconButton size="small" onClick={() => setFormData({ ...formData, vehicleProof: '' })} sx={{ position: 'absolute', top: 5, right: 5, bgcolor: 'red', color: 'white' }}><DeleteIcon sx={{ fontSize: 16 }} /></IconButton>}
@@ -455,14 +680,91 @@ export default function MyVehiclesPage() {
              </Box>
              <Box>
                <Label>Advertisement Options</Label>
-               <FormGroup sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-                 {AD_OPTIONS.map(opt => (
-                   <FormControlLabel key={opt} control={<Checkbox checked={(formData.adOptions || []).includes(opt)} onChange={(e) => {
-                     const opts = e.target.checked ? [...(formData.adOptions || []), opt] : (formData.adOptions || []).filter(o => o !== opt);
-                     setFormData({ ...formData, adOptions: opts });
-                   }} sx={{ color: '#333', '&.Mui-checked': { color: '#FACC15' } }} />} label={<Typography variant="body2" sx={{ color: 'zinc.300' }}>{opt}</Typography>} />
-                 ))}
-               </FormGroup>
+               <Typography variant="caption" sx={{ color: 'zinc.500', mb: 2, display: 'block' }}>Select available ad spaces and upload photos for each</Typography>
+               <Grid container spacing={2}>
+                 {AD_OPTIONS.map(opt => {
+                   const isSelected = (formData.adOptions || []).includes(opt);
+                   const imageUrl = formData.adOptionImages?.[opt];
+                   
+                   return (
+                     <Grid item xs={12} sm={6} key={opt}>
+                       <Box sx={{ 
+                         p: 2, 
+                         borderRadius: 2, 
+                         border: '1px solid', 
+                         borderColor: isSelected ? '#FACC15' : '#333',
+                         bgcolor: isSelected ? 'rgba(250, 204, 21, 0.05)' : 'transparent',
+                         transition: 'all 0.3s ease'
+                       }}>
+                         <FormControlLabel 
+                           control={
+                             <Checkbox 
+                               checked={isSelected} 
+                               onChange={(e) => {
+                                 const opts = e.target.checked ? [...(formData.adOptions || []), opt] : (formData.adOptions || []).filter(o => o !== opt);
+                                 const newImages = { ...(formData.adOptionImages || {}) };
+                                 if (!e.target.checked) delete newImages[opt];
+                                 setFormData({ ...formData, adOptions: opts, adOptionImages: newImages });
+                               }} 
+                               sx={{ color: '#333', '&.Mui-checked': { color: '#FACC15' } }} 
+                             />
+                           } 
+                           label={<Typography variant="body2" sx={{ color: isSelected ? 'white' : 'zinc.400', fontWeight: isSelected ? 700 : 400 }}>{opt}</Typography>} 
+                         />
+                         
+                         {isSelected && (
+                           <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
+                             <Button 
+                               variant="outlined" 
+                               component="label" 
+                               size="small"
+                               sx={{ 
+                                 flex: 1,
+                                 height: 80, 
+                                 border: '1px dashed #444', 
+                                 color: 'white', 
+                                 display: 'flex', 
+                                 flexDirection: 'column', 
+                                 gap: 0.5, 
+                                 position: 'relative', 
+                                 overflow: 'hidden', 
+                                 p: 0,
+                                 bgcolor: '#000',
+                                 '&:hover': { borderColor: '#FACC15' }
+                               }}
+                             >
+                               {uploadingField === `ad-${opt}` ? (
+                                 <CircularProgress size={20} color="inherit" />
+                               ) : imageUrl ? (
+                                 <img src={imageUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                               ) : (
+                                 <>
+                                   <CloudUploadIcon sx={{ color: '#FACC15', fontSize: 20 }}/>
+                                   <Typography variant="caption" sx={{ fontSize: '0.6rem', color: 'zinc.500' }}>UPLOAD</Typography>
+                                 </>
+                               )}
+                               <input type="file" hidden onChange={(e) => handleImageUpload(e, 'adOption', opt)} />
+                             </Button>
+                             {imageUrl && (
+                               <IconButton 
+                                 size="small" 
+                                 onClick={() => {
+                                   const newImages = { ...(formData.adOptionImages || {}) };
+                                   delete newImages[opt];
+                                   setFormData({ ...formData, adOptionImages: newImages });
+                                 }} 
+                                 sx={{ color: 'red' }}
+                               >
+                                 <DeleteIcon fontSize="small" />
+                               </IconButton>
+                             )}
+                           </Box>
+                         )}
+                       </Box>
+                     </Grid>
+                   );
+                 })}
+               </Grid>
              </Box>
           </Box>
         );
@@ -488,6 +790,7 @@ export default function MyVehiclesPage() {
           minHeight: 400,
           '&::-webkit-scrollbar': { display: 'none' },
           scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
         }}
       >
          {isView ? renderViewContent() : renderStep()}
@@ -587,7 +890,18 @@ export default function MyVehiclesPage() {
                              </Button>
                           </Tooltip>
                        ) : v.campaignStatus === 'ACCEPTED' ? (
-                          <Chip label={v.activeCampaignId?.brandName || 'ACTIVE'} size="small" sx={{ bgcolor: 'rgba(34, 197, 94, 0.1)', color: '#4ADE80', fontWeight: 900 }} />
+                          <Chip 
+                              label={v.activeCampaignId?.brandName || 'ACTIVE'} 
+                              size="small" 
+                              onClick={() => { setSelectedVehicle(v); setCampaignDialogOpen(true); }}
+                              sx={{ 
+                                 bgcolor: 'rgba(34, 197, 94, 0.1)', 
+                                 color: '#4ADE80', 
+                                 fontWeight: 900,
+                                 cursor: 'pointer',
+                                 '&:hover': { bgcolor: 'rgba(34, 197, 94, 0.2)' }
+                              }} 
+                           />
                        ) : (
                           <Typography variant="caption" sx={{ color: 'zinc.700' }}>NONE</Typography>
                        )}
@@ -611,7 +925,7 @@ export default function MyVehiclesPage() {
         <TablePagination component="div" count={vehicles.length} rowsPerPage={rowsPerPage} page={page} onPageChange={(e, p) => setPage(p)} onRowsPerPageChange={(e) => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); }} rowsPerPageOptions={[10, 25, 50, 100]} sx={{ color: 'zinc.400' }} />
       </Card>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 1.5, border: '1px solid #333' } }}>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="md" fullWidth PaperProps={{ sx: { bgcolor: '#141414', color: 'white', borderRadius: 1.5, border: '1px solid #333', '&::-webkit-scrollbar': { display: 'none' }, scrollbarWidth: 'none', msOverflowStyle: 'none' } }}>
         {dialogContent}
       </Dialog>
 

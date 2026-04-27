@@ -91,4 +91,19 @@ router.get('/my-campaigns', verifyToken, async (req: Request, res: Response) => 
   }
 });
 
+router.get('/all', verifyToken, async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (user.role !== 'superadmin' && user.role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const campaigns = await Campaign.find().populate('advertiserId', 'fullName email').sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: campaigns });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error fetching all campaigns' });
+  }
+});
+
 export default router;

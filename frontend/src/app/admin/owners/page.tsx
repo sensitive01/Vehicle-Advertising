@@ -36,6 +36,7 @@ export default function VehicleOwnersPage() {
   const [loading, setLoading] = useState(true);
   const [editUser, setEditUser] = useState<User | null>(null);
   const [editFormData, setEditFormData] = useState({ fullName: '', email: '', mobileNumber: '' });
+  const [confirmBlock, setConfirmBlock] = useState<{ open: boolean, user: User | null }>({ open: false, user: null });
 
   useEffect(() => {
     fetchOwners();
@@ -59,13 +60,19 @@ export default function VehicleOwnersPage() {
     }
   };
 
-  const handleBlockToggle = async (e: React.MouseEvent, owner: User) => {
+  const handleBlockToggle = (e: React.MouseEvent, owner: User) => {
     e.stopPropagation();
+    setConfirmBlock({ open: true, user: owner });
+  };
+
+  const processBlockToggle = async () => {
+    if (!confirmBlock.user) return;
     const token = localStorage.getItem('token');
     try {
-      await axios.patch(`${API_URL}/api/auth/users/${owner._id}/block`, {}, {
+      await axios.patch(`${API_URL}/api/auth/users/${confirmBlock.user._id}/block`, {}, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      setConfirmBlock({ open: false, user: null });
       fetchOwners();
     } catch (err) {
       console.error('Error toggling block status:', err);
@@ -93,7 +100,12 @@ export default function VehicleOwnersPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
   };
 
   if (loading) {
@@ -234,6 +246,40 @@ export default function VehicleOwnersPage() {
           >
             Save Changes
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog for Block/Unblock */}
+      <Dialog 
+        open={confirmBlock.open} 
+        onClose={() => setConfirmBlock({ open: false, user: null })}
+        PaperProps={{
+          sx: { bgcolor: '#121212', color: 'white', borderRadius: 1.5, border: '1px solid #333' }
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 900, borderBottom: '1px solid #222' }}>
+           Confirm {confirmBlock.user?.isBlocked ? 'Unblock' : 'Block'} Action
+        </DialogTitle>
+        <DialogContent sx={{ p: 4, pt: 3 }}>
+           <Typography sx={{ color: 'zinc.400' }}>
+              Are you sure you want to <strong>{confirmBlock.user?.isBlocked ? 'UNBLOCK' : 'BLOCK'}</strong> the user 
+              <strong> {confirmBlock.user?.fullName}</strong>?
+           </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, gap: 2 }}>
+           <Button onClick={() => setConfirmBlock({ open: false, user: null })} sx={{ color: 'zinc.500' }}>Cancel</Button>
+           <Button 
+             variant="contained" 
+             onClick={processBlockToggle}
+             sx={{ 
+               bgcolor: confirmBlock.user?.isBlocked ? '#10B981' : '#EF4444', 
+               color: 'white', 
+               fontWeight: 900,
+               '&:hover': { bgcolor: confirmBlock.user?.isBlocked ? '#059669' : '#DC2626' }
+             }}
+           >
+              Confirm {confirmBlock.user?.isBlocked ? 'Unblock' : 'Block'}
+           </Button>
         </DialogActions>
       </Dialog>
     </Box>

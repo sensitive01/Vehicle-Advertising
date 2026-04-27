@@ -214,12 +214,12 @@ export default function LeadsPage() {
   };
 
   const formatDateTime = (isoString: string) => {
+    if (!isoString) return 'N/A';
     const d = new Date(isoString);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    return `${day}-${month}-${year} ${time}`;
+    const year = String(d.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
   };
 
   return (

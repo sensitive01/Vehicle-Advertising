@@ -19,6 +19,25 @@ router.get('/user/:userId', verifyToken, async (req: any, res: any) => {
   }
 });
 
+router.get('/all', verifyToken, async (req: any, res: any) => {
+  try {
+    const role = req.user.role;
+    if (role !== 'superadmin' && role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const transactions = await Transaction.find()
+      .populate('userId', 'fullName email role')
+      .populate('campaignId', 'campaignName brandName')
+      .sort({ createdAt: -1 });
+      
+    res.status(200).json({ success: true, data: transactions });
+  } catch (error) {
+    console.error('Error fetching all transactions:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 router.post('/add', verifyToken, async (req: any, res: any) => {
   try {
     const transaction = new Transaction(req.body);

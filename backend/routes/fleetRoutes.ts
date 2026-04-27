@@ -1,8 +1,11 @@
 import express from 'express';
 import Vehicle from '../model/Vehicle';
+import axios from 'axios';
 import User from '../model/User';
 import AdvertiserProfile from '../model/AdvertiserProfile';
+import FleetProfile from '../model/FleetProfile';
 import { verifyToken } from '../middleware/authMiddleware';
+import bcrypt from 'bcryptjs';
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import dotenv from 'dotenv';
@@ -16,6 +19,52 @@ cloudinary.config({
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
+
+// Profile Management (Must be before /:id routes)
+router.get('/profile', verifyToken, async (req: any, res: any) => {
+  try {
+    let profile = await FleetProfile.findOne({ userId: req.user.id });
+    if (!profile) {
+      profile = new FleetProfile({ userId: req.user.id });
+      await profile.save();
+    }
+    res.status(200).json({ success: true, data: profile });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.get('/profile/:userId', verifyToken, async (req: any, res: any) => {
+  try {
+    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+    const profile = await FleetProfile.findOne({ userId: req.params.userId });
+    res.status(200).json({ success: true, data: profile });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+router.patch('/profile', verifyToken, async (req: any, res: any) => {
+  try {
+    const { bankDetails } = req.body;
+    const profile = await FleetProfile.findOneAndUpdate(
+      { userId: req.user.id },
+      { bankDetails },
+      { new: true, upsert: true }
+    );
+    res.status(200).json({ success: true, data: profile });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+
 
 const generatevehicleId = async () => {
   let isUnique = false;
@@ -31,8 +80,15 @@ const generatevehicleId = async () => {
 
 const mapVehicleForFrontend = (v: any) => {
   const vehicle = v.toObject ? v.toObject() : v;
+  
+  // Convert Mongoose Map to plain object if it exists
+  const adOptionImages = vehicle.adOptionImages instanceof Map 
+    ? Object.fromEntries(vehicle.adOptionImages) 
+    : vehicle.adOptionImages;
+
   return {
     ...vehicle,
+    adOptionImages,
     images: vehicle.documents?.vehicleImages || [],
     vehicleProof: vehicle.documents?.registrationCertificate || ''
   };
@@ -156,6 +212,27 @@ router.patch('/approve/:vehicleId', verifyToken, async (req: any, res: any) => {
   }
 });
 
+router.patch('/reject/:vehicleId', verifyToken, async (req: any, res: any) => {
+  try {
+    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const vehicle = await Vehicle.findByIdAndUpdate(
+      req.params.vehicleId, 
+      { status: 'Rejected' },
+      { new: true }
+    );
+    
+    if (!vehicle) return res.status(404).json({ success: false, message: 'Vehicle not found' });
+    
+    res.status(200).json({ success: true, message: 'Vehicle rejected successfully!', data: vehicle });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error during rejection' });
+  }
+});
+
 router.patch('/block/:vehicleId', verifyToken, async (req: any, res: any) => {
   try {
     if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin') {
@@ -192,6 +269,27 @@ router.patch('/update/:vehicleId', verifyToken, async (req: any, res: any) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error updating vehicle' });
+  }
+});
+
+router.get('/campaign/:campaignId/vehicles', verifyToken, async (req: any, res: any) => {
+  try {
+    // 1. Verify that the campaign belongs to this advertiser (or user is admin)
+    const campaign = await AdvertiserProfile.findById(req.params.campaignId);
+    if (!campaign) return res.status(404).json({ success: false, message: 'Campaign not found' });
+
+    if (req.user.role !== 'superadmin' && req.user.role !== 'SuperAdmin' && campaign.userId.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Unauthorized access to this campaign fleet' });
+    }
+
+    // 2. Find all vehicles for this campaign
+    const vehicles = await Vehicle.find({ activeCampaignId: req.params.campaignId }).populate('userId', 'fullName mobileNumber');
+    const mappedVehicles = vehicles.map(mapVehicleForFrontend);
+    
+    res.status(200).json({ success: true, count: vehicles.length, data: mappedVehicles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error fetching campaign vehicles' });
   }
 });
 
@@ -295,6 +393,54 @@ router.delete('/:id', verifyToken, async (req: any, res: any) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error deleting vehicle' });
+  }
+});
+
+router.get('/search-location', async (req: any, res: any) => {
+  try {
+    const { q } = req.query;
+    if (!q) return res.status(400).json({ success: false, message: 'Query required' });
+    
+    const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
+      params: {
+        format: 'json',
+        q,
+        limit: 5,
+        addressdetails: 1
+      },
+      headers: {
+        'User-Agent': 'VehicleAdvertisingApp/1.0'
+      }
+    });
+    
+    res.status(200).json(response.data);
+  } catch (err) {
+    console.error('Location search error:', err);
+    res.status(500).json({ success: false, message: 'Failed to fetch location' });
+  }
+});
+
+router.get('/reverse-geocode', async (req: any, res: any) => {
+  try {
+    const { lat, lon } = req.query;
+    if (!lat || !lon) return res.status(400).json({ success: false, message: 'Lat/Lon required' });
+    
+    const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+      params: {
+        format: 'json',
+        lat,
+        lon,
+        addressdetails: 1
+      },
+      headers: {
+        'User-Agent': 'VehicleAdvertisingApp/1.0'
+      }
+    });
+    
+    res.status(200).json(response.data);
+  } catch (err) {
+    console.error('Reverse geocode error:', err);
+    res.status(500).json({ success: false, message: 'Failed to fetch location address' });
   }
 });
 

@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
     { text: 'Leads', icon: <ArticleIcon />, path: '/admin/leads' },
-    { text: 'User Management', icon: <PeopleIcon />, path: '/admin/users' },
+    // { text: 'User Management', icon: <PeopleIcon />, path: '/admin/users' },
     { text: 'Vehicle Owners', icon: <DirectionsCarIcon />, path: '/admin/owners' },
     { text: 'Advertisers', icon: <BusinessIcon sx={{ color: 'inherit' }} />, path: '/admin/advertisers' },
     { text: 'Campaigns', icon: <CampaignIcon />, path: '/admin/campaigns' },

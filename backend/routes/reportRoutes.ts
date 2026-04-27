@@ -12,11 +12,14 @@ router.post('/submit', verifyToken, async (req: any, res: any) => {
       damageReported, damageProof, damageReason 
     } = req.body;
 
-    if (isRunning && closingKm < openingKm) {
+    const startKm = Number(openingKm) || 0;
+    const endKm = Number(closingKm) || 0;
+
+    if (isRunning && endKm < startKm) {
       return res.status(400).json({ success: false, message: 'Closing KM cannot be less than Opening KM' });
     }
 
-    const kmDriven = isRunning ? (closingKm - openingKm) : 0;
+    const kmDriven = isRunning ? (endKm - startKm) : 0;
 
     const newReport = new DailyReport({
       userId: req.user.id,
@@ -69,6 +72,49 @@ router.get('/all', verifyToken, async (req: any, res: any) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Error fetching all reports' });
+  }
+});
+
+import Transaction from '../model/Transaction';
+import Vehicle from '../model/Vehicle';
+import User from '../model/User';
+
+router.patch('/payout/:id', verifyToken, async (req: any, res: any) => {
+  try {
+    const { amount, transactionId } = req.body;
+    
+    const report = await DailyReport.findById(req.params.id);
+    if (!report) return res.status(404).json({ success: false, message: 'Report not found' });
+
+    if (report.payoutStatus === 'Paid') {
+       return res.status(400).json({ success: false, message: 'This report has already been paid' });
+    }
+
+    // Update report
+    report.payoutStatus = 'Paid';
+    report.payoutAmount = amount;
+    await report.save();
+
+    // Update User Wallet
+    await User.findByIdAndUpdate(report.userId, { $inc: { walletBalance: amount } });
+
+    // Create Transaction
+    const newTransaction = new Transaction({
+      userId: report.userId, // Pay to the vehicle owner
+      amount: amount,
+      type: 'Credit',
+      status: 'Completed',
+      description: `Payout for Daily Report ${report._id} (${report.kmDriven} KM)`,
+      transactionId: transactionId || `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      paymentMethod: 'UPI'
+    });
+
+    await newTransaction.save();
+
+    res.status(200).json({ success: true, message: 'Payout processed successfully!' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error processing payout' });
   }
 });
 

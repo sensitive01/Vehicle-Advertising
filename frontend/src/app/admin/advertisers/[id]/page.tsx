@@ -215,7 +215,17 @@ export default function AdvertiserProfilePage() {
                         <TableCell sx={{ color: 'zinc.300' }}>{camp.operatingLocation}</TableCell>
                         <TableCell sx={{ color: 'white', fontWeight: 700 }}>{camp.numberOfVehicles} Units</TableCell>
                         <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>
-                          ₹{(camp.rentalChargesPerKm * camp.averageKm || 0).toLocaleString()}
+                          {camp.quotedPrice > 0 ? (
+                            <Box>
+                              <Typography sx={{ fontWeight: 900, color: '#4ADE80' }}>₹ {camp.quotedPrice.toLocaleString('en-IN')}</Typography>
+                              <Typography variant="caption" sx={{ color: 'zinc.600', fontSize: '0.6rem', display: 'block', mt: -0.5 }}>OFFICIAL QUOTE</Typography>
+                            </Box>
+                          ) : (
+                            <Box>
+                              <Typography sx={{ fontWeight: 900 }}>₹ {(camp.rentalChargesPerKm * camp.averageKm * (camp.numberOfVehicles || 1)).toLocaleString('en-IN')}</Typography>
+                              <Typography variant="caption" sx={{ color: 'zinc.600', fontSize: '0.6rem', display: 'block', mt: -0.5 }}>EST. MONTHLY TOTAL</Typography>
+                            </Box>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Chip 

@@ -137,8 +137,8 @@ export default function AdminSettingsPage() {
       {saveSuccess && <Alert severity="success" sx={{ mb: 4, bgcolor: 'rgba(34, 197, 94, 0.1)', color: '#4ADE80', border: '1px solid #4ADE80' }}>Configuration updated successfully!</Alert>}
       {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
 
+      {/* 
       <Grid container spacing={4}>
-         {/* Global Charges */}
          <Grid size={{ xs: 12 }}>
             <Card sx={{ bgcolor: '#121212', p: 4, border: '1px solid #333', borderRadius: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
@@ -162,7 +162,6 @@ export default function AdminSettingsPage() {
             </Card>
          </Grid>
 
-         {/* Detailed Pricing Tables */}
          {[
            { title: 'Printing Charges', field: 'printingChargePerVehicleType' },
            { title: 'Installation Charges', field: 'installationChargePerVehicleType' },
@@ -214,6 +213,10 @@ export default function AdminSettingsPage() {
             </Box>
          </Grid>
       </Grid>
+      */}
+      <Box sx={{ py: 10, textAlign: 'center' }}>
+         <Typography sx={{ color: 'zinc.500', fontStyle: 'italic' }}>System Pricing configuration is managed globally. Contact support for changes.</Typography>
+      </Box>
     </Box>
   );
 }

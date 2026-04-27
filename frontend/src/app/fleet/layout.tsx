@@ -9,7 +9,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Badge } from '@mui/material';
+import { Badge, Menu, MenuItem, Avatar } from '@mui/material';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import PersonIcon from '@mui/icons-material/Person';
 
 const drawerWidth = 260;
 
@@ -21,6 +24,8 @@ export default function FleetLayout({ children }: { children: React.ReactNode })
   const [isClient, setIsClient] = useState(false);
   
   const [pendingCount, setPendingCount] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [user, setUser] = useState<any>(null);
 
   const fetchPendingCount = async () => {
     try {
@@ -43,7 +48,22 @@ export default function FleetLayout({ children }: { children: React.ReactNode })
        window.location.href = '/login';
     }
     fetchPendingCount();
+    fetchUser();
   }, []);
+
+  const fetchUser = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) setUser(data.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
@@ -58,6 +78,7 @@ export default function FleetLayout({ children }: { children: React.ReactNode })
     { text: 'My Vehicles', icon: <DirectionsCarIcon />, path: '/fleet/vehicles' },
     { text: 'Daily Reports', icon: <AssessmentIcon />, path: '/fleet/reports' },
     { text: 'My Advertisements', icon: <CampaignIcon />, path: '/fleet/advertisements' },
+    { text: 'Wallet', icon: <AccountBalanceWalletIcon />, path: '/fleet/wallet' },
   ];
 
   if (!isClient) return null;
@@ -130,6 +151,34 @@ export default function FleetLayout({ children }: { children: React.ReactNode })
           <Typography variant="h6" noWrap sx={{ flexGrow: 1, fontWeight: 700, color: 'white' }}>
              {navItems.find(i => pathname.includes(i.path))?.text || 'Fleet Setup'}
           </Typography>
+
+          <IconButton onClick={handleMenuOpen} sx={{ color: '#FACC15' }}>
+             {user?.fullName ? (
+               <Avatar sx={{ width: 32, height: 32, bgcolor: '#FACC15', color: 'black', fontWeight: 800, fontSize: '0.85rem' }}>
+                 {user.fullName[0]}
+               </Avatar>
+             ) : (
+               <AccountCircleIcon />
+             )}
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            PaperProps={{
+              sx: { bgcolor: '#121212', color: 'white', border: '1px solid #333', minWidth: 180, mt: 1 }
+            }}
+          >
+            <MenuItem onClick={() => { handleMenuClose(); router.push('/fleet/profile'); }} sx={{ py: 1.5, '&:hover': { bgcolor: 'rgba(250, 204, 21, 0.1)' } }}>
+               <ListItemIcon><PersonIcon sx={{ color: '#FACC15', fontSize: 20 }} /></ListItemIcon>
+               <ListItemText primary="My Profile" primaryTypographyProps={{ fontWeight: 600, fontSize: '0.9rem' }} />
+            </MenuItem>
+            <Divider sx={{ borderColor: '#222' }} />
+            <MenuItem onClick={handleLogout} sx={{ py: 1.5, '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.1)' } }}>
+               <ListItemIcon><LogoutIcon sx={{ color: '#EF4444', fontSize: 20 }} /></ListItemIcon>
+               <ListItemText primary="Logout" primaryTypographyProps={{ color: '#EF4444', fontWeight: 600, fontSize: '0.9rem' }} />
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       

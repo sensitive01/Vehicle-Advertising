@@ -30,6 +30,7 @@ export default function CreateCampaignPage() {
     operatingLocations: [] as string[],
     locationInput: '',
     targetCenter: { pin: '', radius: 5, address: '' },
+    startDate: new Date().toISOString().split('T')[0],
   });
 
   useEffect(() => {
@@ -190,25 +191,32 @@ export default function CreateCampaignPage() {
                 <Box>
                    <Typography variant="body2" sx={{ color: '#FACC15', fontWeight: 900, mb: 3, textTransform: 'uppercase', letterSpacing: 1.5 }}>Step 3: Geo-Targeting</Typography>
                    <Grid container spacing={3}>
-                      <Grid size={{ xs: 12, md: 8 }}>
-                         <TextField fullWidth placeholder="Enter city name and press Add" value={formData.locationInput} onChange={(e) => setFormData({...formData, locationInput: e.target.value})} onKeyPress={(e) => e.key === 'Enter' && addLocation()} sx={fieldStyle} InputProps={{ endAdornment: <Button onClick={addLocation} sx={{ color: '#FACC15', fontWeight: 800 }}>ADD</Button> }} />
-                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
-                            {formData.operatingLocations.map((loc, i) => (
-                               <Paper key={i} sx={{ px: 2, py: 0.8, bgcolor: '#1E1E1E', border: '1px solid #333', borderRadius: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <Typography variant="body2" sx={{ color: 'white', fontWeight: 600 }}>{loc}</Typography>
-                                  <IconButton size="small" onClick={() => removeLocation(i)} sx={{ color: '#EF4444', p: 0.2 }}><AddIcon sx={{ transform: 'rotate(45deg)', fontSize: 18 }} /></IconButton>
-                               </Paper>
-                            ))}
-                         </Box>
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 4 }}>
-                         <TextField select fullWidth label="Campaign Duration" value={formData.duration} onChange={(e) => setFormData({...formData, duration: e.target.value as any})} sx={fieldStyle}>
-                            <MenuItem value="3 months">3 MONTHS</MenuItem>
-                            <MenuItem value="6 months">6 MONTHS</MenuItem>
-                            <MenuItem value="1 year">1 YEAR</MenuItem>
-                         </TextField>
-                      </Grid>
-                   </Grid>
+                       <Grid size={{ xs: 12, md: 6 }}>
+                          <TextField fullWidth placeholder="Enter city name and press Add" value={formData.locationInput} onChange={(e) => setFormData({...formData, locationInput: e.target.value})} onKeyPress={(e) => e.key === 'Enter' && addLocation()} sx={fieldStyle} InputProps={{ endAdornment: <Button onClick={addLocation} sx={{ color: '#FACC15', fontWeight: 800 }}>ADD</Button> }} />
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+                             {formData.operatingLocations.map((loc, i) => (
+                                <Paper key={i} sx={{ px: 2, py: 0.8, bgcolor: '#1E1E1E', border: '1px solid #333', borderRadius: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                   <Typography variant="body2" sx={{ color: 'white', fontWeight: 600 }}>{loc}</Typography>
+                                   <IconButton size="small" onClick={() => removeLocation(i)} sx={{ color: '#EF4444', p: 0.2 }}><AddIcon sx={{ transform: 'rotate(45deg)', fontSize: 18 }} /></IconButton>
+                                </Paper>
+                             ))}
+                          </Box>
+                       </Grid>
+                       <Grid size={{ xs: 12, md: 3 }}>
+                          <TextField select fullWidth label="Duration" value={formData.duration} onChange={(e) => setFormData({...formData, duration: e.target.value as any})} sx={fieldStyle}>
+                             <MenuItem value="3 months">3 MONTHS</MenuItem>
+                             <MenuItem value="6 months">6 MONTHS</MenuItem>
+                             <MenuItem value="1 year">1 YEAR</MenuItem>
+                          </TextField>
+                       </Grid>
+                       <Grid size={{ xs: 12, md: 3 }}>
+                          <TextField 
+                            fullWidth type="date" label="Start Date" 
+                            value={formData.startDate} onChange={(e) => setFormData({...formData, startDate: e.target.value})} 
+                            sx={fieldStyle} InputLabelProps={{ shrink: true }} 
+                          />
+                       </Grid>
+                    </Grid>
                 </Box>
 
                 <Divider sx={{ borderColor: '#222' }} />
