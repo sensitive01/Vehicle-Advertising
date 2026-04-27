@@ -263,16 +263,16 @@ export default function FleetProfilePage() {
               <TabPanel value={tabValue} index={0}>
                 <Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 800, mb: 3 }}>Identity & Access</Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField label="Full Legal Name" fullWidth value={user?.fullName} disabled sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#080808' } }} />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField label="Platform ID" fullWidth value={user?.userId} disabled sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#080808' } }} />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField label="Registered Email" fullWidth value={user?.email} disabled sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#080808' } }} />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField label="Contact Number" fullWidth value={user?.mobileNumber} disabled sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#080808' } }} />
                   </Grid>
                 </Grid>
@@ -305,7 +305,7 @@ export default function FleetProfilePage() {
                     )}
                   </Box>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField 
                         label="Account Holder Name" 
                         fullWidth 
@@ -317,7 +317,7 @@ export default function FleetProfilePage() {
                         sx={{ '& .MuiOutlinedInput-root': { bgcolor: isEditingBank ? '#000' : '#080808' } }} 
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField 
                         label="Bank Name" 
                         fullWidth 
@@ -329,7 +329,7 @@ export default function FleetProfilePage() {
                         sx={{ '& .MuiOutlinedInput-root': { bgcolor: isEditingBank ? '#000' : '#080808' } }} 
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField 
                         label="Account Number" 
                         fullWidth 
@@ -341,7 +341,7 @@ export default function FleetProfilePage() {
                         sx={{ '& .MuiOutlinedInput-root': { bgcolor: isEditingBank ? '#000' : '#080808' } }} 
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField 
                         label="IFSC Code" 
                         fullWidth 
@@ -353,7 +353,7 @@ export default function FleetProfilePage() {
                         sx={{ '& .MuiOutlinedInput-root': { bgcolor: isEditingBank ? '#000' : '#080808' } }} 
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12}>
                       <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 900, mb: 1.5, display: 'block', textTransform: 'uppercase' }}>Verification Proof</Typography>
                       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', p: 2, bgcolor: isEditingBank ? '#080808' : '#0a0a0a', borderRadius: 1.5, border: '1px solid #222', opacity: isEditingBank ? 1 : 0.7 }}>
                         <Paper 
