@@ -333,7 +333,7 @@ export default function MyVehiclesPage() {
        <Box>
           <Label>Vehicle Photos</Label>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
-            {(formData.images || []).map((img, i) => (
+            {(formData.images || []).map((img: string, i: number) => (
               <Paper key={i} sx={{ width: 120, height: 90, overflow: 'hidden', borderRadius: 2, border: '1px solid #333' }}>
                 <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </Paper>
@@ -438,7 +438,7 @@ export default function MyVehiclesPage() {
                     <Grid size={{ xs: 12 }}>
                        <Label>Campaign Creatives / Ad Preview</Label>
                        <Box sx={{ display: 'flex', gap: 1, mt: 1, overflowX: 'auto', pb: 1 }}>
-                          {formData.activeCampaignId.adImages.map((img, i) => (
+                          {formData.activeCampaignId.adImages.map((img: string, i: number) => (
                              <Paper key={i} sx={{ minWidth: 150, height: 100, overflow: 'hidden', borderRadius: 1, border: '1px solid #333', flexShrink: 0 }}>
                                 <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                              </Paper>
@@ -464,7 +464,7 @@ export default function MyVehiclesPage() {
             <Box>
                 <Label>Vehicle Photos</Label>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 1 }}>
-                  {(formData.images || []).map((img, i) => (
+                  {(formData.images || []).map((img: string, i: number) => (
                     <Paper key={i} sx={{ position: 'relative', width: 100, height: 75, overflow: 'hidden', borderRadius: 2, border: '1px solid #333' }}>
                       <img src={img} style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
                       <IconButton size="small" onClick={() => setFormData({ ...formData, images: (formData.images || []).filter((_, idx) => idx !== i) })} sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(255,0,0,0.8)', color: 'white', '&:hover': { bgcolor: 'red' }, p: 0.1 }}><CloseIcon sx={{ fontSize: 12 }} /></IconButton>

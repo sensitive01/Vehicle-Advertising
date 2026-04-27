@@ -338,7 +338,7 @@ export default function AdvertiserCompleteProfile() {
                     <Grid size={{ xs: 12, md: 7 }}>
                        <Typography variant="caption" sx={{ color: 'zinc.500', display: 'block', mb: 1, fontWeight: 700 }}>CAMPAIGN IMAGES / CREATIVES</Typography>
                        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
-                          {formData.adImages.map((img, i) => (
+                          {formData.adImages.map((img: string, i: number) => (
                              <Box key={i} sx={{ position: 'relative', width: 100, height: 100, borderRadius: 2, overflow: 'hidden', border: '1px solid #333' }}>
                                 <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 <IconButton size="small" onClick={() => setFormData(prev => ({ ...prev, adImages: prev.adImages.filter((_, idx) => idx !== i) }))} sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(255,0,0,0.8)', color: 'white', '&:hover': { bgcolor: 'red' }, p: 0.1 }}>

@@ -193,7 +193,7 @@ export default function UsersPage() {
        <Box>
           <Label>Vehicle Photos</Label>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
-            {v.images?.map((img, i) => (
+            {v.images?.map((img: string, i: number) => (
               <Paper key={i} sx={{ width: 120, height: 90, overflow: 'hidden', borderRadius: 2, border: '1px solid #333' }}>
                 <img src={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="vehicle" onClick={() => window.open(img, '_blank')} />
               </Paper>
