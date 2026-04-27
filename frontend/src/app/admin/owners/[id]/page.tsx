@@ -446,8 +446,65 @@ export default function OwnerProfilePage() {
           </CustomTabPanel>
 
           <CustomTabPanel value={activeTab} index={3}>
-             {/* Transactions Placeholder */}
-             <Typography sx={{ color: 'zinc.600', textAlign: 'center', py: 10 }}>No transactions found.</Typography>
+            {transactions.length === 0 ? (
+              <Box sx={{ textAlign: 'center', py: 10, bgcolor: '#0A0A0A', borderRadius: 1.5, border: '1px dashed #333' }}>
+                <ReceiptIcon sx={{ fontSize: 48, color: 'zinc.800', mb: 2 }} />
+                <Typography sx={{ color: 'zinc.600' }}>No transactions found for this owner.</Typography>
+              </Box>
+            ) : (
+              <TableContainer component={Paper} sx={{ bgcolor: '#181818', borderRadius: 1.5, border: '1px solid #333', backgroundImage: 'none' }}>
+                <Table>
+                  <TableHead sx={{ bgcolor: '#000' }}>
+                    <TableRow>
+                      <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>TRANSACTION ID</TableCell>
+                      <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>DATE</TableCell>
+                      <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>DESCRIPTION</TableCell>
+                      <TableCell sx={{ color: '#FACC15', fontWeight: 800 }}>TYPE</TableCell>
+                      <TableCell sx={{ color: '#FACC15', fontWeight: 800 }} align="right">AMOUNT</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {transactions.map((tx) => (
+                      <TableRow key={tx._id} hover sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' } }}>
+                        <TableCell sx={{ color: '#FACC15', fontWeight: 700, fontFamily: 'monospace' }}>
+                          {tx.transactionId || tx._id.slice(-10).toUpperCase()}
+                        </TableCell>
+                        <TableCell sx={{ color: 'zinc.400' }}>{formatDate(tx.createdAt)}</TableCell>
+                        <TableCell>
+                          <Typography sx={{ color: 'white', fontWeight: 600 }}>
+                            {tx.description ? tx.description.replace(/Payout for Daily Report [a-f0-9]{24}/, 'Payout for Daily Report') : 'Payout processed'}
+                          </Typography>
+                          {tx.referenceId && (
+                            <Typography variant="caption" sx={{ color: 'zinc.600', display: 'block' }}>Ref: {tx.referenceId}</Typography>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Chip 
+                            label={tx.type === 'Credit' ? 'DEBIT' : 'CREDIT'} 
+                            size="small" 
+                            sx={{ 
+                              bgcolor: tx.type === 'Credit' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)', 
+                              color: tx.type === 'Credit' ? '#F87171' : '#4ADE80', 
+                              fontWeight: 800,
+                              fontSize: '0.65rem'
+                            }} 
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography sx={{ 
+                            color: tx.type === 'Credit' ? '#F87171' : '#4ADE80', 
+                            fontWeight: 900,
+                            fontSize: '1rem'
+                          }}>
+                            {tx.type === 'Credit' ? '-' : '+'}₹{tx.amount.toLocaleString()}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
           </CustomTabPanel>
         </Box>
       </Card>
