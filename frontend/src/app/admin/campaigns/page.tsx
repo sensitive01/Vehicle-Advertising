@@ -606,14 +606,14 @@ export default function AdminCampaignsPage() {
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField 
                       label="Rental / KM" fullWidth type="number" size="small"
-                      value={quoteData.rentalChargesPerKm} onChange={(e) => setQuoteData({...quoteData, rentalChargesPerKm: e.target.value})}
+                      value={quoteData.rentalChargesPerKm} onChange={(e) => setQuoteData({...quoteData, rentalChargesPerKm: Number(e.target.value)})}
                       sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white' } }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField 
                       label="Avg KM / Month" fullWidth type="number" size="small"
-                      value={quoteData.averageKm} onChange={(e) => setQuoteData({...quoteData, averageKm: e.target.value})}
+                      value={quoteData.averageKm} onChange={(e) => setQuoteData({...quoteData, averageKm: Number(e.target.value)})}
                       sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white' } }}
                     />
                   </Grid>
