@@ -564,35 +564,35 @@ export default function AdminCampaignsPage() {
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField 
                       label="Design Charges" fullWidth type="number" size="small"
-                      value={quoteData.designCharges} onChange={(e) => setQuoteData({...quoteData, designCharges: e.target.value})}
+                      value={quoteData.designCharges} onChange={(e) => setQuoteData({...quoteData, designCharges: Number(e.target.value)})}
                       sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white' } }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField 
                       label="Printing Charges" fullWidth type="number" size="small"
-                      value={quoteData.printingCharges} onChange={(e) => setQuoteData({...quoteData, printingCharges: e.target.value})}
+                      value={quoteData.printingCharges} onChange={(e) => setQuoteData({...quoteData, printingCharges: Number(e.target.value)})}
                       sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white' } }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField 
                       label="Service Charges" fullWidth type="number" size="small"
-                      value={quoteData.serviceCharges} onChange={(e) => setQuoteData({...quoteData, serviceCharges: e.target.value})}
+                      value={quoteData.serviceCharges} onChange={(e) => setQuoteData({...quoteData, serviceCharges: Number(e.target.value)})}
                       sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white' } }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField 
                       label="Transport Charges" fullWidth type="number" size="small"
-                      value={quoteData.transportCharges} onChange={(e) => setQuoteData({...quoteData, transportCharges: e.target.value})}
+                      value={quoteData.transportCharges} onChange={(e) => setQuoteData({...quoteData, transportCharges: Number(e.target.value)})}
                       sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white' } }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField 
                       label="Installation Charges" fullWidth type="number" size="small"
-                      value={quoteData.installationCharges} onChange={(e) => setQuoteData({...quoteData, installationCharges: e.target.value})}
+                      value={quoteData.installationCharges} onChange={(e) => setQuoteData({...quoteData, installationCharges: Number(e.target.value)})}
                       sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#000', color: 'white' } }}
                     />
                   </Grid>
