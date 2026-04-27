@@ -353,7 +353,7 @@ export default function FleetProfilePage() {
                         sx={{ '& .MuiOutlinedInput-root': { bgcolor: isEditingBank ? '#000' : '#080808' } }} 
                       />
                     </Grid>
-                    <Grid size={{ xs: 12}>
+                    <Grid size={{ xs: 12 }}>
                       <Typography variant="caption" sx={{ color: 'zinc.500', fontWeight: 900, mb: 1.5, display: 'block', textTransform: 'uppercase' }}>Verification Proof</Typography>
                       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', p: 2, bgcolor: isEditingBank ? '#080808' : '#0a0a0a', borderRadius: 1.5, border: '1px solid #222', opacity: isEditingBank ? 1 : 0.7 }}>
                         <Paper 
