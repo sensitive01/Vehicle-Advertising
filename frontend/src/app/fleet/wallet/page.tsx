@@ -58,7 +58,7 @@ export default function FleetWalletPage() {
         </Box>
 
         <Grid container spacing={3}>
-           <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Card sx={{ 
                 bgcolor: '#121212', p: 4, borderRadius: 1.5, border: '1px solid #333',
                 position: 'relative', overflow: 'hidden'

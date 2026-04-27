@@ -688,7 +688,7 @@ export default function MyVehiclesPage() {
                    const imageUrl = formData.adOptionImages?.[opt];
                    
                    return (
-                     <Grid item xs={12} sm={6} key={opt}>
+                     <Grid size={{ xs: 12, sm: 6 }} key={opt}>
                        <Box sx={{ 
                          p: 2, 
                          borderRadius: 2, 
